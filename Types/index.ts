@@ -12,12 +12,12 @@ export interface Product {
     title: string;
     price: number;
     image_url: string;
-    Artists: Artist[];
+    Artists: { name: string }[];
   }
 
 export interface Artist {
     id?: string;
     name: string;
-    bio: string;
+    bio?: string;
     profile_picture: string;
 }
