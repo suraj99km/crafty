@@ -46,7 +46,9 @@ const PopularProducts = () => {
               <h2 className="font-bold mt-4 text-center text-xl font-palanquin text-gray-800">{product.title}</h2>
               <p className="text-right text-lg font-semibold py-1 text-gray-900 mr-4">₹ {product.price}</p>
               <p className="text-center text-sm text-gray-700 mb-2">
-                Crafted by <span className="font-bold text-gray-900">{product.Artists.name || 'Unknown Artist'}</span>
+                Crafted by <span className="font-bold text-gray-900">
+                {product.Artists[0]?.name || 'Unknown Artist'}
+                </span>
             </p>
             </div>
           ))}
