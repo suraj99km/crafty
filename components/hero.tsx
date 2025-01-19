@@ -13,7 +13,7 @@ const Hero = () => {
   return (
     <div>
     <div className='hero'>
-        <div className="flex-1 pt-36 padding-x">
+        <div className="flex-1 pt-20 xl:pt-36 padding-x">
             <h1 className="hero__title mt-5">
                 Handmade Treasures, crafted with love
                 <span className="inline-flex items-center">
@@ -23,7 +23,7 @@ const Hero = () => {
             <p className="hero__subtitle">
                 Discover handcrafted products made with heart and passion.
             </p>
-            <div className="inline-flex gap-5 flex-wrap mt-10 mb-10">
+            <div className="inline-flex gap-3 sm:gap-5 flex-wrap mt-8 mb-5 text-[14px] 2xl:text-[18px]">
             <CustomButton 
             title="Explore crafts"
             btnType='button'
@@ -40,7 +40,7 @@ const Hero = () => {
             
         </div>
         <div className="hero__image-container">
-            <div className="hero__image overflow-hidden relative h-[1500px]">
+            <div className="hero__image overflow-hidden relative 2xl:h-[1500px] h-[500px]">
                 <Image src="/hero.jpg" alt="hero" fill className="object-cover object-center" />
             </div>
         </div>

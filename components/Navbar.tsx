@@ -20,7 +20,7 @@ const Navbar = () => {
                 title="Sign In"
                 btnType="button"
                 // handleClick={() => handleLoginWithOAuth("google")}
-                containerStyles='text-red-500 font-semibold min w-[130px] xl:text-white sm:text-red-500 md:text-red-500'
+                containerStyles='text-red-500 font-semibold min w-[110px] xl:text-white sm:text-red-500 md:text-red-500'
             />
         </nav>
     </header>

@@ -43,19 +43,19 @@
 }
 
 .hero__title {
-  @apply 2xl:text-[72px] sm:text-[64px] text-[50px] font-extrabold;
+  @apply 2xl:text-[72px] sm:text-[56px] text-[40px] font-extrabold;
 }
 
 .hero__title2 {
-  @apply 2xl:text-[64px] sm:text-[50px] text-[44px] font-extrabold;
+  @apply 2xl:text-[64px] sm:text-[50px] text-[36px] font-extrabold;
 }
 
 .hero__subtitle {
-  @apply text-[27px] text-black-100 font-light mt-5;
+  @apply 2xl:text-[36px] sm:text-[32px] text-[20px] text-black-100 font-light mt-5;
 }
 
 .hero__mission {
-  @apply text-[20px] text-black-100 font-light mt-5;
+  @apply 2xl:text-[20px] text-[18px] text-black-100 font-light mt-5;
 }
 
 .hero__image-container {
@@ -63,13 +63,8 @@
 }
 
 .hero__image {
-  @apply relative xl:w-full w-[100%] xl:h-full h-[400px] z-0;
+  @apply relative xl:w-full w-[100%] xl:h-full h-[250px] z-0;
 }
-
-.hero__image-overlay {
-  @apply absolute xl:-top-24 xl:-right-1/2 -right-1/4 bg-hero-bg bg-repeat-round -z-10 w-full xl:h-screen h-[590px] overflow-hidden;
-}
-/* END: Hero styles */
 
 /* START: Home styles */
 
@@ -95,8 +90,8 @@
 /* END: Home styles */
 
 /* START: Car Card styles */
-.product-card {
-  @apply flex flex-col p-6 justify-center items-start text-black-100 bg-primary-blue-100 hover:bg-white hover:shadow-md rounded-3xl;
+.product__card {
+  @apply flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-xl;
 }
 
 .product-card__content {

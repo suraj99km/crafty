@@ -35,7 +35,7 @@ const PopularArtists = () => {
       {artistsToShow.length === 0 ? (
         <p>No artists found</p>
       ) : (
-        <div className="mt-8 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 sm:gap-2 gap-6">
+        <div className="mt-8 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 sm:gap-2 gap-6">
           {artistsToShow.map((artist) => (
             <div
               key={artist.id}
