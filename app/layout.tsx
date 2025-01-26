@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
   title: "CraftID.in",
