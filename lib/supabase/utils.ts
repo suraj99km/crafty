@@ -1,37 +1,69 @@
 import supabase from '@/db/supabaseClient';
+import { Product, Artist } from '@/Types';
 
-// Fetch products with associated artists
-export const fetchProductsWithArtists = async () => {
-  const { data, error } = await supabase
+export const fetchProductsWithArtists = async (): Promise<Product[] | null> => {
+  const { data: products, error } = await supabase
     .from('Products')
-    .select(`
-      id,
-      title,
-      price,
-      image_url,
-      Artists (
-        name
-      )
-    `); // Fetch products with artist names
+    .select('id, title, description, price, image_url, category, artist_id')
+    .order('sales_count', { ascending: false });
 
   if (error) {
-    console.error('Error fetching products with artists:', error);
+    console.error('Error fetching products:', error);
     return null;
   }
 
-  return data; // Return the fetched data
+  // Temporarily add 'artist_name' to each product
+  const productsWithArtistName = products!.map((product) => ({
+    ...product,
+    artist_name: 'Unknown Artist', // Default value
+  }));
+
+  // Fetch artist name for each product and update it
+  for (const product of productsWithArtistName) {
+    const { data: artist, error: artistError } = await supabase
+      .from('Artists')
+      .select('name')
+      .eq('id', product.artist_id)
+      .single();
+
+    if (artistError) {
+      console.error('Error fetching artist:', artistError);
+      product['artist_name'] = 'Unknown Artist';
+    } else {
+      product['artist_name'] = artist?.name || 'Unknown Artist';
+    }
+  }
+
+  // Cast the result to Product[] (since we're sure it's correctly transformed)
+  return productsWithArtistName as Product[];
 };
 
-// Fetch popular artists
+
+
 export const fetchPopularArtists = async () => {
-  const { data, error } = await supabase
+  const { data: artists, error } = await supabase
     .from('Artists')
-    .select('id, name, profile_picture, bio'); // Fetch popular artists' details
+    .select('id, name, profile_picture, bio, Products(sales_count)'); // Fetch artists with their products' sales count
 
   if (error) {
     console.error('Error fetching artists:', error);
-    throw error;
+    return null; // Return null if there's an error
   }
 
-  return data; // Return the fetched data
+  // Sum sales count for each artist
+  const artistsWithSalesCount = artists?.map(artist => {
+    // Calculate the total sales for the artist
+    const totalSales = artist.Products?.reduce((sum, product) => sum + (product.sales_count || 0), 0) || 0;
+    
+    return {
+      ...artist, // Spread existing artist data
+      totalSales, // Add total sales
+    };
+  });
+
+  // Sort artists by total sales in descending order
+  const sortedArtists = artistsWithSalesCount?.sort((a, b) => b.totalSales - a.totalSales);
+
+  return sortedArtists; // Return sorted artists
 };
+

@@ -13,6 +13,7 @@ const PopularProducts = () => {
     const getProducts = async () => {
       try {
         const fetchedProducts = await fetchProductsWithArtists();
+        
         if (fetchedProducts) {
           setProducts(fetchedProducts); // This should now match the defined type
         }
@@ -49,10 +50,10 @@ const PopularProducts = () => {
               </div>
 
               <p className="text-center text-xs text-gray-700 mb-2">
-                Crafted by <span className="font-bold text-gray-900">
-                {product.Artists[0]?.name || 'Unknown Artist'}
-                </span>
-            </p>
+              Crafted by <span className="font-bold text-gray-900">
+              {product.artist_name || "Unknown Artist"}
+              </span>
+              </p>
             </div>
           ))}
         </div>

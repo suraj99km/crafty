@@ -12,7 +12,7 @@ export interface Product {
     title: string;
     price: number;
     image_url: string;
-    Artists: { name: string }[];
+    artist_name?: string;
   }
 
 export interface Artist {
