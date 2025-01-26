@@ -56,13 +56,13 @@ const Hero = () => {
         Our Mission
         </h1>
         <p className="hero__mission">
-        "At The Crafty Indians, our mission is to connect talented artists with people who cherish creative art and handicrafts. We’re more than just a marketplace—we’re a community that celebrates craftsmanship and ensures artists receive fair credit for their work.
+        At CraftID.in, our mission is to provide artists with a platform to express their creativity while offering a built-in marketplace for customers to discover and buy their unique crafts. We foster an environment of trust, authenticity, and passion for art, where each creation is celebrated and valued.
         </p>
         <p className="hero__mission">
-            Our platform empowers artists to showcase their creations, build their profiles, and expand their reach. By providing this supportive space, we enable meaningful connections between artists and buyers, fostering relationships that go beyond transactions.
+        We empower artists to showcase their work, build their profiles, and expand their reach, ensuring they receive the recognition and fair credit they deserve for their craftsmanship. Our platform helps connect artists and buyers in meaningful ways, creating lasting relationships beyond mere transactions.
         </p>
         <p className="hero__mission">
-        We take pride in celebrating The Crafty Indians and their incredible stories. Come, let’s show them the love and recognition they truly deserve!"
+        At CraftID.in, we proudly celebrate the stories of the artists and their extraordinary talent. Join us in showing them the love and recognition they truly deserve."
         </p>
         </div>
     </div>

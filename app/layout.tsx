@@ -5,8 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Crafty Indians",
-  description: "Handcrafts made out of passion.",
+  title: "CraftID.in",
+  description: "",
 };
 
 export default function RootLayout({
