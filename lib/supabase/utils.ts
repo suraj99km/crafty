@@ -67,3 +67,35 @@ export const fetchPopularArtists = async () => {
   return sortedArtists; // Return sorted artists
 };
 
+export const fetchLatestProductsWithCategories = async () => {
+  const { data: products, error } = await supabase
+    .from('Products')
+    .select('id, title, description, price, image_url, category, artist_id, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching products:', error);
+    return { products: [], categories: [] };
+  }
+
+  // Extract unique categories
+  const categories = [...new Set(products.map((product) => product.category))];
+
+  // Fetch artist names
+  const productsWithArtists = await Promise.all(
+    products.map(async (product) => {
+      const { data: artist, error: artistError } = await supabase
+        .from('Artists')
+        .select('name')
+        .eq('id', product.artist_id)
+        .single();
+
+      return {
+        ...product,
+        artist_name: artist?.name || 'Unknown Artist',
+      };
+    })
+  );
+
+  return { products: productsWithArtists, categories };
+};

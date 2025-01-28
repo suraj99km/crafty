@@ -1,8 +1,8 @@
 import React from 'react';
 import Hero from '@/components/hero';
-import PopularProducts from '@/components/PopularProducts';
-import Howitworks from '@/components/howitworks';
-import PopularArtists from '@/components/PopularArtists';
+import PopularProducts from '@/components/home/PopularProducts';
+import Howitworks from '@/components/home/howitworks';
+import PopularArtists from '@/components/home/PopularArtists';
 
 export default function Page() {
   return (
@@ -17,8 +17,6 @@ export default function Page() {
       <section className="padding-x padding-y">
         <PopularArtists/>
       </section>
-
-      
     </main>
 
 

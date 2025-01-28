@@ -3,12 +3,14 @@
 import React from 'react';
 import CustomButton from './CustomButton';
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
 const Hero = () => {
 
-    const handleScroll = () => {
+    const router = useRouter(); // Initialize the router
 
-    }
+    const handleScroll = () => {
+    };
 
   return (
     <div>
@@ -27,13 +29,16 @@ const Hero = () => {
             <CustomButton 
             title="Explore crafts"
             btnType='button'
-            containerStyles="bg-red-500 text-white rounded-full"
-            handleClick={handleScroll}
+            containerStyles="hover:bg-red-400 p-3 px-6 rounded-full font-medium transition-all duration-200 ease-in-out bg-red-500 text-white lg:text-lg lg:px-8"
+            handleClick={() => {
+                // Redirect to /products when the button is clicked
+                router.push('/products');
+        }}
             />
             <CustomButton
             title="Join as an Artist"
             btnType='button'
-            containerStyles="hover:bg-red-500 hover:text-white transition-all duration-200 ease-in-out text-red-500 font-medium rounded-full bg-transparent border-red-500 border "
+            containerStyles="hover:bg-red-500 hover:text-white transition-all duration-200 ease-in-out text-red-500 font-medium rounded-full bg-transparent border-red-500 border lg:text-lg lg:px-8"
             handleClick={handleScroll}
             />
             </div>
