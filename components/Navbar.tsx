@@ -1,31 +1,48 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement | null>(null); // Explicitly type the ref
 
   // Function to toggle sidebar visibility
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Listen for scroll events
+  // Close sidebar when clicking outside of it
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarRef.current && // Ensure the ref is not null
+        !sidebarRef.current.contains(event.target as Node) // Type assertion
+      ) {
+        setIsSidebarOpen(false);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    if (isSidebarOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
 
-    // Cleanup on unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+
+  // Listen for scroll events
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -35,7 +52,7 @@ const Navbar = () => {
     <header
       className={`${
         isScrolled ? "py-2" : "py-4"
-      } xl:absolute w-full z-10 fixed top-0 left-0 xl:bg-transparent bg-white shadow-sm transition-all duration-300`}
+      } w-full z-10 fixed top-0 left-0 xl:bg-transparent bg-white shadow-sm transition-all duration-300`}
     >
       <nav className="max-w-[1440px] mx-auto flex justify-between items-center sm:px-16 px-6 transition-all duration-300">
         <Link href="/" className="flex justify-center items-center">
@@ -57,49 +74,55 @@ const Navbar = () => {
             isScrolled ? "text-sm" : "text-3xl"
           }`}
         >
-          &#9776; {/* This is the hamburger icon */}
+          &#9776; {/* Hamburger icon */}
         </button>
       </nav>
 
       {/* Sidebar */}
       <div
+        ref={sidebarRef}
         className={`fixed top-0 right-0 w-[250px] h-full bg-red-500 text-white transition-all duration-300 ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex justify-end p-4">
           <button onClick={toggleSidebar} className="text-white text-2xl">
-            &times; {/* This is the close icon */}
+            &times; {/* Close icon */}
           </button>
         </div>
         <div className="flex flex-col items-center space-y-6 pt-10">
           <Link
             href="/"
             className="text-lg text-white hover:text-gray-200 transition duration-200"
+            onClick={toggleSidebar}
           >
             Home
           </Link>
           <Link
             href="/products"
             className="text-lg text-white hover:text-gray-200 transition duration-200"
+            onClick={toggleSidebar}
           >
             Products
           </Link>
           <Link
             href="/artists"
             className="text-lg text-white hover:text-gray-200 transition duration-200"
+            onClick={toggleSidebar}
           >
             Artists
           </Link>
           <Link
             href="/join-artist"
             className="text-lg text-white hover:text-gray-200 transition duration-200"
+            onClick={toggleSidebar}
           >
             Join as Artist
           </Link>
           <Link
             href="/login"
             className="text-lg text-white hover:text-gray-200 transition duration-200"
+            onClick={toggleSidebar}
           >
             Sign In / Login
           </Link>
