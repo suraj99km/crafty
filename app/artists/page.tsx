@@ -1,6 +1,6 @@
 // app/artists/page.tsx (Artists Listing Page)
 import React from "react";
-import ArtistList from "@/components/Artists/ArtistList"; // Updated path
+import ArtistList from "@/components/artists/ArtistList"; // Updated path
 
 const ArtistsPage = () => {
   return (
