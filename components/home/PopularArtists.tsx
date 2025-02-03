@@ -27,7 +27,7 @@ const PopularArtists = () => {
     setShowAll((prev) => !prev); // Toggle the value of showAll
   };
 
-  const artistsToShow = showAll ? artists : artists.slice(0, 4);
+  const artistsToShow = showAll ? artists : artists.slice(0, 5);
 
   return (
     <div>
