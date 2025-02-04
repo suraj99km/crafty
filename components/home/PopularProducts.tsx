@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { fetchProductsWithArtists } from '@/lib/supabase/utils';
 import { Product } from '@/Types';
+import Link from 'next/link';
 
 const PopularProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,6 +37,7 @@ const PopularProducts = () => {
         ) : (
           <div className="mt-8 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
             {products.slice(0, visibleCount).map((product) => (
+              <Link key={product.id} href={`/products/${product.id}`} passHref>
               <div key={product.id} className="product__card">
                 <img
                   src={product.image_url}
@@ -50,6 +52,7 @@ const PopularProducts = () => {
                   Crafted by <span className="font-bold text-gray-900">{product.artist_name || "Unknown Artist"}</span>
                 </p>
               </div>
+              </Link>
             ))}
           </div>
         )}
