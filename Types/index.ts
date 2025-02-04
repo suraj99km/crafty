@@ -13,6 +13,8 @@ export interface Product {
     price: number;
     image_url: string;
     artist_name?: string;
+    description?: string;
+    artist_id?: string;
   }
 
 export interface Artist {

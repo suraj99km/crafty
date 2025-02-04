@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchLatestProductsWithCategories } from "@/lib/supabase/utils";
 import { ArrowUpDown } from "lucide-react"; // Sort icon
+import Link from 'next/link';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -121,6 +122,8 @@ export default function ProductsPage() {
               product.title.toLowerCase().includes(searchTerm.toLowerCase())
             )
             .map((product) => (
+
+              <Link key={product.id} href={`/products/${product.id}`} passHref>
               <div
                 key={product.id}
                 className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex flex-col h-full"
@@ -136,6 +139,7 @@ export default function ProductsPage() {
                   <p className="text-xs text-gray-500 text-left">Artist: {product.artist_name}</p>
                 </div>
               </div>
+              </Link>
             ))}
         </div>
       </div>

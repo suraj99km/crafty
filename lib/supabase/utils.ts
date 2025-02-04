@@ -150,3 +150,18 @@ export const fetchRelatedProducts = async (artistId: string): Promise<Product[] 
   return products;
 };
 
+export const fetchProductDetails = async (id: string) => {
+  const { data, error } = await supabase
+    .from('Products') // Make sure this matches the actual case-sensitive table name
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching product details:', error.message);
+    return null;
+  }
+
+  return data;
+};
+
