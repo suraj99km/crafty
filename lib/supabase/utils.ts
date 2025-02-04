@@ -12,33 +12,35 @@ export const fetchProductsWithArtists = async (): Promise<Product[] | null> => {
     return null;
   }
 
-  // Temporarily add 'artist_name' to each product
-  const productsWithArtistName = products!.map((product) => ({
-    ...product,
-    artist_name: 'Unknown Artist', // Default value
-  }));
+  // Collect all unique artist_id values
+  const artistIds = [...new Set(products!.map((product) => product.artist_id))];
 
-  // Fetch artist name for each product and update it
-  for (const product of productsWithArtistName) {
-    const { data: artist, error: artistError } = await supabase
-      .from('Artists')
-      .select('name')
-      .eq('id', product.artist_id)
-      .single();
+  // Fetch all artists at once
+  const { data: artists, error: artistError } = await supabase
+    .from('Artists')
+    .select('id, name')
+    .in('id', artistIds);
 
-    if (artistError) {
-      console.error('Error fetching artist:', artistError);
-      product['artist_name'] = 'Unknown Artist';
-    } else {
-      product['artist_name'] = artist?.name || 'Unknown Artist';
-    }
+  if (artistError) {
+    console.error('Error fetching artists:', artistError);
+    return null;
   }
 
-  // Cast the result to Product[] (since we're sure it's correctly transformed)
-  return productsWithArtistName as Product[];
+  // Create a map of artist_id to artist name
+  const artistMap = artists.reduce((acc: { [key: number]: string }, artist) => {
+    acc[artist.id] = artist.name || 'Unknown Artist';
+    return acc;
+  }, {});
+
+  // Map the artist names to the products
+  const productsWithArtistName = products!.map((product) => ({
+    ...product,
+    artist_name: artistMap[product.artist_id] || 'Unknown Artist', // Default value
+  }));
+
+  // Return the transformed products with artist names
+  return productsWithArtistName;
 };
-
-
 
 export const fetchPopularArtists = async () => {
   const { data: artists, error } = await supabase
@@ -113,5 +115,38 @@ export const fetchLatestProductsWithCategories = async (sortBy: string = "sales_
   const categories = [...new Set(productsWithArtistName.map((p) => p.category))];
 
   return { products: productsWithArtistName, categories };
+};
+
+
+
+// Fetch artist details by ID
+export const fetchArtistDetails = async (id: string): Promise<Artist | null> => {
+  const { data: artist, error } = await supabase
+    .from('Artists')
+    .select('id, name, bio, profile_picture')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching artist details:', error);
+    return null;
+  }
+
+  return artist;
+};
+
+// Fetch related products by artist_id
+export const fetchRelatedProducts = async (artistId: string): Promise<Product[] | null> => {
+  const { data: products, error } = await supabase
+    .from('Products')
+    .select('id, title, price, image_url')
+    .eq('artist_id', artistId);
+
+  if (error) {
+    console.error('Error fetching related products:', error);
+    return null;
+  }
+
+  return products;
 };
 

@@ -6,7 +6,7 @@ import { Product } from '@/Types';
 
 const PopularProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [visibleCount, setVisibleCount] = useState(5); // Initially show 5 products
+  const [visibleCount, setVisibleCount] = useState(4); // Initially show 5 products
 
   useEffect(() => {
     const getProducts = async () => {
@@ -57,7 +57,7 @@ const PopularProducts = () => {
 
       {/* Buttons Section */}
       <div className="text-center mt-6">
-        {visibleCount < 10 && visibleCount < products.length && (
+        {visibleCount < 8 && visibleCount < products.length && (
           <button
             className="py-2 px-4 text-black underline font-semibold transition-all duration-300 hover:text-gray-700"
             onClick={handleShowMore}
@@ -66,11 +66,11 @@ const PopularProducts = () => {
           </button>
         )}
 
-        {visibleCount >= 10 && products.length > 10 && (
+        {visibleCount >= 8 && products.length > 8 && (
           <div className="flex justify-center mt-8">
             <a
               href="/products"
-              className="inline-block px-6 py-3 text-white bg-red-600 rounded-lg shadow-md transition-all duration-300 hover:bg-red-700 hover:shadow-lg active:scale-95"
+              className="inline-block px-6 py-3 text-white bg-red-500 rounded-lg shadow-md transition-all duration-300 hover:bg-red-700 hover:shadow-lg active:scale-95"
             >
               Explore All
             </a>

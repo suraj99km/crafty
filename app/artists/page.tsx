@@ -2,7 +2,7 @@
 import React from "react";
 import ArtistList from "@/components/artists/ArtistList"; // Updated path
 
-const ArtistsPage = () => {
+const ArtistsGrid = () => {
   return (
     <div className="container mx-auto p-4">
       <ArtistList />
@@ -10,4 +10,4 @@ const ArtistsPage = () => {
   );
 };
 
-export default ArtistsPage; // Updated export name
+export default ArtistsGrid; // Updated export name

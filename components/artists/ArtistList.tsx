@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
 import { fetchPopularArtists } from "@/lib/supabase/utils"; // Import the function to fetch artists
@@ -52,7 +52,7 @@ const ArtistList = () => {
         <input
           type="text"
           placeholder="Search for an artist..."
-          className="border p-2 rounded-lg flex-1"
+          className="border p-2 rounded-lg flex-grow shadow-sm focus:ring-2 focus:ring-red-500 outline-none"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)} // Update the search query state on input change
         />
@@ -61,7 +61,7 @@ const ArtistList = () => {
       {/* Artist Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredArtists.map((artist) => (
-          <Link key={artist.id} href={`/artists/${artist.id}`}>
+          <Link key={artist.id} href={`/artists/${artist.id}`}>  {/* This is the dynamic route */}
             <div className="border rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex flex-col h-full">
               <img
                 src={artist.profile_picture}
