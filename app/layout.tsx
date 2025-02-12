@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Analytics } from "@vercel/analytics/react"
+import FloatingCartButton from "@/components/cart/FloatingCartButton"; // Import Floating Cart Button
 
 export const metadata: Metadata = {
   title: "CraftID.in",
@@ -21,9 +21,8 @@ export default function RootLayout({
         <Navbar />
             {children}
         <Footer />
+        <FloatingCartButton /> {/* This ensures the button stays across all pages */}
       </body>
     </html>
   );
 }
-
-

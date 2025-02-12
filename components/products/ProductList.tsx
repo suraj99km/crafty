@@ -36,7 +36,7 @@ export default function ProductsPage() {
     );
 
   return (
-    <section className="container mx-auto p-2 mt-20 min-h-screen">
+    <section className="container mx-auto p-2 mt-14 min-h-screen">
       {/* Search and Filter Bar */}
       <div className="flex items-center gap-4 mb-4">
         <input

@@ -9,7 +9,7 @@ type Props = {
 
 const ArtistDetails: React.FC<Props> = ({ artist, relatedProducts }) => {
   return (
-    <section className="max-container mt-24">
+    <section className="max-container mt-20">
       <div className="flex flex-col items-center">
         {/* Artist Profile Section */}
         <div className="flex flex-col md:flex-row w-full bg-white shadow-lg overflow-hidden">
