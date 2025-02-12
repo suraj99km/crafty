@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Product } from "@/Types";
-import CartList from "@/components/cart/cartlist";
+import CartList from "@/components/cart/CartList";
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
 
