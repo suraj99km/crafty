@@ -15,6 +15,7 @@ export interface Product {
     artist_name?: string;
     description?: string;
     artist_id?: string;
+    quantity?: number;
   }
 
 export interface Artist {

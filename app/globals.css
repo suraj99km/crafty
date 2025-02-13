@@ -11,6 +11,19 @@
   font-family: "Manrope", sans-serif;
 }
 
+@keyframes softPulse {
+  0%, 100% {
+    opacity: 0.50; /* Instead of full fade, only slight dim */
+  }
+  50% {
+    opacity: 1; /* Brighter at peak */
+  }
+}
+
+.animate-softPulse {
+  animation: softPulse 1.5s infinite;
+}
+
 /* START: General styles */
 .max-width {
   @apply max-w-[1440px] mx-auto;
@@ -47,7 +60,7 @@
 }
 
 .hero__title2 {
-  @apply 2xl:text-[64px] sm:text-[50px] text-[36px] font-extrabold;
+  @apply 2xl:text-[64px] sm:text-[50px] text-[32px] font-extrabold;
 }
 
 .hero__subtitle {

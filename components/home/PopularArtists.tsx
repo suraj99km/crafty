@@ -31,7 +31,7 @@ const PopularArtists = () => {
   return (
     <section id="PopularArtists" className="max-container max-sm:mt-2">
       <div className="flex flex-col justify-start">
-        <h2 className="text-4xl font-palanquin font-bold">Popular Artists</h2>
+        <h2 className="text-3xl font-palanquin font-bold">Popular Artists</h2>
         {artists.length === 0 ? (
           <p>No artists found</p>
         ) : (
@@ -72,7 +72,7 @@ const PopularArtists = () => {
           <div className="flex justify-center mt-8">
             <a
               href="/artists"
-              className="inline-block px-6 py-3 text-white bg-red-500 rounded-lg shadow-md transition-all duration-300 hover:bg-red-700 hover:shadow-lg active:scale-95"
+              className="inline-block font-semibold px-6 py-3 text-white bg-red-500 rounded-lg shadow-md transition-all duration-300 hover:bg-red-700 hover:shadow-lg active:scale-95"
             >
               Explore All
             </a>

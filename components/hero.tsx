@@ -61,14 +61,40 @@ const Hero = () => {
         Our Mission
         </h1>
         <p className="hero__mission">
-        At CraftID.in, our mission is to provide artists with a platform to express their creativity while offering a built-in marketplace for customers to discover and buy their unique crafts. We foster an environment of trust, authenticity, and passion for art, where each creation is celebrated and valued.
-        </p>
-        <p className="hero__mission">
-        We empower artists to showcase their work, build their profiles, and expand their reach, ensuring they receive the recognition and fair credit they deserve for their craftsmanship. Our platform helps connect artists and buyers in meaningful ways, creating lasting relationships beyond mere transactions.
-        </p>
-        <p className="hero__mission">
-        At CraftID.in, we proudly celebrate the stories of the artists and their extraordinary talent. Join us in showing them the love and recognition they truly deserve."
-        </p>
+  At <span className="text-white bg-red-500 rounded-lg p-1 font-bold">CraftID.in</span> ,  
+  we believe <span className="text-red-500 font-extrabold">every artist deserves a stage.</span>  
+</p>
+
+<blockquote className="border-l-4 border-red-500 italic text-gray-700 pl-4 mt-4">
+  "Every product at CraftID carries a story—  
+  a story of passion, dedication, and craftsmanship."  
+</blockquote>
+
+<p className="hero__mission">
+  We empower artists to <span className="font-bold text-blue-500">showcase their work</span>,  
+  build their profiles, and expand their reach, ensuring they receive the  
+  <span className="text-red-500 font-bold"> recognition</span> they deserve.  
+</p>
+
+<p className="hero__mission">
+  Our platform is more than just transactions—it's about  
+  <span className="text-gray-900 font-semibold"> meaningful connections </span>  
+  between artists and buyers.  
+</p>
+
+<p className="hero__mission">
+  <span className="text-xl font-bold text-gray-900">Join us in celebrating creativity!</span>  
+</p>
+
+<div className="text-center mt-6">
+  <a
+    href="/products"
+    className="inline-block font-bold px-6 py-3 text-white bg-red-500 rounded-lg shadow-md transition-all duration-300 hover:bg-red-700 hover:shadow-lg active:scale-95"
+  >
+    Explore Unique Crafts ➜
+  </a>
+</div>
+
         </div>
     </div>
     </div>

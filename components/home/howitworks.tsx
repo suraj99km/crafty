@@ -2,9 +2,9 @@
 
 const Howitworks = () => {
   return (
-<section className="py-12 px-4 bg-white text-center">
-      <h2 className="text-3xl font-bold text-gray-800 mb-12">How It Works</h2>
-      <div className="flex flex-wrap justify-center gap-8">
+<section className="py-3 px-3 bg-white text-center">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">How It Works</h2>
+      <div className="flex flex-wrap justify-center gap-4">
         {/* Step 1 */}
         <div className="bg-white p-6 w-72 rounded-lg shadow-lg">
         <div className="bg-red-500 text-white text-xl w-12 h-12 rounded-full flex justify-center items-center mb-6 font-bold mx-auto">
