@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 const PopularProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [visibleCount, setVisibleCount] = useState(4); // Initially show 5 products
+  const [visibleCount, setVisibleCount] = useState(5); // Initially show 5 products
 
   useEffect(() => {
     const getProducts = async () => {

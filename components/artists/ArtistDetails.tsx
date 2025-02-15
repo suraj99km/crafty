@@ -29,27 +29,29 @@ const ArtistDetails: React.FC<Props> = ({ artist, relatedProducts }) => {
 
         {/* Related Products Section */}
         <div className="mt-12 w-full">
-          <h2 className="text-3xl font-semibold text-gray-800 text-center">Crafted Products</h2>
+          <h2 className="text-3xl font-bold text-gray-800 text-center">Crafted Products</h2>
           
           {/* Product Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 md:grid-cols-3 gap-4 flex-1 mt-4 p-4">
+          <div className="grid grid-cols-1 lg:grid-cols-5 md:grid-cols-3 gap-8 flex-1 p-8">
             {relatedProducts.length === 0 ? (
               <p>No crafted products found.</p>
             ) : (
               relatedProducts.map((product) => (
                 <Link key={product.id} href={`/products/${product.id}`} passHref>
-                  <div className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex flex-col h-full cursor-pointer">
-                    <img
-                      src={product.image_url}
-                      alt={product.title}
-                      className="w-full h-80 object-cover rounded-md"
-                    />
-                    <h3 className="mt-2 font-semibold flex-grow">{product.title}</h3>
-                    <div className="mt-2">
-                      <p className="font-bold text-left">₹ {product.price}</p>
-                      <p className="text-xs text-gray-500 text-left">Artist: {artist.name}</p>
-                    </div>
+                <div key={product.id} className="product__card">
+                  <img
+                    src={product.image_url}
+                    alt={product.title}
+                    className="w-full h-[280px] object-cover rounded-t-lg transition-transform duration-300 hover:scale-105"
+                  />
+                  <div className="flex justify-between items-center mt-4 mb-3 font-palanquin">
+                    <h2 className="font-bold ml-6 text-gray-800 text-md 2xl:text-xl">{product.title}</h2>
+                    <p className="text-gray-900 mr-4 text-sm 2xl:text-lg font-semibold">₹ {product.price}</p>
                   </div>
+                  <p className="text-center text-xs text-gray-700 mb-2">
+                    Crafted by <span className="font-bold text-gray-900">{artist.name || "Unknown Artist"}</span>
+                  </p>
+                </div>
                 </Link>
               ))
             )}

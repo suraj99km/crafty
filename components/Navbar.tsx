@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { User } from "lucide-react";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -91,6 +92,15 @@ const Navbar = () => {
           </button>
         </div>
         <div className="flex flex-col items-center space-y-6 pt-10">
+        <Link
+        href="/login"
+        className="flex items-center gap-2 bg-white text-gray-800 px-4 py-2 rounded-lg shadow-md transition-all duration-300 hover:bg-gray-200"
+        onClick={toggleSidebar}
+      >
+        <User size={20} className="text-gray-700" />
+        <span className="font-semibold">Sign In / Login</span>
+      </Link>
+
           <Link
             href="/"
             className="text-lg text-white hover:text-gray-200 transition duration-200"
@@ -118,13 +128,6 @@ const Navbar = () => {
             onClick={toggleSidebar}
           >
             Join as Artist
-          </Link>
-          <Link
-            href="/login"
-            className="text-lg text-white hover:text-gray-200 transition duration-200"
-            onClick={toggleSidebar}
-          >
-            Sign In / Login
           </Link>
         </div>
       </div>
