@@ -1,73 +1,61 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { FaGoogle } from "react-icons/fa";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+import { Card } from "@/components/ui/card";
+import { FaGoogle, FaLinkedin } from "react-icons/fa";
+import PhoneAuth from "@/components/login/PhoneAuth";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-red-500 p-6">
-      
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-red-500 to-red-600 p-6">
+      {/* Logo */}
+      <div className="mb-4">
+        <Image
+          src="/logo-white.png" // Replace with your CraftID logo path
+          alt="CraftID Logo"
+          width={180}
+          height={160}
+          className="mx-auto"
+        />
+      </div>
+
+      {/* Tagline */}
+      <p className="text-white text-md font-semibold mb-6 tracking-wide">
+        "Every craft has an identity."
+      </p>
+
       {/* Login Card */}
-      <Card className="w-full max-w-md p-8 rounded-3xl shadow-lg bg-white mt-18">
-        <h4 className="text-center text-xl font-semibold text-gray-800 mb-6">Enter your mobile number</h4>
-        
-        {step === 1 ? (
-          <div className="space-y-6">
-            <PhoneInput
-              country={"in"} // Default country code set to +91 for India
-              value={phone}
-              onChange={(value) => setPhone(value)}
-              inputClass="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
-              containerClass="w-full"
-              disableDropdown
-              inputStyle={{ borderRadius: "10px", width: "100%", height: "45px", padding: "10px" }}
-            />
-            <Button
-              className="w-full bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition duration-300"
-              onClick={() => setStep(2)}
-              disabled={loading || phone.length < 10}
-            >
-              {loading ? "Sending..." : "Send OTP"}
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <Input
-              type="text"
-              className="w-full p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-red-500"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-            <Button
-              className="w-full bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition duration-300"
-              onClick={() => alert("OTP Submitted!")}
-              disabled={loading || otp.length < 4}
-            >
-              {loading ? "Verifying..." : "Login"}
-            </Button>
-          </div>
-        )}
+      <Card className="w-full max-w-md p-8 rounded-3xl shadow-2xl bg-white">
+        <h4 className="text-center text-2xl font-extrabold text-gray-800 mb-6">
+          Sign in to <span className="text-red-500">CraftID.in</span>
+        </h4>
 
-        <div className="my-6 text-center text-gray-500">OR</div>
+        {/* Phone Authentication */}
+        <PhoneAuth />
 
-        <Button className="w-full flex items-center justify-center gap-2 p-3 border border-gray-300 rounded-lg bg-white shadow hover:bg-gray-50 transition duration-300">
-          <FaGoogle className="text-red-500" /> Sign in with Google
-        </Button>
+        {/* Divider */}
+        <div className="relative my-6 flex items-center">
+          <div className="flex-grow border-t border-gray-300"></div>
+          <span className="mx-4 text-gray-500 font-medium">OR</span>
+          <div className="flex-grow border-t border-gray-300"></div>
+        </div>
 
-        <Button className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-200 hover:bg-gray-300 transition duration-300">
+        {/* Google Sign-In */}
+        <button className="w-full flex items-center justify-center gap-3 p-3 border border-gray-300 rounded-xl bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition duration-300">
+          <FaGoogle className="text-red-500 text-lg" />
+          <span className="font-semibold text-gray-700">Sign in with Google</span>
+        </button>
+
+        {/* LinkedIn Sign-In */}
+        <button className="mt-4 w-full flex items-center justify-center gap-3 p-3 border border-gray-300 rounded-xl bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition duration-300">
+          <FaLinkedin className="text-blue-600 text-lg" />
+          <span className="font-semibold text-gray-700">Sign in with LinkedIn</span>
+        </button>
+
+        {/* Email Sign-In */}
+        <button className="w-full mt-4 p-3 border border-gray-300 rounded-xl bg-gray-200 hover:bg-gray-300 shadow-md hover:shadow-lg transition duration-300 font-semibold">
           Sign in with Email
-        </Button>
+        </button>
       </Card>
     </div>
   );

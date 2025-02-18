@@ -2,16 +2,19 @@
 
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
-  // Hide footer on these pages
-  const hideFooterPages = ["/cart"];
+  // Pages where Navbar and Footer should be hidden
+  const hideFooterPages = ["/cart", "/login"];
   const isProductPage = pathname.startsWith("/products/");
+  const hideNavbarPages = ["/login"]; // Hide navbar on login page
 
   return (
     <>
+      {!hideNavbarPages.includes(pathname) && <Navbar />}
       {children}
       {!hideFooterPages.includes(pathname) && !isProductPage && <Footer />}
     </>
