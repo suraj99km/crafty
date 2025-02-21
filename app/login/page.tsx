@@ -1,8 +1,9 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { FaGoogle, FaLinkedin } from "react-icons/fa";
-import PhoneAuth from "@/components/login/PhoneAuth";
+import OAuthButtons from "@/components/auth/OAuthButtoms";
+import PhoneAuth from "@/components/auth/PhoneAuth";
+import EmailAuth from "@/components/auth/EmailAuth";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -11,7 +12,7 @@ export default function LoginPage() {
       {/* Logo */}
       <div className="mb-4">
         <Image
-          src="/logo-white.png" // Replace with your CraftID logo path
+          src="/logo-white.png"
           alt="CraftID Logo"
           width={180}
           height={160}
@@ -30,8 +31,8 @@ export default function LoginPage() {
           Sign in to <span className="text-red-500">CraftID.in</span>
         </h4>
 
-        {/* Phone Authentication */}
-        <PhoneAuth />
+       {/* OAuth Buttons */}
+       <OAuthButtons />
 
         {/* Divider */}
         <div className="relative my-6 flex items-center">
@@ -40,22 +41,15 @@ export default function LoginPage() {
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
-        {/* Google Sign-In */}
-        <button className="w-full flex items-center justify-center gap-3 p-3 border border-gray-300 rounded-xl bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition duration-300">
-          <FaGoogle className="text-red-500 text-lg" />
-          <span className="font-semibold text-gray-700">Sign in with Google</span>
-        </button>
+        {/* Phone Authentication */}
+        {/* <PhoneAuth /> */}
 
-        {/* LinkedIn Sign-In */}
-        <button className="mt-4 w-full flex items-center justify-center gap-3 p-3 border border-gray-300 rounded-xl bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition duration-300">
-          <FaLinkedin className="text-blue-600 text-lg" />
-          <span className="font-semibold text-gray-700">Sign in with LinkedIn</span>
-        </button>
-
-        {/* Email Sign-In */}
+        <EmailAuth />
+ 
+        {/* Email Sign-In (Future Implementation)
         <button className="w-full mt-4 p-3 border border-gray-300 rounded-xl bg-gray-200 hover:bg-gray-300 shadow-md hover:shadow-lg transition duration-300 font-semibold">
           Sign in with Email
-        </button>
+        </button> */}
       </Card>
     </div>
   );

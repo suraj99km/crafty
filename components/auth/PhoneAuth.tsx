@@ -46,7 +46,7 @@ export default function PhoneAuth() {
   };
 
   return (
-    <Card className="">
+    <div className="">
       {step === 1 ? (
         <>
 
@@ -91,6 +91,6 @@ export default function PhoneAuth() {
           </Button>
         </>
       )}
-    </Card>
+    </div>
   );
 }
