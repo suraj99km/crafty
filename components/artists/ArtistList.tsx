@@ -62,7 +62,7 @@ const ArtistList = () => {
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredArtists.map((artist) => (
           <Link key={artist.id} href={`/artists/${artist.id}`}>  {/* This is the dynamic route */}
-            <div className="border rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex flex-col h-full">
+            <div className="border rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-95 hover:shadow-lg flex flex-col h-full">
               <img
                 src={artist.profile_picture}
                 alt={artist.name}

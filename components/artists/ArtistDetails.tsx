@@ -32,17 +32,17 @@ const ArtistDetails: React.FC<Props> = ({ artist, relatedProducts }) => {
           <h2 className="text-3xl font-bold text-gray-800 text-center">Crafted Products</h2>
           
           {/* Product Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 md:grid-cols-3 gap-8 flex-1 p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 md:grid-cols-3 gap-5 flex-1 p-6">
             {relatedProducts.length === 0 ? (
               <p>No crafted products found.</p>
             ) : (
               relatedProducts.map((product) => (
                 <Link key={product.id} href={`/products/${product.id}`} passHref>
-                <div key={product.id} className="product__card">
+                <div key={product.id} className="product__card hover:scale-95 duration-300 transition-transform">
                   <img
                     src={product.image_url}
                     alt={product.title}
-                    className="w-full h-[280px] object-cover rounded-t-lg transition-transform duration-300 hover:scale-105"
+                    className="w-full h-[280px] object-cover rounded-t-lg transition-transform duration-300"
                   />
                   <div className="flex justify-between items-center mt-4 mb-3 font-palanquin">
                     <h2 className="font-bold ml-6 text-gray-800 text-md 2xl:text-xl">{product.title}</h2>
