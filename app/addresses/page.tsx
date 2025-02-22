@@ -45,26 +45,29 @@ export default function SavedAddresses() {
         data.user.user_metadata?.name ||
         "User";
 
-      const nameParts = fullName.split(" ");
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || "";
+      const firstName = fullName.split(" ")[0] || "";
+      const lastName = fullName.split(" ")[1] || "";
+      const email = data.user.email || "";
+      const id = data.user.id;
 
-      setUser({ id: data.user.id, email: data.user.email, firstName, lastName });
+      const userData = { id, firstName, lastName, email };
+      setUser(userData);
 
+      // Set new address default fields
       setNewAddress((prev) => ({
         ...prev,
         first_name: firstName,
         last_name: lastName,
-        email: data.user.email || "",
+        email: email,
       }));
 
-      // Fetch existing addresses
+      // Fetch saved addresses
       const { data: userInfo, error: userError } = await supabase
         .from("user_information")
         .select("*")
-        .eq("id", data.user.id);
+        .eq("id", id);
 
-      if (!userError && userInfo.length > 0) {
+      if (!userError && userInfo) {
         setAddresses(userInfo);
       }
     };
@@ -128,28 +131,100 @@ export default function SavedAddresses() {
 
       {addresses.length < 3 && (
         <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-3">Add New Address</h3>
+  <h3 className="text-lg font-semibold mb-3">Add New Address</h3>
 
-          <div className="flex space-x-2">
-            <input type="text" name="first_name" value={newAddress.first_name} disabled className="w-1/2 p-2 border rounded mb-3 bg-gray-200" />
-            <input type="text" name="last_name" value={newAddress.last_name} disabled className="w-1/2 p-2 border rounded mb-3 bg-gray-200" />
-          </div>
-          <input type="email" name="email" value={newAddress.email} disabled className="w-full p-2 border rounded mb-3 bg-gray-200" />
-          <input type="text" name="phone" value={newAddress.phone} onChange={handleChange} placeholder="Phone" className="w-full p-2 border rounded mb-3" />
-          <input type="text" name="state" value={newAddress.state} onChange={handleChange} placeholder="State" className="w-full p-2 border rounded mb-3" />
-          <input type="text" name="city" value={newAddress.city} onChange={handleChange} placeholder="City" className="w-full p-2 border rounded mb-3" />
-          <input type="text" name="pincode" value={newAddress.pincode} onChange={handleChange} placeholder="Pincode" className="w-full p-2 border rounded mb-3" />
-          <input type="text" name="address_line1" value={newAddress.address_line1} onChange={handleChange} placeholder="Address Line 1" className="w-full p-2 border rounded mb-3" />
-          <input type="text" name="address_line2" value={newAddress.address_line2} onChange={handleChange} placeholder="Address Line 2 (Optional)" className="w-full p-2 border rounded mb-3" />
+  {/* Name and Email (Disabled Fields) */}
+  <div className="flex space-x-2">
+    <input
+      type="text"
+      name="first_name"
+      value={newAddress.first_name}
+      disabled
+      className="w-1/2 p-2 border rounded mb-3 bg-gray-200"
+    />
+    <input
+      type="text"
+      name="last_name"
+      value={newAddress.last_name}
+      disabled
+      className="w-1/2 p-2 border rounded mb-3 bg-gray-200"
+    />
+  </div>
+  <input
+    type="email"
+    name="email"
+    value={newAddress.email}
+    disabled
+    className="w-full p-2 border rounded mb-3 bg-gray-200"
+  />
 
-          <button
-            onClick={handleSaveAddress}
-            className="w-full text-lg bg-red-500 font-semibold text-white p-2 rounded-md hover:bg-red-600 transition duration-150"
-            >
-            Save Address
-            </button>
+  {/* Address Fields */}
+  <input
+    type="text"
+    name="address_line1"
+    value={newAddress.address_line1}
+    onChange={handleChange}
+    placeholder="Address Line 1"
+    className="w-full p-2 border rounded mb-3"
+  />
+  <input
+    type="text"
+    name="address_line2"
+    value={newAddress.address_line2}
+    onChange={handleChange}
+    placeholder="Address Line 2 (Optional)"
+    className="w-full p-2 border rounded mb-3"
+  />
 
-        </div>
+  {/* City Field */}
+  <input
+    type="text"
+    name="city"
+    value={newAddress.city}
+    onChange={handleChange}
+    placeholder="City"
+    className="w-full p-2 border rounded mb-3"
+  />
+
+  {/* Pincode & State (Side by Side) */}
+  <div className="flex space-x-2">
+    <input
+      type="text"
+      name="pincode"
+      value={newAddress.pincode}
+      onChange={handleChange}
+      placeholder="Pincode"
+      className="w-1/2 p-2 border rounded mb-3"
+    />
+    <input
+      type="text"
+      name="state"
+      value={newAddress.state}
+      onChange={handleChange}
+      placeholder="State"
+      className="w-1/2 p-2 border rounded mb-3"
+    />
+  </div>
+
+  {/* Phone Input */}
+  <input
+    type="text"
+    name="phone"
+    value={newAddress.phone}
+    onChange={handleChange}
+    placeholder="Phone"
+    className="w-full p-2 border rounded mb-3"
+  />
+
+  {/* Save Button */}
+  <button
+    onClick={handleSaveAddress}
+    className="w-full text-lg bg-red-500 font-semibold text-white p-2 rounded-md hover:bg-red-600 transition duration-150"
+  >
+    Save Address
+  </button>
+</div>
+
       )}
     </div>
   );
