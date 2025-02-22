@@ -104,7 +104,7 @@
 
 /* START: Car Card styles */
 .product__card {
-  @apply flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-xl;
+  @apply flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:shadow-xl;
 }
 
 .product-card__content {

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchPopularArtists } from '@/lib/supabase/utils'; // Ensure you have this function
-import { Artist } from '@/Types'; // Assuming you have an Artist type
+import { fetchPopularArtists } from '@/lib/supabase/utils';
+import { Artist } from '@/Types';
 import Link from 'next/link';
 
 const PopularArtists = () => {
   const [artists, setArtists] = useState<Artist[]>([]);
-  const [visibleCount, setVisibleCount] = useState(5); // Initially show 5 artists
+  const [visibleCount, setVisibleCount] = useState(5);
 
   useEffect(() => {
     const getArtists = async () => {
@@ -25,34 +25,35 @@ const PopularArtists = () => {
   }, []);
 
   const handleShowMore = () => {
-    setVisibleCount((prev) => prev + 5); // Load 5 more artists
+    setVisibleCount((prev) => prev + 5);
   };
 
   return (
     <section id="PopularArtists" className="max-container max-sm:mt-2">
       <div className="flex flex-col justify-start">
         <h2 className="text-3xl font-palanquin font-bold">Popular Artists</h2>
+
         {artists.length === 0 ? (
-        <div className="mt-16 flex justify-center items-center">
-          <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin border-t-red-500"></div>
-        </div>
+          <div className="mt-16 flex justify-center items-center">
+            <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin border-t-red-500"></div>
+          </div>
         ) : (
           <div className="mt-8 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 sm:gap-2 gap-6">
             {artists.slice(0, visibleCount).map((artist) => (
-              <Link key={artist.id} href={`/artists/${artist.id}`}> 
-              <div
-                key={artist.id}
-                className="flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-xl"
-              >
-                <img
-                  src={artist.profile_picture} // Make sure you have an image URL for artists
-                  alt={artist.name}
-                  className="w-full h-[280px] object-cover rounded-t-lg transition-transform duration-300 hover:scale-105"
-                />
-                <h2 className="font-bold my-4 text-center text-xl font-palanquin text-gray-800">
-                  {artist.name}
-                </h2>
-              </div>
+              <Link key={artist.id} href={`/artists/${artist.id}`}>
+                <div
+                  className="flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden 
+                  transform transition-transform duration-300 active:scale-95 hover:shadow-xl"
+                >
+                  <img
+                    src={artist.profile_picture}
+                    alt={artist.name}
+                    className="w-full h-[280px] object-cover rounded-t-lg"
+                  />
+                  <h2 className="font-bold my-4 text-center text-xl font-palanquin text-gray-800">
+                    {artist.name}
+                  </h2>
+                </div>
               </Link>
             ))}
           </div>
