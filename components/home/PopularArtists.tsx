@@ -43,7 +43,7 @@ const PopularArtists = () => {
               <Link key={artist.id} href={`/artists/${artist.id}`}>
                 <div
                   className="flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden 
-                  transform transition-transform duration-300 active:scale-95 hover:shadow-xl"
+                  transform transition-transform duration-500 active:scale-90 hover:shadow-xl"
                 >
                   <img
                     src={artist.profile_picture}

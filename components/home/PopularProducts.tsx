@@ -41,7 +41,7 @@ const PopularProducts = () => {
             {products.slice(0, visibleCount).map((product) => (
               <Link key={product.id} href={`/products/${product.id}`} passHref>
                 <div
-                  className="product__card transform transition-transform duration-300 active:scale-95"
+                  className="product__card transform transition-transform duration-500 active:scale-95"
                 >
                   <img
                     src={product.image_url}

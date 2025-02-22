@@ -126,7 +126,7 @@ export default function ProductsPage() {
               <Link key={product.id} href={`/products/${product.id}`} passHref>
               <div
                 key={product.id}
-                className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg flex flex-col h-full"
+                className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out active:scale-95 hover:shadow-lg flex flex-col h-full"
               >
                 <img
                   src={product.image_url}
