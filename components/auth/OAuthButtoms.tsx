@@ -12,7 +12,7 @@ export default function OAuthButtons() {
   const signInWithProvider = async (provider: "google" | "linkedin" | "twitter") => {
     setLoading(provider);
   
-    const redirectTo = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`;
+    const redirectTo = `${process.env.NEXT_PUBLIC_BASE_URL}`;
     console.log(process.env.NEXT_PUBLIC_BASE_URL);
   
     const { error } = await supabase.auth.signInWithOAuth({
