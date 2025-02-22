@@ -33,7 +33,9 @@ const PopularArtists = () => {
       <div className="flex flex-col justify-start">
         <h2 className="text-3xl font-palanquin font-bold">Popular Artists</h2>
         {artists.length === 0 ? (
-          <p>No artists found</p>
+        <div className="mt-16 flex justify-center items-center">
+          <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin border-t-red-500"></div>
+        </div>
         ) : (
           <div className="mt-8 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 sm:gap-2 gap-6">
             {artists.slice(0, visibleCount).map((artist) => (
