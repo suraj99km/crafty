@@ -12,13 +12,14 @@ const artistPages = [
   { name: "Track Your Sales", path: "/track-sales" },
   { name: "Get Help", path: "/user-help" },
 ];
+
 const userPages = [
   { name: "Orders", path: "/orders" },
   { name: "Saved Addresses", path: "/addresses" },
   { name: "Get Help", path: "/artist-help" },
 ];
 
-export default function UserPages() {
+export default function UserPages({ onClick }: { onClick?: () => void }) {
   const [user, setUser] = useState(false);
   const [isArtist, setIsArtist] = useState(false);
   const router = useRouter();
@@ -29,18 +30,29 @@ export default function UserPages() {
       if (error || !data?.user) return;
 
       setUser(true);
-      setIsArtist(data.user.user_metadata?.isArtist || false);
+
+      // Fetch user data from Supabase to get the `is_artist` field
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("is_artist")
+        .eq("id", data.user.id)
+        .single();
+
+      if (!userError) {
+        setIsArtist(userData?.is_artist === 1);
+      }
     };
 
     checkUser();
   }, []);
 
-  const handleJoinAsArtist = () => {
+  const handleJoinAsArtist = async () => {
     if (user) {
-      router.push("/join-as-artist"); // Direct if logged in
+      router.push("/join-as-artist");
     } else {
-      router.push("/login?redirect=/join-as-artist"); // Redirect to signin first
+      router.push("/login?redirect=/join-as-artist");
     }
+    onClick?.(); // Close sidebar after clicking
   };
 
   const handleLogout = async () => {
@@ -55,12 +67,14 @@ export default function UserPages() {
   return (
     <div className="mt-4 w-full">
       {/* Join as Artist Button */}
-      <button
-        onClick={handleJoinAsArtist}
-        className="block text-lg text-white hover:text-gray-200 transition duration-200 text-center py-3 w-full"
-      >
-        Join as Artist
-      </button>
+      {!isArtist && (
+        <button
+          onClick={handleJoinAsArtist}
+          className="block text-lg text-white hover:text-gray-200 transition duration-200 text-center py-3 w-full"
+        >
+          Join as Artist
+        </button>
+      )}
 
       {/* Show different menus for users and artists */}
       {(user ? (isArtist ? artistPages : userPages) : []).map((page) => (
@@ -68,6 +82,7 @@ export default function UserPages() {
           key={page.path}
           href={page.path}
           className="block text-lg text-white hover:text-gray-200 transition duration-200 text-center py-3"
+          onClick={onClick} // Close sidebar on clicking any page
         >
           {page.name}
         </Link>

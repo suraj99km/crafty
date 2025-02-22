@@ -23,7 +23,7 @@ const Hero = () => {
         if (user) {
             router.push("/join-as-artist");
         } else {
-            router.push("/signin?redirect=/join-as-artist");
+            router.push("/login?redirect=/join-as-artist");
         }
     };
 

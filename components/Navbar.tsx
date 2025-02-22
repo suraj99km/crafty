@@ -118,7 +118,7 @@ return (
       </Link>
 
       {/* User-specific pages */}
-      <UserPages />
+      <UserPages onClick={toggleSidebar}/>
     </div>
 
     </div>

@@ -11,14 +11,23 @@ export default function OAuthButtons() {
 
   const signInWithProvider = async (provider: "google" | "linkedin" | "twitter") => {
     setLoading(provider);
-    const { error } = await supabase.auth.signInWithOAuth({ provider });
-
+  
+    const redirectTo = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`;
+    console.log(process.env.NEXT_PUBLIC_BASE_URL);
+  
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo },
+    });
+  
     if (error) {
+      console.error("OAuth Error:", error);
       alert("Error signing in: " + error.message);
     }
+  
     setLoading(null);
   };
-
+  
   return (
     <>
       {/* Google Sign-In */}
