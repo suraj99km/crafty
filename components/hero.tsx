@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import CustomButton from './CustomButton';
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
-import supabase from "@/db/supabaseClient";
+import supabase from "@/lib/supabase/supabaseClient";
 
 const Hero = () => {
     const router = useRouter();

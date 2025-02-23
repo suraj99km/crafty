@@ -7,10 +7,14 @@ import { useRouter } from "next/navigation";
 import CartList from "@/components/cart/CartList";
 import PopularProducts from "@/components/home/PopularProducts";
 import Pricing from "@/components/cart/Pricing";
+import SavedAddresses from "@/components/cart/SavedAddresses";
+import RelatedProducts from "@/components/cart/RelatedProducts";
+import { Address } from "@/Types";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,13 +26,16 @@ const CartPage = () => {
     cartItems.map((item) => ({ ...item, quantity: item.quantity ?? 0 }));
 
   const handlePlaceOrder = () => {
+    if (!selectedAddress) {
+      alert("Please select a delivery address.");
+      return;
+    }
     alert("Order Placed!");
     setCartItems([]);
     localStorage.removeItem("cart");
   };
 
   return (
-
     <div className="min-h-[calc(100vh-4rem-5rem)] mt-16 mb-20 flex flex-col p-3 bg-gray-100">
       {/* Header Section */}
       <div className="flex items-center justify-between mb-4">
@@ -55,12 +62,20 @@ const CartPage = () => {
           </div>
         ) : (
           <>
+            {/* Saved Addresses Section */}
+            <SavedAddresses selectedAddress={selectedAddress} setSelectedAddress={setSelectedAddress} />
+
+            {/* Cart Items */}
             <CartList cartItems={getUpdatedCartItems()} setCartItems={setCartItems} />
-            
+
+            {/* Pricing Section */}
             <Pricing cartItems={getUpdatedCartItems()} onTotalChange={setTotal} />
           </>
         )}
       </div>
+
+      {/* Related Products Section */}
+      {/* {cartItems.length > 0 && <RelatedProducts cartItems={cartItems} />} */}
 
       {/* Fixed Bottom Section */}
       {cartItems.length > 0 && (

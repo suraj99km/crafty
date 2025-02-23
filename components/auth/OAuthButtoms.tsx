@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import supabase from "@/db/supabaseClient";
+import supabase from "@/lib/supabase/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { FaGoogle, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6"; // Import X.com (formerly Twitter) icon

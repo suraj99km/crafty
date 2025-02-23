@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-import supabase from "@/db/supabaseClient";
+import supabase from "@/lib/supabase/supabaseClient";
 
 const artistPages = [
   { name: "List a Product", path: "/list-product" },

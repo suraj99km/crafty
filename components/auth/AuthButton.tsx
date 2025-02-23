@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { User } from "lucide-react";
-import supabase from "@/db/supabaseClient";
+import supabase from "@/lib/supabase/supabaseClient";
 
 export default function AuthButton() {
   const [user, setUser] = useState<{ firstName?: string } | null>(null);

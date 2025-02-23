@@ -1,231 +1,62 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import supabase from "@/db/supabaseClient";
-
-type Address = {
-  id?: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  email: string;
-  state: string;
-  city: string;
-  pincode: string;
-  address_line1: string;
-  address_line2?: string;
-};
+import { useRouter } from "next/navigation";
+import supabase from "@/lib/supabase/supabaseClient";
+import AddressCard from "@/components/users/AddressCard";
+import { ChevronRight } from "lucide-react";
+import { Address } from "@/Types"; // Import Address type
 
 export default function SavedAddresses() {
-  const [user, setUser] = useState<{ id: string; email: string; firstName: string; lastName: string } | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [newAddress, setNewAddress] = useState<Address>({
-    first_name: "",
-    last_name: "",
-    phone: "",
-    email: "",
-    state: "",
-    city: "",
-    pincode: "",
-    address_line1: "",
-    address_line2: "",
-  });
+  const router = useRouter();
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data?.user) {
-        setUser(null);
-        return;
-      }
-
-      const fullName =
-        data.user.user_metadata?.full_name ||
-        data.user.user_metadata?.display_name ||
-        data.user.user_metadata?.name ||
-        "User";
-
-      const firstName = fullName.split(" ")[0] || "";
-      const lastName = fullName.split(" ")[1] || "";
-      const email = data.user.email || "";
-      const id = data.user.id;
-
-      const userData = { id, firstName, lastName, email };
-      setUser(userData);
-
-      // Set new address default fields
-      setNewAddress((prev) => ({
-        ...prev,
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-      }));
-
-      // Fetch saved addresses
-      const { data: userInfo, error: userError } = await supabase
+    const fetchAddresses = async () => {
+      const { data, error } = await supabase
         .from("user_information")
-        .select("*")
-        .eq("id", id);
+        .select("*");
 
-      if (!userError && userInfo) {
-        setAddresses(userInfo);
+      if (!error && data) {
+        setAddresses(data as Address[]);
       }
     };
 
-    getUser();
+    fetchAddresses();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewAddress((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSaveAddress = async () => {
-    if (addresses.length >= 3) {
-      alert("You can only save up to 3 addresses.");
-      return;
-    }
-
-    if (!newAddress.first_name || !newAddress.phone || !newAddress.state || !newAddress.city || !newAddress.pincode || !newAddress.address_line1) {
-      alert("Please fill all required fields.");
-      return;
-    }
-
-    const { data, error } = await supabase.from("user_information").upsert([
-      {
-        id: user?.id,
-        ...newAddress,
-      },
-    ]);
-
-    if (error) {
-      alert("Failed to save address. Please try again.");
-      console.error(error);
-    } else {
-      setAddresses([...addresses, newAddress]);
-      setNewAddress((prev) => ({
-        ...prev,
-        phone: "",
-        state: "",
-        city: "",
-        pincode: "",
-        address_line1: "",
-        address_line2: "",
-      }));
-    }
+  // Function to remove the deleted address from UI
+  const handleDeleteAddress = (id: number) => {
+    setAddresses((prev) => prev.filter((address) => address.id !== id));
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-12 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-xl font-semibold mb-4">Saved Addresses</h2>
+    <div className="h-screen flex flex-col items-center">
+      <div className="w-full max-w-3xl mt-16 p-6 bg-white rounded-lg">
+        
+        {/* Add New Address Button */}
+        <button
+          onClick={() => router.push("/addresses/add_new")}
+          className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium shadow-sm hover:bg-gray-100 transition duration-200"
+        >
+          <span className="text-lg">Add New Address</span>
+          <ChevronRight className="h-5 w-5 text-gray-500" />
+        </button>
 
-      {addresses.map((addr, index) => (
-        <div key={index} className="p-3 mb-4 border rounded-lg">
-          <p><strong>{addr.first_name} {addr.last_name}</strong></p>
-          <p>{addr.address_line1}, {addr.address_line2}</p>
-          <p>{addr.city}, {addr.state} - {addr.pincode}</p>
-          <p>📞 {addr.phone}</p>
-          <p>📧 {addr.email}</p>
+        {/* Section Heading */}
+        <h2 className="text-2xl font-semibold text-center mt-8">Saved Addresses</h2>
+
+        {/* Address List */}
+        <div className="my-6 pb-4 space-y-4 overflow-y-auto max-h-[70vh] px-2 w-full">
+          {addresses.length > 0 ? (
+            addresses.map((address) => (
+              <AddressCard key={address.id} address={address} onDelete={handleDeleteAddress} />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center mt-4">No saved addresses found.</p>
+          )}
         </div>
-      ))}
-
-      {addresses.length < 3 && (
-        <div className="mt-6">
-  <h3 className="text-lg font-semibold mb-3">Add New Address</h3>
-
-  {/* Name and Email (Disabled Fields) */}
-  <div className="flex space-x-2">
-    <input
-      type="text"
-      name="first_name"
-      value={newAddress.first_name}
-      disabled
-      className="w-1/2 p-2 border rounded mb-3 bg-gray-200"
-    />
-    <input
-      type="text"
-      name="last_name"
-      value={newAddress.last_name}
-      disabled
-      className="w-1/2 p-2 border rounded mb-3 bg-gray-200"
-    />
-  </div>
-  <input
-    type="email"
-    name="email"
-    value={newAddress.email}
-    disabled
-    className="w-full p-2 border rounded mb-3 bg-gray-200"
-  />
-
-  {/* Address Fields */}
-  <input
-    type="text"
-    name="address_line1"
-    value={newAddress.address_line1}
-    onChange={handleChange}
-    placeholder="Address Line 1"
-    className="w-full p-2 border rounded mb-3"
-  />
-  <input
-    type="text"
-    name="address_line2"
-    value={newAddress.address_line2}
-    onChange={handleChange}
-    placeholder="Address Line 2 (Optional)"
-    className="w-full p-2 border rounded mb-3"
-  />
-
-  {/* City Field */}
-  <input
-    type="text"
-    name="city"
-    value={newAddress.city}
-    onChange={handleChange}
-    placeholder="City"
-    className="w-full p-2 border rounded mb-3"
-  />
-
-  {/* Pincode & State (Side by Side) */}
-  <div className="flex space-x-2">
-    <input
-      type="text"
-      name="pincode"
-      value={newAddress.pincode}
-      onChange={handleChange}
-      placeholder="Pincode"
-      className="w-1/2 p-2 border rounded mb-3"
-    />
-    <input
-      type="text"
-      name="state"
-      value={newAddress.state}
-      onChange={handleChange}
-      placeholder="State"
-      className="w-1/2 p-2 border rounded mb-3"
-    />
-  </div>
-
-  {/* Phone Input */}
-  <input
-    type="text"
-    name="phone"
-    value={newAddress.phone}
-    onChange={handleChange}
-    placeholder="Phone"
-    className="w-full p-2 border rounded mb-3"
-  />
-
-  {/* Save Button */}
-  <button
-    onClick={handleSaveAddress}
-    className="w-full text-lg bg-red-500 font-semibold text-white p-2 rounded-md hover:bg-red-600 transition duration-150"
-  >
-    Save Address
-  </button>
-</div>
-
-      )}
+      </div>
     </div>
   );
 }
