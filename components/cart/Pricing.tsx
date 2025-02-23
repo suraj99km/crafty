@@ -1,54 +1,64 @@
-// components/cart/Pricing.tsx
-
-"use client"
+"use client";
 
 import { useState, useEffect } from "react";
 
+interface CartItem {
+  title: string;
+  price: number;
+  quantity: number;
+}
+
 interface PricingProps {
-  cartItems: { price: number; quantity: number | undefined }[];
-  onTotalChange: (total: number) => void; // Callback to pass the total back to CartPage
+  cartItems: CartItem[];
+  onTotalChange: (total: number) => void;
 }
 
 const Pricing = ({ cartItems, onTotalChange }: PricingProps) => {
+  const [subtotal, setSubtotal] = useState(0);
   const [convenienceFee, setConvenienceFee] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  // Calculate the subtotal
-  const subtotal = cartItems.reduce((total, item) => {
-    const quantity = item.quantity ?? 0; // Default to 0 if quantity is undefined
-    return total + item.price * quantity;
-  }, 0);
-
-  // Update convenience fee & delivery fee dynamically
   useEffect(() => {
-    const calculatedConvenienceFee = Math.min(Math.max(subtotal * 0.02, 10), 50);
+    const calculatedSubtotal = cartItems.reduce(
+      (sum, item) => sum + item.price * (item.quantity || 1),
+      0
+    );
+
+    const calculatedConvenienceFee = Math.min(Math.max(calculatedSubtotal * 0.03, 10), 100);
+    const calculatedDeliveryFee = calculatedSubtotal > 1000 ? 50 : 30;
+    const calculatedTotal = calculatedSubtotal + calculatedConvenienceFee + calculatedDeliveryFee;
+
+    setSubtotal(calculatedSubtotal);
     setConvenienceFee(calculatedConvenienceFee);
-
-    const calculatedDeliveryFee = subtotal > 1000 ? 49 : 29;
     setDeliveryFee(calculatedDeliveryFee);
+    setTotal(calculatedTotal);
 
-    const total = subtotal + convenienceFee + deliveryFee;
-    onTotalChange(total); // Pass the total back to the parent component
-  }, [subtotal, convenienceFee, deliveryFee, onTotalChange]);
-
-  const total = subtotal + convenienceFee + deliveryFee;
+    onTotalChange(calculatedTotal);
+    sessionStorage.setItem("total", JSON.stringify(calculatedTotal));
+  }, [cartItems, onTotalChange]);
 
   return (
     <div className="p-4 mt-6 bg-white shadow-md border-t">
       <h2 className="text-lg font-semibold mb-2">Price Breakup</h2>
+      
       <div className="flex justify-between">
         <span>Subtotal:</span>
         <span>₹ {subtotal.toFixed(2)}</span>
       </div>
+      
       <div className="flex justify-between">
         <span>Convenience Fee:</span>
         <span>₹ {convenienceFee.toFixed(2)}</span>
       </div>
+      
       <div className="flex justify-between">
         <span>Delivery Charges:</span>
         <span>₹ {deliveryFee.toFixed(2)}</span>
       </div>
+
       <hr className="my-2" />
+
       <div className="flex justify-between font-semibold text-lg">
         <span>Total:</span>
         <span>₹ {total.toFixed(2)}</span>

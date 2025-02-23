@@ -32,12 +32,22 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
           {/* Product Image */}
           <img src={item.image_url} alt={item.title} className="w-20 h-20 rounded-lg object-cover" />
 
-          {/* Product Details */}
-          <div className="flex-1 ml-4">
-            <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
-            <p className="text-gray-600">₹ {item.price}</p>
-            <p className="text-sm text-green-600 mt-1">Estimated delivery: {Math.floor(Math.random() * 5) + 3} days</p>
-          </div>
+{/* Product Details */}
+<div className="flex-1 ml-4">
+  <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
+  <p className="text-gray-600">₹ {item.price}</p>
+  <p className="text-sm text-green-600 font-semibold mt-1">
+  Expected delivery <br /> by
+  <span className="font-semibold ml-1">
+    {new Date(Date.now() + (Math.floor(Math.random() * 5) + 2) * 24 * 60 * 60 * 1000)
+      .toLocaleDateString('en-GB', { day: 'numeric', month: 'short'})}
+  </span>
+</p>
+
+
+</div>
+
+
 
           {/* Quantity and Delete */}
           <div className="flex flex-col items-center space-y-2">

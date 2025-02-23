@@ -1,5 +1,6 @@
 import { MapPin, Phone } from "lucide-react";
 import { Address } from "@/Types";
+import { useRouter } from "next/navigation";
 
 interface SelectAddressCardProps {
   address: Address;
@@ -12,12 +13,20 @@ export default function SelectAddressCard({
   isSelected,
   onSelect,
 }: SelectAddressCardProps) {
+  const router = useRouter();
+
+  // Handle address selection
+  const handleAddressSelect = () => {
+    // If logged in, proceed to select the address
+    onSelect(address);
+  };
+
   return (
     <div
-      className={`relative border rounded-lg p-3 text-sm transition cursor-pointer 
+      className={`relative rounded-lg p-3 text-sm transition cursor-pointer 
                   min-w-[250px] w-full max-w-md overflow-hidden
-                  ${isSelected ? "border-green-500 shadow-lg" : "border-gray-300"}`}
-      onClick={() => onSelect(address)}
+                  ring-2 ${isSelected ? "ring-green-500 shadow-lg scale-95" : "ring-gray-300 scale-95"}`}
+      onClick={handleAddressSelect}
     >
       {/* Selection Overlay */}
       {isSelected && (

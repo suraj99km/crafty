@@ -8,7 +8,7 @@ const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
   // Pages where Navbar and Footer should be hidden
-  const hideFooterPages = ["/cart", "/login"];
+  const hideFooterPages = ["/cart", "/login","/cart/checkout"];
   const isProductPage = pathname.startsWith("/products/");
   const hideNavbarPages = ["/login"]; // Hide navbar on login page
 
