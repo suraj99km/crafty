@@ -1,4 +1,4 @@
-import supabase from '@/lib/supabase/supabaseClient';
+import supabase from '@/lib/supabase-db/supabaseClient';
 import { Product, Artist } from '@/Types';
 
 export const fetchProductsWithArtists = async (): Promise<Product[] | null> => {

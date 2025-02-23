@@ -1,6 +1,6 @@
 import { MapPin, Phone, Trash2, Mail } from "lucide-react";
 import { Address } from "@/Types"; // Import Address type
-import supabase from "@/lib/supabase/supabaseClient";
+import supabase from "@/lib/supabase-db/supabaseClient";
 
 interface AddressCardProps {
   address: Address;

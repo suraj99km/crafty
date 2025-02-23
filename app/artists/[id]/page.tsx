@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import ArtistDetails from "@/components/artists/ArtistDetails";
 import { Artist, Product } from "@/Types";
-import { fetchArtistDetails, fetchRelatedProducts } from "@/lib/supabase/utils"; // Importing utilities
+import { fetchArtistDetails, fetchRelatedProducts } from "@/lib/supabase-db/utils"; // Importing utilities
 
 const ArtistPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params); // Unwrapping params Promise

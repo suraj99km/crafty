@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchPopularArtists } from '@/lib/supabase/utils';
+import { fetchPopularArtists } from '@/lib/supabase-db/utils';
 import { Artist } from '@/Types';
 import Link from 'next/link';
 

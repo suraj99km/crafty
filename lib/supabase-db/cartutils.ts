@@ -1,4 +1,4 @@
-import supabase from "@/lib/supabase/supabaseClient";
+import supabase from "@/lib/supabase-db/supabaseClient";
 import { Address } from "@/Types";
 
 /**

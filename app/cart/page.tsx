@@ -8,7 +8,7 @@ import CartList from "@/components/cart/CartList";
 import PopularProducts from "@/components/home/PopularProducts";
 import Pricing from "@/components/cart/Pricing";
 import SavedAddresses from "@/components/cart/SavedAddresses";
-import RelatedProducts from "@/components/cart/RelatedProducts";
+import RelatedProducts from "@/components/products/RelatedProducts";
 import { Address } from "@/Types";
 
 const CartPage = () => {
@@ -39,7 +39,7 @@ const CartPage = () => {
     <div className="min-h-[calc(100vh-4rem-5rem)] mt-16 mb-20 flex flex-col p-3 bg-gray-100">
       {/* Header Section */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={router.back} className="p-3 bg-white rounded-full hover:bg-gray-100 transition">
+        <button onClick={router.back} className="p-2 bg-white rounded-full hover:bg-gray-100 transition">
           <ChevronLeft size={24} className="text-gray-800" />
         </button>
         <h1 className="text-2xl font-bold text-gray-800">Your Cart</h1>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { fetchPopularArtists } from "@/lib/supabase/utils"; // Import the function to fetch artists
+import { fetchPopularArtists } from "@/lib/supabase-db/utils"; // Import the function to fetch artists
 import Link from "next/link";
 import { Artist } from "@/Types"; // Assuming you have an Artist type
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchUserAddresses } from "@/lib/supabase/cartutils";
-import supabase from "@/lib/supabase/supabaseClient";
+import { fetchUserAddresses } from "@/lib/supabase-db/cartutils";
+import supabase from "@/lib/supabase-db/supabaseClient";
 import { useRouter } from "next/navigation";
 import SelectAddressCard from "@/components/cart/SelectAddressCard";
 import { Address } from "@/Types";
@@ -36,7 +36,7 @@ const SavedAddresses = ({
 
   if (!userId) {
     return (
-      <div className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-md">
+      <div className="mb-4 flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-md">
         <p className="mb-2 text-gray-700">Please log in to view saved addresses.</p>
         <Link
           href="/login"

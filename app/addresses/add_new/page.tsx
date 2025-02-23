@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "@/lib/supabase/supabaseClient";
+import supabase from "@/lib/supabase-db/supabaseClient";
 import { ChevronLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Address = {
   first_name: string;
@@ -117,128 +118,134 @@ export default function AddNewAddress() {
       };
 
   return (
-    <div className="max-w-lg mx-auto mt-16 p-6 bg-white shadow-lg rounded-xl border border-gray-200 text-center">
+    <div className="h-screen flex flex-col items-center justify-center bg-gray-100">
     {/* Header with Back Button */}
-    <div className="relative flex justify-center items-center mb-4">
-    <button
-        onClick={handleBack}
-        className="absolute left-0 bg-white rounded-full p-3 shadow-sm hover:bg-gray-100 transition-all duration-200"
-    >
-        <ChevronLeft size={24} className="text-gray-800" />
-    </button>
-    <h2 className="text-xl font-semibold">Add New Address</h2>
+    <div className="w-full max-w-2xl px-6 mt-16">
+      <div className="relative flex justify-center items-center">
+        <button
+          onClick={handleBack}
+          className="absolute left-0 bg-white rounded-full p-2 shadow-sm hover:bg-gray-100 transition-all duration-200"
+        >
+          <ChevronLeft size={24} className="text-gray-800" />
+        </button>
+        <h2 className="text-xl font-semibold">Add New Address</h2>
+      </div>
     </div>
 
+    {/* Form Card */}
+    <Card className="w-full max-w-2xl mt-2 shadow-xl p-2">
+      <CardContent className="p-6 bg-white rounded-xl border border-gray-200">
+        {/* First Name & Last Name */}
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="first_name"
+            value={newAddress.first_name}
+            onChange={handleChange}
+            placeholder="First Name"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+          <input
+            type="text"
+            name="last_name"
+            value={newAddress.last_name}
+            onChange={handleChange}
+            placeholder="Last Name"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
 
-      {/* First Name & Last Name */}
-      <div className="flex space-x-3">
+        {/* Email */}
+        <input
+          type="email"
+          name="email"
+          value={newAddress.email}
+          onChange={handleChange}
+          placeholder="Email"
+          className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-red-500"
+        />
+
+        {/* Phone Number */}
         <input
           type="text"
-          name="first_name"
-          value={newAddress.first_name}
+          name="phone"
+          value={newAddress.phone}
           onChange={handleChange}
-          placeholder="First Name"
-          className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          placeholder="Phone Number"
+          className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-red-500"
+          maxLength={10}
         />
+
+        {/* Address Line 1 */}
         <input
           type="text"
-          name="last_name"
-          value={newAddress.last_name}
+          name="address_line1"
+          value={newAddress.address_line1}
           onChange={handleChange}
-          placeholder="Last Name"
-          className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          placeholder="Address Line 1"
+          className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-red-500"
         />
-      </div>
 
-      {/* Email */}
-      <input
-        type="email"
-        name="email"
-        value={newAddress.email}
-        onChange={handleChange}
-        placeholder="Email"
-        className="w-full p-3 border rounded-lg mt-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-      />
+        {/* Address Line 2 */}
+        <input
+          type="text"
+          name="address_line2"
+          value={newAddress.address_line2}
+          onChange={handleChange}
+          placeholder="Address Line 2 (Optional)"
+          className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-red-500"
+        />
 
-      {/* Phone Number */}
-      <input
-        type="text"
-        name="phone"
-        value={newAddress.phone}
-        onChange={handleChange}
-        placeholder="Phone Number"
-        className="w-full p-3 border rounded-lg mt-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-        maxLength={10}
-      />
-
-      {/* Address Line 1 */}
-      <input
-        type="text"
-        name="address_line1"
-        value={newAddress.address_line1}
-        onChange={handleChange}
-        placeholder="Address Line 1"
-        className="w-full p-3 border rounded-lg mt-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-      />
-
-      {/* Address Line 2 */}
-      <input
-        type="text"
-        name="address_line2"
-        value={newAddress.address_line2}
-        onChange={handleChange}
-        placeholder="Address Line 2 (Optional)"
-        className="w-full p-3 border rounded-lg mt-3 focus:outline-none focus:ring-2 focus:ring-red-500"
-      />
-
-      {/* Landmark + City */}
-      <div className="flex space-x-3 mt-3">
+        {/* Landmark */}
         <input
           type="text"
           name="landmark"
           value={newAddress.landmark}
           onChange={handleChange}
           placeholder="Landmark (Optional)"
-          className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-red-500"
         />
+
+        {/* City */}
         <input
           type="text"
           name="city"
           value={newAddress.city}
           onChange={handleChange}
           placeholder="City"
-          className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-red-500"
         />
-      </div>
 
-      {/* Pincode + State */}
-      <div className="flex space-x-3 mt-3">
-        <input
-          type="text"
-          name="pincode"
-          value={newAddress.pincode}
-          onChange={handleChange}
-          placeholder="Pincode"
-          className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          maxLength={6}
-        />
-        <input
-          type="text"
-          name="state"
-          value={newAddress.state}
-          onChange={handleChange}
-          placeholder="State"
-          className="w-1/2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-        />
-      </div>
+        {/* Pincode & State */}
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <input
+            type="text"
+            name="pincode"
+            value={newAddress.pincode}
+            onChange={handleChange}
+            placeholder="Pincode"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            maxLength={6}
+          />
+          <input
+            type="text"
+            name="state"
+            value={newAddress.state}
+            onChange={handleChange}
+            placeholder="State"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+        </div>
 
-      {/* Save Button */}
-      <button
-        onClick={handleSaveAddress}
-        className="w-full text-lg bg-red-500 font-semibold text-white p-3 rounded-lg hover:bg-red-600 transition duration-200 mt-5 shadow-md hover:shadow-lg"
-      >
-        Save Address
-      </button>
-    </div>
+        {/* Save Button */}
+        <button
+          onClick={handleSaveAddress}
+          className="w-full text-lg bg-red-500 font-semibold text-white p-3 rounded-lg hover:bg-red-600 transition duration-200 mt-6 shadow-md hover:shadow-lg"
+        >
+          Save Address
+        </button>
+      </CardContent>
+    </Card>
+  </div>
   );
 }

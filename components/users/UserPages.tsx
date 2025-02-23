@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-import supabase from "@/lib/supabase/supabaseClient";
+import supabase from "@/lib/supabase-db/supabaseClient";
 
 const artistPages = [
   { name: "List a Product", path: "/list-product" },
@@ -14,6 +14,7 @@ const artistPages = [
 ];
 
 const userPages = [
+  { name: "Shopping Cart", path: "/cart" },
   { name: "Orders", path: "/orders" },
   { name: "Saved Addresses", path: "/addresses" },
   { name: "Get Help", path: "/artist-help" },
@@ -66,15 +67,6 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
 
   return (
     <div className="mt-4 w-full">
-      {/* Join as Artist Button */}
-      {!isArtist && (
-        <button
-          onClick={handleJoinAsArtist}
-          className="block text-lg text-white hover:text-gray-200 transition duration-200 text-center py-3 w-full"
-        >
-          Join as Artist
-        </button>
-      )}
 
       {/* Show different menus for users and artists */}
       {(user ? (isArtist ? artistPages : userPages) : []).map((page) => (
@@ -87,6 +79,16 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
           {page.name}
         </Link>
       ))}
+
+      {/* Join as Artist Button */}
+            {!isArtist && (
+        <button
+          onClick={handleJoinAsArtist}
+          className="block text-lg text-white hover:text-gray-200 transition duration-200 text-center py-3 w-full"
+        >
+          Join as Artist
+        </button>
+      )}
 
       {/* Logout Button */}
       {user && (

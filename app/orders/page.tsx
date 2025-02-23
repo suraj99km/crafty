@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import supabase from "@/lib/supabase/supabaseClient";
+import supabase from "@/lib/supabase-db/supabaseClient";
 import { useRouter } from "next/navigation";
 
 const OrdersPage = () => {

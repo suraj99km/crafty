@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "@/lib/supabase/supabaseClient";
+import supabase from "@/lib/supabase-db/supabaseClient";
 import AddressCard from "@/components/users/AddressCard";
 import { ChevronRight } from "lucide-react";
 import { Address } from "@/Types"; // Import Address type

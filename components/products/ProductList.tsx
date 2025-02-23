@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { fetchLatestProductsWithCategories } from "@/lib/supabase/utils";
+import { fetchLatestProductsWithCategories } from "@/lib/supabase-db/utils";
 import { ArrowUpDown } from "lucide-react"; // Sort icon
 import Link from 'next/link';
 

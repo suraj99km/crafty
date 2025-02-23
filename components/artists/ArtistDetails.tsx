@@ -7,6 +7,7 @@ type Props = {
   relatedProducts: Product[];
 };
 
+
 const ArtistDetails: React.FC<Props> = ({ artist, relatedProducts }) => {
   return (
     <section className="max-container mt-20">

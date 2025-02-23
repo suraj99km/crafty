@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { fetchProductDetails, fetchArtistDetails } from "@/lib/supabase/utils"; // Import utils
+import { fetchProductDetails, fetchArtistDetails } from "@/lib/supabase-db/utils"; // Import utils
 import ProductDetails from "@/components/products/ProductDetails";
 import { Product, Artist } from "@/Types";
 
