@@ -61,9 +61,14 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
     if (error) {
       console.error("Logout error:", error.message);
     } else {
+      // Clear only sessionStorage (not localStorage)
+      sessionStorage.clear();  // This will remove all data from sessionStorage
+      
+      // Optionally redirect to home or login page
       window.location.href = "/"; // Refresh & redirect to home
     }
   };
+  
 
   return (
     <div className="mt-4 w-full">

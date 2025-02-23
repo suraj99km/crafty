@@ -13,7 +13,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     // Retrieve selected address
-    const storedAddress = localStorage.getItem("selectedAddress");
+    const storedAddress = sessionStorage.getItem("selectedAddress");
     if (storedAddress) {
       setSelectedAddress(JSON.parse(storedAddress));
     }
@@ -33,7 +33,7 @@ const CheckoutPage = () => {
     }
 
     // Retrieve total
-    const storedTotal = localStorage.getItem("total");
+    const storedTotal = sessionStorage.getItem("total");
     if (storedTotal) {
       setTotal(JSON.parse(storedTotal));
     }

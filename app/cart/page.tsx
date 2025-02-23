@@ -22,22 +22,22 @@ const CartPage = () => {
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCartItems(storedCart);
 
-    const storedAddress = JSON.parse(localStorage.getItem("selectedAddress") || "null");
+    const storedAddress = JSON.parse(sessionStorage.getItem("selectedAddress") || "null");
     setSelectedAddress(storedAddress);
 
-    const storedTotal = JSON.parse(localStorage.getItem("total") || "0");
+    const storedTotal = JSON.parse(sessionStorage.getItem("total") || "0");
     setTotal(storedTotal);
   }, []);
 
   // Store selected address in localStorage
   const handleSelectAddress = (address: Address) => {
     setSelectedAddress(address);
-    localStorage.setItem("selectedAddress", JSON.stringify(address));
+    sessionStorage.setItem("selectedAddress", JSON.stringify(address));
   };
 
   // Update localStorage on total change
   useEffect(() => {
-    localStorage.setItem("total", JSON.stringify(total));
+    sessionStorage.setItem("total", JSON.stringify(total));
   }, [total]);
 
   const getUpdatedCartItems = () =>
