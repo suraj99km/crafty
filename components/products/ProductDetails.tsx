@@ -63,7 +63,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
       {/* Back Button */}
       <button
         onClick={handleBack}
-        className="fixed top-24 left-4 bg-white rounded-full p-2 shadow-lg z-10 hover:bg-gray-100 transition-all duration-200"
+        className="fixed top-24 left-4 bg-white rounded-full p-3 shadow-lg z-10 hover:bg-gray-100 transition-all duration-200"
       >
         <ChevronLeft size={24} className="text-gray-800" />
       </button>

@@ -2,9 +2,9 @@
 
 import { Card } from "@/components/ui/card";
 import OAuthButtons from "@/components/auth/OAuthButtoms";
-import PhoneAuth from "@/components/auth/PhoneAuth";
 import EmailAuth from "@/components/auth/EmailAuth";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -31,8 +31,8 @@ export default function LoginPage() {
           Sign in to <span className="text-red-500">CraftID.in</span>
         </h4>
 
-       {/* OAuth Buttons */}
-       <OAuthButtons />
+        {/* OAuth Buttons */}
+        <OAuthButtons />
 
         {/* Divider */}
         <div className="relative my-6 flex items-center">
@@ -41,15 +41,21 @@ export default function LoginPage() {
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
-        {/* Phone Authentication */}
-        {/* <PhoneAuth /> */}
-
+        {/* Email Authentication */}
         <EmailAuth />
- 
-        {/* Email Sign-In (Future Implementation)
-        <button className="w-full mt-4 p-3 border border-gray-300 rounded-xl bg-gray-200 hover:bg-gray-300 shadow-md hover:shadow-lg transition duration-300 font-semibold">
-          Sign in with Email
-        </button> */}
+
+        {/* Terms & Conditions Clause */}
+        <p className="mt-4 text-xs text-gray-600 text-center">
+          By signing in, you agree to our{" "}
+          <Link href="/terms" className="text-red-500 hover:underline">
+            Terms & Conditions
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy-policy" className="text-red-500 hover:underline">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </Card>
     </div>
   );
