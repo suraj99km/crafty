@@ -4,6 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global Reset */
 * {
   margin: 0;
   padding: 0;
@@ -11,12 +12,13 @@
   font-family: "Manrope", sans-serif;
 }
 
+/* === Animations === */
 @keyframes softPulse {
   0%, 100% {
-    opacity: 0.50; /* Instead of full fade, only slight dim */
+    opacity: 0.5; /* Subtle dim */
   }
   50% {
-    opacity: 1; /* Brighter at peak */
+    opacity: 1; /* Brightest at midpoint */
   }
 }
 
@@ -24,7 +26,7 @@
   animation: softPulse 1.5s infinite;
 }
 
-/* START: General styles */
+/* === Utility Classes === */
 .max-width {
   @apply max-w-[1440px] mx-auto;
 }
@@ -45,30 +47,28 @@
   @apply flex justify-between items-center;
 }
 
+/* === Custom Button === */
 .custom-btn {
-  @apply flex flex-row relative justify-center items-center py-3 px-6 outline-none;
+  @apply flex justify-center items-center py-3 px-6 outline-none;
 }
-/* END: General styles */
 
-/* START: Hero styles */
+/* ========================= */
+/*         HERO SECTION      */
+/* ========================= */
 .hero {
-  @apply flex xl:flex-row flex-col gap-5 relative z-0 max-w-[1440px] mx-auto;
+  @apply flex xl:flex-row flex-col gap-5 relative z-0 max-width;
 }
 
 .hero__title {
-  @apply 2xl:text-[72px] sm:text-[56px] text-[40px] font-extrabold;
-}
-
-.hero__title2 {
-  @apply 2xl:text-[64px] sm:text-[50px] text-[32px] font-extrabold;
+  @apply text-[40px] sm:text-[56px] 2xl:text-[72px] font-extrabold;
 }
 
 .hero__subtitle {
-  @apply 2xl:text-[36px] sm:text-[32px] text-[20px] text-black-100 font-light mt-5;
+  @apply text-[20px] sm:text-[32px] 2xl:text-[36px] text-black-100 font-light mt-5;
 }
 
 .hero__mission {
-  @apply 2xl:text-[20px] text-[18px] text-black-100 font-light mt-5;
+  @apply text-[18px] 2xl:text-[20px] text-black-100 font-light mt-5;
 }
 
 .hero__image-container {
@@ -76,51 +76,53 @@
 }
 
 .hero__image {
-  @apply relative xl:w-full w-[100%] xl:h-full h-[250px] z-0;
+  @apply relative w-full xl:h-full h-[250px] z-0;
 }
 
-/* START: Home styles */
-
+/* ========================= */
+/*         HOME PAGE         */
+/* ========================= */
 .home__text-container {
   @apply flex flex-col items-start justify-start gap-y-2.5 text-black-100;
 }
 
 .home__filters {
-  @apply mt-12 w-full flex-between items-center flex-wrap gap-5;
+  @apply mt-12 w-full flex-between flex-wrap gap-5;
 }
 
 .home__filter-container {
   @apply flex justify-start flex-wrap items-center gap-2;
 }
 
-.home__cars-wrapper {
-  @apply grid 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-8 pt-14;
+.home__products-wrapper {
+  @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 pt-14;
 }
 
 .home__error-container {
-  @apply mt-16 flex justify-center items-center flex-col gap-2;
+  @apply mt-16 flex flex-col items-center justify-center gap-2;
 }
-/* END: Home styles */
 
-/* START: Car Card styles */
+/* ========================= */
+/*       PRODUCT CARD        */
+/* ========================= */
 .product__card {
-  @apply flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform hover:shadow-xl;
+  @apply flex flex-col w-full max-w-xs mx-auto bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:shadow-xl;
 }
 
 .product-card__content {
   @apply w-full flex justify-between items-start gap-2;
 }
 
-.product-card__content-title {
+.product-card__title {
   @apply text-[22px] leading-[26px] font-bold capitalize;
 }
 
 .product-card__price {
-  @apply mt-4 text-[18px] leading-[20px] font-extrabold;
+  @apply mt-4 text-[18px] font-extrabold;
 }
 
 .product-card__price-day {
-  @apply self-end text-[14px] leading-[17px] font-medium;
+  @apply self-end text-[14px] font-medium;
 }
 
 .product-card__image {
@@ -128,7 +130,7 @@
 }
 
 .product-card__icon-container {
-  @apply flex group-hover:invisible w-full justify-between text-grey;
+  @apply flex w-full justify-between text-grey;
 }
 
 .product-card__icon {
@@ -136,17 +138,18 @@
 }
 
 .product-card__icon-text {
-  @apply text-[14px] leading-[17px];
+  @apply text-[14px];
 }
 
 .product-card__btn-container {
   @apply hidden group-hover:flex absolute bottom-0 w-full z-10;
 }
-/* END: Car Card styles */
 
-/* START: Car Details styles */
+/* ========================= */
+/*    PRODUCT DETAILS PAGE   */
+/* ========================= */
 .product-details__dialog-panel {
-  @apply relative w-full max-w-lg max-h-[90vh] overflow-y-auto transform rounded-2xl bg-white p-6 text-left shadow-xl transition-all flex flex-col gap-5;
+  @apply relative w-full max-w-lg max-h-[90vh] overflow-y-auto transform rounded-2xl bg-white p-6 shadow-xl flex flex-col gap-5;
 }
 
 .product-details__close-btn {
@@ -156,21 +159,23 @@
 .product-details__main-image {
   @apply relative w-full h-40 bg-pattern bg-cover bg-center rounded-lg;
 }
-/* END: Car Details styles */
 
-/* START: Custom Filter styles */
+/* ========================= */
+/*      CUSTOM FILTERS       */
+/* ========================= */
 .custom-filter__btn {
-  @apply relative w-full min-w-[127px] flex justify-between items-center cursor-default rounded-lg bg-white py-2 px-3 text-left shadow-md sm:text-sm border;
+  @apply relative w-full min-w-[127px] flex justify-between items-center cursor-default rounded-lg bg-white py-2 px-3 shadow-md sm:text-sm border;
 }
 
 .custom-filter__options {
   @apply absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm;
 }
-/* END: Custom Filter styles */
 
-/* START: Footer styles */
+/* ========================= */
+/*         FOOTER            */
+/* ========================= */
 .footer {
-  @apply flex flex-col text-black-100  mt-5 border-t border-gray-100;
+  @apply flex flex-col text-black-100 mt-5 border-t border-gray-100;
 }
 
 .footer__links-container {
@@ -196,9 +201,10 @@
 .footer__copyrights-link {
   @apply flex-1 flex sm:justify-end justify-center max-sm:mt-4 gap-10;
 }
-/* END: Footer styles */
 
-/* START: searchbar styles */
+/* ========================= */
+/*         SEARCHBAR         */
+/* ========================= */
 .searchbar {
   @apply flex items-center justify-start max-sm:flex-col w-full relative max-sm:gap-4 max-w-3xl;
 }
@@ -210,9 +216,10 @@
 .searchbar__input {
   @apply w-full h-[48px] pl-12 p-4 bg-light-white rounded-r-full max-sm:rounded-full outline-none cursor-pointer text-sm;
 }
-/* END: searchbar styles */
 
-/* START: search manufacturer styles */
+/* ========================= */
+/*  SEARCH MANUFACTURER      */
+/* ========================= */
 .search-manufacturer {
   @apply flex-1 max-sm:w-full flex justify-start items-center;
 }
@@ -228,4 +235,3 @@
 .search-manufacturer__option {
   @apply cursor-default select-none py-2 pl-10 pr-4;
 }
-/* END: search manufacturer styles */

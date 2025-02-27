@@ -7,20 +7,20 @@ import { LogOut, ShoppingCart, Users, Package, HelpCircle, List } from "lucide-r
 import supabase from "@/lib/supabase-db/supabaseClient";
 
 const userPages = [
-  { name: "Shopping Cart", path: "/cart", icon: <ShoppingCart size={18} /> },
-  { name: "Orders Tracking", path: "/orders", icon: <Package size={18} /> },
-  { name: "Saved Addresses", path: "/addresses", icon: <List size={18} /> },
+  { name: "Shopping Cart", path: "/cart", icon: <ShoppingCart size={20} /> },
+  { name: "Orders Tracking", path: "/orders", icon: <Package size={20} /> },
+  { name: "Saved Addresses", path: "/addresses", icon: <List size={20} /> },
 ];
 
 const profilePages = [
-  { name: "Refer a Friend", path: "/refer-friend", icon: <Users size={18} /> },
-  { name: "Get Help", path: "/artist-help", icon: <HelpCircle size={18} /> },
+  { name: "Refer a Friend", path: "/refer-friend", icon: <Users size={20} /> },
+  { name: "Get Help", path: "/artist-help", icon: <HelpCircle size={20} /> },
 ];
 
 const artistPages = [
-  { name: "List a Product", path: "/list-product", icon: <List size={18} /> },
-  { name: "Product Listings", path: "/product-listings", icon: <List size={18} /> },
-  { name: "Track Your Sales", path: "/track-sales", icon: <Package size={18} /> },
+  { name: "List a Product", path: "/list-product", icon: <List size={20} /> },
+  { name: "Product Listings", path: "/product-listings", icon: <List size={20} /> },
+  { name: "Track Your Sales", path: "/track-sales", icon: <Package size={20} /> },
 ];
 
 export default function UserPages({ onClick }: { onClick?: () => void }) {
@@ -65,78 +65,77 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
   };
 
   return (
-    <div className="w-full flex flex-col space-y-4 py-2 text-white">
+    <div className="w-full h-full flex flex-col justify-between text-white">
+      <div className="flex flex-col space-y-4 py-2">
 
-      {/* Join as Artist Button */}
-      {!isArtist && (
-        <button
-          onClick={handleJoinAsArtist}
-          className="w-full flex items-center justify-center gap-2 text-lg font-semibold bg-white text-red-500 px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition duration-300"
-        >
-          <Users size={20} className="text-red-500" />
-          Join as Artist
-        </button>
-      )}
+        {/* Join as Artist Button */}
+        {!isArtist && (
+          <button
+            onClick={handleJoinAsArtist}
+            className="w-full flex items-center justify-center gap-2 text-base font-semibold bg-white text-red-500 px-4 py-2 rounded-full shadow hover:bg-gray-100 transition"
+          >
+            <Users size={22} className="text-red-500" />
+            Join as Artist
+          </button>
+        )}
 
-
-      {/* User Shopping Section */}
-      {!isArtist && user && (
-        
-        <div className="w-full px-4">
-          <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Shopping & Orders</h3>
-          <div className="flex flex-col mt-2 space-y-2">
-            {userPages.map((page) => (
-              <Link key={page.path} href={page.path} className="flex items-center gap-2 text-lg hover:text-gray-200 transition duration-200 py-2" onClick={onClick}>
-                {page.icon}
-                {page.name}
-              </Link>
-            ))}
+        {/* User Shopping Section */}
+        {!isArtist && user && (
+          <div className="w-full px-4">
+            <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Shopping & Orders</h3>
+            <div className="flex flex-col mt-2 space-y-2">
+              {userPages.map((page) => (
+                <Link key={page.path} href={page.path} className="flex items-center gap-2 text-base hover:text-gray-200 transition py-2" onClick={onClick}>
+                  {page.icon}
+                  {page.name}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
         {/* User Profile Section */}
         <div className="w-full px-4">
-        <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Profile</h3>
-        <div className="flex flex-col mt-2 space-y-2">
-          {profilePages.map((page) => (
-            <Link key={page.path} href={page.path} className="flex items-center gap-2 text-lg hover:text-gray-200 transition duration-200 py-2" onClick={onClick}>
-              {page.icon}
-              {page.name}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Artist Dashboard Section */}
-      {isArtist && (
-        <div className="w-full px-4">
-          <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Artist Dashboard</h3>
+          <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Profile</h3>
           <div className="flex flex-col mt-2 space-y-2">
-            {artistPages.map((page) => (
-              <Link key={page.path} href={page.path} className="flex items-center gap-2 text-lg hover:text-gray-200 transition duration-200 py-2" onClick={onClick}>
+            {profilePages.map((page) => (
+              <Link key={page.path} href={page.path} className="flex items-center gap-2 text-base hover:text-gray-200 transition py-2" onClick={onClick}>
                 {page.icon}
                 {page.name}
               </Link>
             ))}
           </div>
         </div>
-      )}
 
-      {/* Logout Button */}
+        {/* Artist Dashboard Section */}
+        {isArtist && (
+          <div className="w-full px-4">
+            <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Artist Dashboard</h3>
+            <div className="flex flex-col mt-2 space-y-2">
+              {artistPages.map((page) => (
+                <Link key={page.path} href={page.path} className="flex items-center gap-2 text-base hover:text-gray-200 transition py-2" onClick={onClick}>
+                  {page.icon}
+                  {page.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Logout Button (Always at Bottom) */}
       {user && (
-        <div className="w-full px-4 border-t border-white mt-2 pt-2">
+        <div className="w-full px-4 border-t border-white pt-3 mt-6">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 text-lg py-3 transition duration-200 hover:text-gray-200"
+            className="w-full flex items-center gap-3 text-base font-medium text-gray-200 hover:text-white transition py-3"
           >
-            <LogOut size={18} />
-            <span className="font-medium">Logout</span>
+            <LogOut size={22}/>
+            Logout
           </button>
         </div>
       )}
+
     </div>
   );
 }
-
-

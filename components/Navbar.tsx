@@ -46,72 +46,76 @@ const Navbar = () => {
   }, []);
 
   return (
-<header
-  className={`fixed top-0 left-0 w-full z-10 transition-all duration-300 ${
-    isScrolled ? "py-1 shadow-md bg-white" : "py-4 bg-white"
-  }`}
->
-  <nav className="max-w-[1440px] mx-auto flex justify-between items-center px-6 sm:px-16 transition-all duration-300">
-    <Link href="/" className="flex items-center">
-      <Image
-        src="/logo.png"
-        alt="Logo"
-        width={180}
-        height={30}
-        className={`object-contain transition-all duration-300 ${
-          isScrolled ? "w-28" : "w-44"
-        }`}
-      />
-    </Link>
-
-    {/* Sidebar Toggle Button - Scales Down on Scroll */}
-    <button
-      onClick={toggleSidebar}
-      className={`p-2 rounded-full bg-red-500 text-white transition-all duration-300 hover:bg-red-600 ${
-        isScrolled ? "scale-75" : "scale-100"
+    <header
+      className={`fixed top-0 left-0 w-full z-10 transition-all duration-300 ${
+        isScrolled ? "py-1 shadow-md bg-white" : "py-4 bg-white"
       }`}
     >
-      {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-    </button>
-  </nav>
+      <nav className="max-w-[1440px] mx-auto flex justify-between items-center px-6 sm:px-16 transition-all duration-300">
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={180}
+            height={30}
+            className={`object-contain transition-all duration-300 ${
+              isScrolled ? "w-28" : "w-44"
+            }`}
+          />
+        </Link>
 
+        {/* Sidebar Toggle Button */}
+        <button
+          onClick={toggleSidebar}
+          className={`p-2 rounded-full bg-red-500 text-white transition-all duration-300 hover:bg-red-600 ${
+            isScrolled ? "scale-75" : "scale-100"
+          }`}
+        >
+          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </nav>
 
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`fixed top-0 right-0 w-[280px] h-full bg-red-500 text-white transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={` fixed top-0 right-0 w-[260px] h-full bg-red-500 text-white transition-transform duration-300 ${
+          isSidebarOpen ? "translate-x-0" : "translate-x-full"
+        } flex flex-col justify-between`}
       >
-        <div className="flex justify-between items-center p-4 border-b border-white/20">
+        {/* Header */}
+        <div className="ml-4 flex justify-between items-center p-3 border-b border-white/20">
           <span className="text-lg font-semibold">Menu</span>
           <button onClick={toggleSidebar} className="text-white">
             <X size={24} />
           </button>
         </div>
 
-        <div className="flex flex-col p-4 space-y-4">
-          {/* Auth Button - Justified Left with No Extra Space */}
-            <div className="flex justify-start w-full">
-              <AuthButton />
-            </div>
+        {/* Scrollable Content */}
+        <div className="ml-2 overflow-y-auto flex-grow p-3 space-y-3 scrollbar-hide">
+          {/* Auth Button */}
+          <div className="flex justify-start w-full">
+            <AuthButton />
+          </div>
 
-
-          <div className="border-t border-white/20 pt-4">
-            <p className="text-sm uppercase opacity-75">Explore</p>
-            <Link href="/" className="flex items-center gap-2 py-2 text-lg hover:text-gray-200" onClick={toggleSidebar}>
-              <Home size={20} />
+          {/* Navigation */}
+          <div className="border-t border-white/20 pt-3">
+            <p className="text-xs uppercase opacity-75">Explore</p>
+            <Link href="/" className="flex items-center gap-2 py-2 text-base hover:text-gray-200" onClick={toggleSidebar}>
+              <Home size={18} />
               Home
             </Link>
-            <Link href="/products" className="flex items-center gap-2 py-2 text-lg hover:text-gray-200" onClick={toggleSidebar}>
-              <Store size={20} />
+            <Link href="/products" className="flex items-center gap-2 py-2 text-base hover:text-gray-200" onClick={toggleSidebar}>
+              <Store size={18} />
               Products
             </Link>
-            <Link href="/artists" className="flex items-center gap-2 py-2 text-lg hover:text-gray-200" onClick={toggleSidebar}>
-              <Users size={20} />
+            <Link href="/artists" className="flex items-center gap-2 py-2 text-base hover:text-gray-200" onClick={toggleSidebar}>
+              <Users size={18} />
               Artists
             </Link>
           </div>
 
-          <div className="border-t border-white/20 pt-4">
+          {/* User Pages */}
+          <div className="border-t border-white/20 pt-3">
             <UserPages onClick={toggleSidebar} />
           </div>
         </div>

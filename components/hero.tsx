@@ -1,77 +1,71 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import CustomButton from './CustomButton';
+import React, { useEffect, useState } from "react";
+import CustomButton from "./CustomButton";
 import Image from "next/image";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import supabase from "@/lib/supabase-db/supabaseClient";
 
 const Hero = () => {
-    const router = useRouter();
-    const [user, setUser] = useState(false);
+  const router = useRouter();
+  const [user, setUser] = useState(false);
 
-    useEffect(() => {
-        const checkUser = async () => {
-            const { data, error } = await supabase.auth.getUser();
-            if (error || !data?.user) return;
-            setUser(true);
-        };
-        checkUser();
-    }, []);
-
-    const handleJoinAsArtist = () => {
-        if (user) {
-            router.push("/join-as-artist");
-        } else {
-            router.push("/login?redirect=/join-as-artist");
-        }
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (error || !data?.user) return;
+      setUser(true);
     };
+    checkUser();
+  }, []);
+
+  const handleJoinAsArtist = () => {
+    router.push(user ? "/join-as-artist" : "/login?redirect=/join-as-artist");
+  };
 
   return (
-    <div>
-      <div className='hero'>
-        <div className="flex-1 pt-20 xl:pt-36 padding-x">
-          <h1 className="hero__title mt-5">
-            Handmade Treasures, crafted with love
-            <span className="inline-flex items-center">
-              <img src="/love.png" alt="Your Image" className="h-[0.8em] ml-3 -mb-2" />
-            </span>
-          </h1>
-          <p className="hero__subtitle">
-            Discover handcrafted products made with heart and passion.
-          </p>
-          <div className="inline-flex gap-3 sm:gap-5 flex-wrap mt-8 mb-5 text-[14px] 2xl:text-[18px]">
-            <CustomButton 
-              title="Explore crafts"
-              btnType='button'
-              containerStyles="hover:bg-red-400 p-3 px-6 rounded-full font-medium transition-all duration-200 ease-in-out bg-red-500 text-white lg:text-lg lg:px-8"
-              handleClick={() => router.push('/products')}
-            />
-            <CustomButton
-              title="Join as an Artist"
-              btnType='button'
-              containerStyles="hover:bg-red-500 hover:text-white transition-all duration-200 ease-in-out text-red-500 font-medium rounded-full bg-transparent border-red-500 border lg:text-lg lg:px-8"
-              handleClick={handleJoinAsArtist}
-            />
-          </div>
-        </div>
-
-        <div className="hero__image-container">
-          <div className="hero__image overflow-hidden relative 2xl:h-[1500px] h-[500px]">
-            <Image src="/hero.jpg" alt="hero" fill className="object-cover object-center" />
-          </div>
-        </div>
+    <div className="w-full min-h-[775px] flex flex-col items-center bg-gray-100 font-poppins">
+      {/* Hero Image */}
+      <div className="relative w-full h-[380px]">
+        <Image
+          src="/hero.jpg"
+          alt="Handmade Treasures"
+          fill
+          className="object-cover object-center rounded-b-3xl"
+        />
       </div>
 
-      <div className="hero">
-        <div className="xl:flex-[0.895] flex justify-end items-end w-full xl:h-auto hidden xl:block">
-          <div className="relative xl:w-full w-[100%] xl:h-full h-[300px] z-0 overflow-hidden">
-            <Image src="/mission_hero.png" alt="hero" fill className="object-cover object-center" />
-          </div>
-        </div>
+      {/* Hero Content */}
+      <div className="w-full px-6 text-center mt-5">
+        <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+          Handmade Treasures, <br /> Crafted with Love
+        </h1>
+        <p className="text-lg text-gray-700 mt-2">
+          Discover unique handcrafted products made with passion.
+        </p>
 
-        <div className="flex-1 pt-10 pb-10 padding-x">
-          <h1 className="hero__title2 mt-5 sm:mt-0">Our Mission</h1>
+        {/* Buttons */}
+        <div className="flex flex-col gap-3 mt-6">
+          <CustomButton
+            title="Explore Crafts"
+            btnType="button"
+            containerStyles="w-full p-3 text-lg font-semibold bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition-all"
+            handleClick={() => router.push("/products")}
+          />
+          <CustomButton
+            title="Join as an Artist"
+            btnType="button"
+            containerStyles="w-full p-3 text-lg font-semibold border border-red-500 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all"
+            handleClick={handleJoinAsArtist}
+          />
+        </div>
+        <p className="text-md text-gray-500 italic mt-4 font-semibold">
+          "Every craft has an Identity."
+        </p>
+      </div>
+
+      <div className="flex-1 pt-10 pb-10 padding-x">
+          <h1 className="text-3xl font-bold mt-5 sm:mt-0">Our Mission</h1>
           <p className="hero__mission">
             At <span className="text-white bg-red-500 rounded-lg p-1 font-bold">CraftID.in</span>,  
             we believe <span className="text-red-500 font-extrabold">every artist deserves a stage.</span>
@@ -107,9 +101,9 @@ const Hero = () => {
             </a>
           </div>
         </div>
-      </div>
+
     </div>
   );
-}
+};
 
 export default Hero;

@@ -29,9 +29,12 @@ const PopularProducts = () => {
   };
 
   return (
-    <section id="Products" className="max-container max-sm:mt-12">
-      <div className="flex flex-col justify-start">
-        <h2 className="text-3xl font-palanquin font-bold">Popular Products</h2>
+    <section id="Products" className="max-w-7xl mx-auto px-2 py-10">
+      <div className="flex flex-col">
+        {/* Section Title */}
+        <h2 className="text-3xl font-extrabold text-gray-900">Popular Products</h2>
+
+        {/* Loader */}
         {products.length === 0 ? (
           <div className="mt-16 flex justify-center items-center">
             <div className="w-16 h-16 border-4 border-gray-300 rounded-full animate-spin border-t-red-500"></div>
@@ -40,21 +43,21 @@ const PopularProducts = () => {
           <div className="mt-8 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
             {products.slice(0, visibleCount).map((product) => (
               <Link key={product.id} href={`/products/${product.id}`} passHref>
-                <div
-                  className="product__card transform transition-transform duration-500 hover:scale-95"
-                >
+                <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-95 cursor-pointer">
                   <img
                     src={product.image_url}
                     alt={product.title}
-                    className="w-full h-[280px] object-cover rounded-t-lg"
+                    className="w-full h-[280px] object-cover rounded-t-xl"
                   />
-                  <div className="flex justify-between items-center mt-4 mb-3 font-palanquin">
-                    <h2 className="font-bold ml-6 text-gray-800 text-md 2xl:text-xl">{product.title}</h2>
-                    <p className="text-gray-900 mr-4 text-sm 2xl:text-lg font-semibold">₹ {product.price}</p>
+                  <div className="px-4 py-3">
+                    <div className="flex justify-between items-center gap-2">
+                      <h2 className="text-lg font-semibold text-gray-900">{product.title}</h2>
+                      <p className="text-gray-800 font-bold text-lg">₹ {product.price}</p>
+                    </div>
+                    <p className="text-gray-700 text-sm text-center mt-2">
+                      Crafted by <span className="font-semibold text-gray-900">{product.artist_name || "Unknown Artist"}</span>
+                    </p>
                   </div>
-                  <p className="text-center text-xs text-gray-700 mb-2">
-                    Crafted by <span className="font-bold text-gray-900">{product.artist_name || "Unknown Artist"}</span>
-                  </p>
                 </div>
               </Link>
             ))}
@@ -66,7 +69,7 @@ const PopularProducts = () => {
       <div className="text-center mt-6">
         {visibleCount < 8 && visibleCount < products.length && (
           <button
-            className="py-2 px-4 text-black underline font-semibold transition-all duration-300 hover:text-gray-700"
+            className="py-2 px-4 text-red-500 font-semibold underline transition-all duration-300 hover:text-red-700"
             onClick={handleShowMore}
           >
             Show More
@@ -77,7 +80,7 @@ const PopularProducts = () => {
           <div className="flex justify-center mt-8">
             <a
               href="/products"
-              className="inline-block px-6 py-3 font-semibold text-white bg-red-500 rounded-lg shadow-md transition-all duration-300 hover:bg-red-700 hover:shadow-lg active:scale-95"
+              className="inline-block px-6 py-3 font-bold text-white bg-red-500 rounded-lg shadow-lg transition-all duration-300 hover:bg-red-700 hover:shadow-xl active:scale-95"
             >
               Explore All
             </a>
