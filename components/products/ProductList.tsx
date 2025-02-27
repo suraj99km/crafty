@@ -1,9 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { fetchLatestProductsWithCategories } from "@/lib/supabase-db/utils";
 import { ArrowUpDown } from "lucide-react"; // Sort icon
 import Link from "next/link";
+
+// Native debounce function to avoid flickering
+const debounce = (func: Function, delay: number) => {
+  let timer: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(...args), delay);
+  };
+};
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -12,21 +21,12 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [sortOption, setSortOption] = useState<string>("sales_count"); // Default: Popularity
-  const searchBarRef = useRef<HTMLDivElement>(null);
-  const [isSticky, setIsSticky] = useState(false);
 
-  // Handle Scroll for Sticky Search Bar (Smooth Transition)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (searchBarRef.current) {
-        const offset = searchBarRef.current.getBoundingClientRect().top;
-        setIsSticky(offset <= 10);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Handle Search Input with Debounce
+  const handleSearch = useCallback(
+    debounce((value: string) => setSearchTerm(value), 300),
+    []
+  );
 
   // Fetch Products from DB & Apply Sorting
   useEffect(() => {
@@ -75,51 +75,43 @@ export default function ProductsPage() {
 
   return (
     <section className="container mx-auto p-2 mt-16 min-h-screen">
-      {/* Sticky Search & Sorting Bar */}
-      <div
-        ref={searchBarRef}
-        className={`transition-all duration-300 ease-in-out ${
-          isSticky
-            ? "fixed top-10 left-0 right-0 bg-white shadow-lg z-50 p-3 opacity-100 scale-[0.98]"
-            : "opacity-100 scale-100"
-        }`}
-      >
+      {/* Search & Sorting Bar (No Sticky) */}
+      <div className="mb-4">
         <div className="flex items-center gap-4">
           <input
             type="text"
             placeholder="Search products..."
             className="border p-2 rounded-lg flex-grow shadow-sm focus:ring-2 focus:ring-red-500 outline-none"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
 
-          {/* Compact Sort Button (Back to Previous Style) */}
-          <div className="relative">
-            <button
-              className="flex items-center gap-1 border p-2 rounded-lg bg-white text-sm shadow-sm hover:bg-gray-100 transition"
-              onClick={handleSortCycle}
-            >
-              <ArrowUpDown size={18} className="text-gray-600" />
-              <span className="text-xs text-gray-600">
-                {sortOption === "sales_count"
-                  ? "Popularity"
-                  : sortOption === "recentlyAdded"
-                  ? "Recently Added"
-                  : sortOption === "recentlyModified"
-                  ? "Recently Modified"
-                  : sortOption === "price_low_to_high"
-                  ? "Price: Low to High"
-                  : "Price: High to Low"}
-              </span>
-            </button>
-          </div>
+          {/* Compact Sort Button */}
+          <button
+            className="flex items-center gap-1 border p-2 rounded-lg bg-white text-sm shadow-sm hover:bg-gray-100 transition"
+            onClick={handleSortCycle}
+          >
+            <ArrowUpDown size={18} className="text-gray-600" />
+            <span className="text-xs text-gray-600">
+              {sortOption === "sales_count"
+                ? "Popularity"
+                : sortOption === "recentlyAdded"
+                ? "Recently Added"
+                : sortOption === "recentlyModified"
+                ? "Recently Modified"
+                : sortOption === "price_low_to_high"
+                ? "Price: Low to High"
+                : "Price: High to Low"}
+            </span>
+          </button>
         </div>
       </div>
 
       {/* Scrollable Categories */}
-      <div className="flex overflow-x-auto space-x-4 mb-4 mt-4 lg:hidden">
+      <div className="flex overflow-x-auto space-x-4 mb-4 lg:hidden">
         <button
-          className={`p-1 px-3 text-xs rounded-lg ${selectedCategory === "All" ? "bg-red-500 text-white border-2 border-red-500" : "bg-white border-2"}`}
+          className={`p-1 px-3 text-xs rounded-lg ${
+            selectedCategory === "All" ? "bg-red-500 text-white border-2 border-red-500" : "bg-white border-2"
+          }`}
           onClick={() => setSelectedCategory("All")}
         >
           All
