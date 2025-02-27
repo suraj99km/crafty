@@ -29,7 +29,7 @@ const PopularArtists = () => {
   };
 
   return (
-    <section id="PopularArtists" className="max-w-7xl mx-auto px-3 py-10">
+    <section id="PopularArtists" className="max-w-7xl mx-auto px-3 py-2 pb-10">
       <div className="flex flex-col">
         {/* Section Title */}
         <h2 className="text-3xl font-extrabold text-gray-900">Popular Artists</h2>

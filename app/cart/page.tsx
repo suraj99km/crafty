@@ -64,9 +64,9 @@ const CartPage = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem-5rem)] mt-16 mb-20 flex flex-col p-3 bg-gray-100">
+    <div className="min-h-[calc(100vh-4rem-5rem)] mt-12 mb-20 flex flex-col p-3 bg-gray-100">
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2 mt-6">
         <button
           onClick={router.back}
           className="p-2 bg-white rounded-full hover:bg-gray-100 transition"
@@ -85,7 +85,7 @@ const CartPage = () => {
       {/* Cart Content */}
       <div className="flex-1 overflow-auto">
         {cartItems.length === 0 ? (
-          <div className="text-center text-gray-500">
+          <div className="text-center text-gray-500 mt-2">
             Your cart is empty. Add some products!
             <div className="p-3">
               <PopularProducts />

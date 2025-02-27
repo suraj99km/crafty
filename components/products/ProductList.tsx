@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { fetchLatestProductsWithCategories } from "@/lib/supabase-db/utils";
 import { ArrowUpDown } from "lucide-react"; // Sort icon
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -12,14 +12,38 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [sortOption, setSortOption] = useState<string>("sales_count"); // Default: Popularity
+  const searchBarRef = useRef<HTMLDivElement>(null);
+  const [isSticky, setIsSticky] = useState(false);
 
-  // Fetch Products from DB
+  // Handle Scroll for Sticky Search Bar (Smooth Transition)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (searchBarRef.current) {
+        const offset = searchBarRef.current.getBoundingClientRect().top;
+        setIsSticky(offset <= 10);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Fetch Products from DB & Apply Sorting
   useEffect(() => {
     const loadLatestProducts = async () => {
       setLoading(true);
       const data = await fetchLatestProductsWithCategories(sortOption);
       if (data) {
-        setProducts(data.products);
+        let sortedProducts = data.products;
+
+        // Apply Price Sorting
+        if (sortOption === "price_low_to_high") {
+          sortedProducts = [...sortedProducts].sort((a, b) => a.price - b.price);
+        } else if (sortOption === "price_high_to_low") {
+          sortedProducts = [...sortedProducts].sort((a, b) => b.price - a.price);
+        }
+
+        setProducts(sortedProducts);
         setCategories(data.categories);
       }
       setLoading(false);
@@ -27,6 +51,20 @@ export default function ProductsPage() {
 
     loadLatestProducts();
   }, [sortOption]); // Re-fetch when sort changes
+
+  // Handle sorting cycle
+  const handleSortCycle = () => {
+    const sortOrder = [
+      "sales_count",
+      "recentlyAdded",
+      "recentlyModified",
+      "price_low_to_high",
+      "price_high_to_low",
+    ];
+    const currentIndex = sortOrder.indexOf(sortOption);
+    const nextIndex = (currentIndex + 1) % sortOrder.length;
+    setSortOption(sortOrder[nextIndex]);
+  };
 
   if (loading)
     return (
@@ -36,49 +74,52 @@ export default function ProductsPage() {
     );
 
   return (
-    <section className="container mx-auto p-2 mt-14 min-h-screen">
-      {/* Search and Filter Bar */}
-      <div className="flex items-center gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Search products..."
-          className="border p-2 rounded-lg flex-grow shadow-sm focus:ring-2 focus:ring-red-500 outline-none"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+    <section className="container mx-auto p-2 mt-16 min-h-screen">
+      {/* Sticky Search & Sorting Bar */}
+      <div
+        ref={searchBarRef}
+        className={`transition-all duration-300 ease-in-out ${
+          isSticky
+            ? "fixed top-10 left-0 right-0 bg-white shadow-lg z-50 p-3 opacity-100 scale-[0.98]"
+            : "opacity-100 scale-100"
+        }`}
+      >
+        <div className="flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Search products..."
+            className="border p-2 rounded-lg flex-grow shadow-sm focus:ring-2 focus:ring-red-500 outline-none"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
 
-        {/* Sort Button (Compact) */}
-        <div className="relative">
-          <button
-            className="flex items-center gap-1 border p-2 rounded-lg bg-white text-sm shadow-sm hover:bg-gray-100 transition"
-            onClick={() =>
-              setSortOption((prev) =>
-                prev === "sales_count"
-                  ? "recentlyAdded"
-                  : prev === "recentlyAdded"
-                  ? "recentlyModified"
-                  : "sales_count"
-              )
-            }
-          >
-            <ArrowUpDown size={18} className="text-gray-600" />
-            <span className="text-xs text-gray-600">
-              {sortOption === "sales_count"
-                ? "Popularity"
-                : sortOption === "recentlyAdded"
-                ? "Recently Added"
-                : "Recently Modified"}
-            </span>
-          </button>
+          {/* Compact Sort Button (Back to Previous Style) */}
+          <div className="relative">
+            <button
+              className="flex items-center gap-1 border p-2 rounded-lg bg-white text-sm shadow-sm hover:bg-gray-100 transition"
+              onClick={handleSortCycle}
+            >
+              <ArrowUpDown size={18} className="text-gray-600" />
+              <span className="text-xs text-gray-600">
+                {sortOption === "sales_count"
+                  ? "Popularity"
+                  : sortOption === "recentlyAdded"
+                  ? "Recently Added"
+                  : sortOption === "recentlyModified"
+                  ? "Recently Modified"
+                  : sortOption === "price_low_to_high"
+                  ? "Price: Low to High"
+                  : "Price: High to Low"}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Scrollable Categories */}
-      <div className="flex overflow-x-auto space-x-4 mb-4 lg:hidden">
+      <div className="flex overflow-x-auto space-x-4 mb-4 mt-4 lg:hidden">
         <button
-          className={`p-1 px-3 text-xs rounded-lg ${
-            selectedCategory === "All" ? "bg-red-500 text-white border-2 border-red-500" : "bg-white border-2"
-          }`}
+          className={`p-1 px-3 text-xs rounded-lg ${selectedCategory === "All" ? "bg-red-500 text-white border-2 border-red-500" : "bg-white border-2"}`}
           onClick={() => setSelectedCategory("All")}
         >
           All
@@ -101,13 +142,11 @@ export default function ProductsPage() {
         <aside className="hidden lg:block w-1/6">
           <h2 className="text-lg font-semibold mb-4">Categories</h2>
           <ul className="space-y-2">
-            <li className="cursor-pointer" onClick={() => setSelectedCategory("All")}>All</li>
+            <li className="cursor-pointer" onClick={() => setSelectedCategory("All")}>
+              All
+            </li>
             {categories.map((category) => (
-              <li
-                key={category}
-                className="cursor-pointer"
-                onClick={() => setSelectedCategory(category)}
-              >
+              <li key={category} className="cursor-pointer" onClick={() => setSelectedCategory(category)}>
                 {category}
               </li>
             ))}
@@ -117,28 +156,21 @@ export default function ProductsPage() {
         {/* Product Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-4 flex-1">
           {products
-            .filter((product) =>
-              (selectedCategory === "All" || product.category === selectedCategory) &&
-              product.title.toLowerCase().includes(searchTerm.toLowerCase())
+            .filter(
+              (product) =>
+                (selectedCategory === "All" || product.category === selectedCategory) &&
+                product.title.toLowerCase().includes(searchTerm.toLowerCase())
             )
             .map((product) => (
-
               <Link key={product.id} href={`/products/${product.id}`} passHref>
-              <div
-                key={product.id}
-                className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-95 hover:shadow-lg flex flex-col h-full"
-              >
-                <img
-                  src={product.image_url}
-                  alt={product.title}
-                  className="w-full h-40 object-cover rounded-md"
-                />
-                <h3 className="mt-2 font-semibold flex-grow">{product.title}</h3>
-                <div className="mt-2">
-                  <p className="font-bold text-left">₹ {product.price}</p>
-                  <p className="text-xs text-gray-500 text-left">Artist: {product.artist_name}</p>
+                <div className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-95 hover:shadow-lg flex flex-col h-full">
+                  <img src={product.image_url} alt={product.title} className="w-full h-40 object-cover rounded-md" />
+                  <h3 className="mt-2 font-semibold flex-grow">{product.title}</h3>
+                  <div className="mt-2">
+                    <p className="font-bold text-left">₹ {product.price}</p>
+                    <p className="text-xs text-gray-500 text-left">Artist: {product.artist_name}</p>
+                  </div>
                 </div>
-              </div>
               </Link>
             ))}
         </div>

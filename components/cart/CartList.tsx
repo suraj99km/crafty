@@ -26,26 +26,26 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {updatedCart.map((item) => (
-        <div key={item.id} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md border border-gray-200">
+        <div key={item.id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-md border border-gray-200">
           {/* Product Image */}
           <img src={item.image_url} alt={item.title} className="w-20 h-20 rounded-lg object-cover" />
 
-{/* Product Details */}
-<div className="flex-1 ml-4">
-  <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
-  <p className="text-gray-600">₹ {item.price}</p>
-  <p className="text-sm text-green-600 font-semibold mt-1">
-  Expected delivery <br /> by
-  <span className="font-semibold ml-1">
-    {new Date(Date.now() + (Math.floor(Math.random() * 5) + 2) * 24 * 60 * 60 * 1000)
-      .toLocaleDateString('en-GB', { day: 'numeric', month: 'short'})}
-  </span>
-</p>
+        {/* Product Details */}
+        <div className="flex-1 ml-4">
+          <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
+          <p className="text-gray-600">₹ {item.price}</p>
+          <p className="text-sm text-green-600 font-semibold mt-1">
+          Expected delivery <br /> by
+          <span className="font-semibold ml-1">
+            {new Date(Date.now() + (Math.floor(Math.random() * 5) + 2) * 24 * 60 * 60 * 1000)
+              .toLocaleDateString('en-GB', { day: 'numeric', month: 'short'})}
+          </span>
+        </p>
 
 
-</div>
+        </div>
 
 
 
