@@ -57,9 +57,9 @@ export default function ProductsPage() {
     const sortOrder = [
       "sales_count",
       "recentlyAdded",
-      "recentlyModified",
       "price_low_to_high",
       "price_high_to_low",
+      "recentlyModified",
     ];
     const currentIndex = sortOrder.indexOf(sortOption);
     const nextIndex = (currentIndex + 1) % sortOrder.length;

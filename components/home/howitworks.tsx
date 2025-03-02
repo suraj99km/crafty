@@ -1,6 +1,6 @@
 const Howitworks = () => {
   return (
-    <section className="py-2 px-5 bg-gray-50 text-center h-full flex flex-col justify-center">
+    <section className="pt-10 pb-2 px-5 text-center h-full flex flex-col justify-center">
       {/* Title */}
       <h2 className="text-3xl font-extrabold text-gray-900 mb-8">How It Works</h2>
 

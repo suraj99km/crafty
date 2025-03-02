@@ -61,7 +61,9 @@ const Footer = () => {
 
       {/* Bottom Section */}
       <div className="text-center text-sm font-semibold text-gray-600 py-4 border-t border-gray-300">
-        Made with ❤️ by CraftID.in
+        Made with ❤️ by <span className="text-white bg-red-500 rounded-lg p-1 font-bold">
+          CraftID.in
+        </span>
       </div>
     </footer>
   );

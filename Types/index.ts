@@ -19,12 +19,16 @@ export interface Product {
   }
   
 
-export interface Artist {
-    id?: string;
+  export interface Artist {
+    id: string;
     name: string;
-    bio?: string;
+    bio: string;
     profile_picture: string;
+    portfolio?: string;
+    instagram?: string;
+    other_social?: string;
 }
+
 
 export interface Address {
     id: number;

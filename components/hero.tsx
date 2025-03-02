@@ -24,7 +24,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="w-full min-h-[775px] flex flex-col items-center bg-gray-100 font-poppins">
+    <div className="w-full min-h-[775px] flex flex-col items-center font-poppins">
       {/* Hero Image */}
       <div className="relative w-full h-[380px]">
         <Image
@@ -36,7 +36,7 @@ const Hero = () => {
       </div>
 
       {/* Hero Content */}
-      <div className="w-full px-6 text-center mt-5">
+      <div className="w-full px-6 text-center mt-5 pb-10">
         <h1 className="text-3xl font-bold text-gray-900 leading-tight">
           Handmade Treasures, <br /> Crafted with Love
         </h1>
@@ -59,12 +59,12 @@ const Hero = () => {
             handleClick={handleJoinAsArtist}
           />
         </div>
-        <p className="text-md text-gray-500 italic mt-4 font-semibold">
+        <p className="text-md text-gray-500 italic mt-6 font-semibold">
           "Every craft has an Identity."
         </p>
       </div>
 
-      <div className="flex-1 pt-10 pb-10 padding-x">
+      <div className="flex-1 pt-10 pb-16 padding-x bg-gray-100">
           <h1 className="text-3xl font-bold mt-5 sm:mt-0">Our Mission</h1>
           <p className="hero__mission">
             At <span className="text-white bg-red-500 rounded-lg p-1 font-bold">CraftID.in</span>,  

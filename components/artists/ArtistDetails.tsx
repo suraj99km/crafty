@@ -1,62 +1,94 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import { Artist, Product } from "@/Types"; // Assuming you have these types defined
+import { useRouter } from "next/navigation"; // Correct useRouter for App Router
+import { Artist, Product } from "@/Types";
 
 type Props = {
   artist: Artist;
   relatedProducts: Product[];
 };
 
-
 const ArtistDetails: React.FC<Props> = ({ artist, relatedProducts }) => {
-  return (
-    <section className="max-container mt-20">
-      <div className="flex flex-col items-center">
-        {/* Artist Profile Section */}
-        <div className="flex flex-col md:flex-row w-full bg-white shadow-lg overflow-hidden">
-          <div className="w-full md:w-1/3">
-            <img
-              src={artist.profile_picture}
-              alt={artist.name}
-              className="w-full h-[400px] object-cover"
-            />
-          </div>
+  const router = useRouter();
 
-          <div className="w-full md:w-2/3 p-6">
-            <h1 className="text-4xl font-bold text-gray-800">{artist.name}</h1>
-            <p className="text-md text-gray-600 mt-2">{artist.bio || "No biography available."}</p>
-          </div>
+  return (
+    <section className="max-w-6xl mx-auto mt-20 p-6">
+      {/* Back Button */}
+      {/* <button
+        onClick={() => router.back()}
+        className="mb-6 px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition"
+      >
+        ← Back
+      </button> */}
+
+      {/* Artist Profile Section */}
+      <div className="flex flex-col md:flex-row items-center bg-white shadow-lg rounded-xl overflow-hidden">
+        <div className="w-full md:w-1/3">
+          <img
+            src={artist.profile_picture}
+            alt={artist.name}
+            className="w-full h-[400px] object-cover"
+          />
         </div>
 
-        {/* Related Products Section */}
-        <div className="mt-12 w-full">
-          <h2 className="text-3xl font-bold text-gray-800 text-center">Crafted Products</h2>
-          
-          {/* Product Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 md:grid-cols-3 gap-5 flex-1 p-6">
-            {relatedProducts.length === 0 ? (
-              <p>No crafted products found.</p>
-            ) : (
-              relatedProducts.map((product) => (
-                <Link key={product.id} href={`/products/${product.id}`} passHref>
-                <div key={product.id} className="product__card hover:scale-95 duration-300 transition-transform">
+        <div className="w-full md:w-2/3 p-6">
+          <h1 className="text-4xl font-bold text-gray-800">{artist.name}</h1>
+          <p className="text-md text-gray-600 mt-2">
+            {artist.bio || "No biography available."}
+          </p>
+
+{/* Social Links */}
+<div className="mt-4 flex gap-4">
+  {artist.instagram && (
+    <a href={artist.instagram} target="_blank" rel="noopener noreferrer" className="text-red-500 font-medium hover:underline">
+      Instagram
+    </a>
+  )}
+  {artist.portfolio && (
+    <a href={artist.portfolio} target="_blank" rel="noopener noreferrer" className="text-red-500 font-medium hover:underline">
+      Portfolio
+    </a>
+  )}
+  {artist.other_social && (
+    <a href={artist.other_social} target="_blank" rel="noopener noreferrer" className="text-red-500 font-medium hover:underline">
+      Other
+    </a>
+  )}
+</div>
+
+        </div>
+      </div>
+
+      {/* Related Products Section */}
+      <div className="mt-12">
+        <h2 className="text-3xl font-bold text-gray-800 text-center">Crafted Products</h2>
+
+        {/* Product Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-6">
+          {relatedProducts.length === 0 ? (
+            <p className="text-center text-gray-600">No crafted products found.</p>
+          ) : (
+            relatedProducts.map((product) => (
+              <Link key={product.id} href={`/products/${product.id}`} passHref>
+                <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-95 duration-300 transition-transform cursor-pointer">
                   <img
                     src={product.image_url}
                     alt={product.title}
-                    className="w-full h-[280px] object-cover rounded-t-lg transition-transform duration-300"
+                    className="w-full h-[250px] object-cover"
                   />
-                  <div className="flex justify-between items-center mt-4 mb-3 font-palanquin">
-                    <h2 className="font-bold ml-6 text-gray-800 text-md 2xl:text-xl">{product.title}</h2>
-                    <p className="text-gray-900 mr-4 text-sm 2xl:text-lg font-semibold">₹ {product.price}</p>
+                  <div className="p-4">
+                    <h2 className="font-bold text-gray-800 text-lg">{product.title}</h2>
+                    <p className="text-gray-900 text-sm font-semibold mt-2">₹ {product.price}</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Crafted by <span className="font-bold text-red-500">{artist.name}</span>
+                    </p>
                   </div>
-                  <p className="text-center text-xs text-gray-700 mb-2">
-                    Crafted by <span className="font-bold text-gray-900">{artist.name || "Unknown Artist"}</span>
-                  </p>
                 </div>
-                </Link>
-              ))
-            )}
-          </div>
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </section>

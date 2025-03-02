@@ -15,6 +15,7 @@
     "@vercel/analytics": "^1.4.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "compressorjs": "^1.2.1",
     "framer-motion": "^12.4.7",
     "lodash": "^4.17.21",
     "lucide-react": "^0.471.0",

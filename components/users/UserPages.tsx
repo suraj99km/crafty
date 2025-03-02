@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, ShoppingCart, Users, Package, HelpCircle, List } from "lucide-react";
+import { LogOut, ShoppingCart, Users, Package, HelpCircle, List, ArrowLeftRight, Paintbrush, ShoppingBag} from "lucide-react";
 import supabase from "@/lib/supabase-db/supabaseClient";
 
 const userPages = [
@@ -26,6 +26,7 @@ const artistPages = [
 export default function UserPages({ onClick }: { onClick?: () => void }) {
   const [user, setUser] = useState(false);
   const [isArtist, setIsArtist] = useState(false);
+  const [mode, setMode] = useState<"user" | "artist">("user");
   const router = useRouter();
 
   useEffect(() => {
@@ -35,14 +36,20 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
 
       setUser(true);
 
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select("is_artist")
-        .eq("id", data.user.id)
+      const { data: artistData, error: artistError } = await supabase
+        .from("Artists")
+        .select("id")
+        .eq("email_address", data.user.email)
         .single();
 
-      if (!userError) {
-        setIsArtist(userData?.is_artist === 1);
+      if (!artistError && artistData) {
+        setIsArtist(true);
+        // Load stored mode or default to "artist"
+        const storedMode = localStorage.getItem("profileMode");
+        setMode(storedMode === "user" ? "user" : "artist");
+      } else {
+        setIsArtist(false);
+        setMode("user");
       }
     };
 
@@ -54,12 +61,19 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
     onClick?.();
   };
 
+  const handleToggleMode = () => {
+    const newMode = mode === "user" ? "artist" : "user";
+    setMode(newMode);
+    localStorage.setItem("profileMode", newMode);
+  };
+
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Logout error:", error.message);
     } else {
       sessionStorage.clear();
+      localStorage.removeItem("profileMode");
       window.location.href = "/";
     }
   };
@@ -79,8 +93,19 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
           </button>
         )}
 
+      {isArtist && (
+        <button
+          onClick={handleToggleMode}
+          className="w-full flex items-center justify-center gap-2 text-base font-semibold bg-white text-red-500 border-2 border-red-500 px-4 py-2 rounded-full shadow-md hover:bg-gray-100 transition"
+        >
+          <ArrowLeftRight size={22} className="text-red-500" />
+          {mode === "user" ? "Switch to Artist" : "Switch to User"}
+        </button>
+      )}
+
+
         {/* User Shopping Section */}
-        {!isArtist && user && (
+        {mode === "user" && user && (
           <div className="w-full px-4">
             <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Shopping & Orders</h3>
             <div className="flex flex-col mt-2 space-y-2">
@@ -94,21 +119,8 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
           </div>
         )}
 
-        {/* User Profile Section */}
-        <div className="w-full px-4">
-          <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Profile</h3>
-          <div className="flex flex-col mt-2 space-y-2">
-            {profilePages.map((page) => (
-              <Link key={page.path} href={page.path} className="flex items-center gap-2 text-base hover:text-gray-200 transition py-2" onClick={onClick}>
-                {page.icon}
-                {page.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
         {/* Artist Dashboard Section */}
-        {isArtist && (
+        {mode === "artist" && isArtist && (
           <div className="w-full px-4">
             <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Artist Dashboard</h3>
             <div className="flex flex-col mt-2 space-y-2">
@@ -123,6 +135,19 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
         )}
       </div>
 
+     {/* User Profile Section */}
+    <div className="w-full px-4">
+      <h3 className="text-xs font-semibold text-gray-300 uppercase tracking-wide">Profile</h3>
+      <div className="flex flex-col mt-2 space-y-2">
+        {profilePages.map((page) => (
+          <Link key={page.path} href={page.path} className="flex items-center gap-2 text-base hover:text-gray-200 transition py-2" onClick={onClick}>
+            {page.icon}
+            {page.name}
+          </Link>
+        ))}
+      </div>
+    </div>
+
       {/* Logout Button (Always at Bottom) */}
       {user && (
         <div className="w-full px-4 border-t border-white pt-3 mt-6">
@@ -135,7 +160,6 @@ export default function UserPages({ onClick }: { onClick?: () => void }) {
           </button>
         </div>
       )}
-
     </div>
   );
 }
