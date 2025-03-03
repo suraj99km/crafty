@@ -227,7 +227,6 @@ export default function JoinArtistForm() {
           const file = e.target.files?.[0];
           if (file) {
             setImage(file);
-            setImageUrl(URL.createObjectURL(file)); // Show preview
             handleUpload(file, "artists"); // Upload immediately
           }
         }}
@@ -268,6 +267,7 @@ export default function JoinArtistForm() {
                 }
               }} 
             />  */}
+
 {/* Mobile Number Input */}
 <div className="space-y-2">
   <label className="text-gray-700 font-medium">Contact Number *</label>

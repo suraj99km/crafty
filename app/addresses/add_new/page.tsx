@@ -35,26 +35,19 @@ export default function AddNewAddress() {
     landmark: "",
   });
 
+  const [errors, setErrors] = useState<Partial<Address>>({});
+
   useEffect(() => {
     const getUser = async () => {
       const { data, error } = await supabase.auth.getUser();
-      if (error || !data?.user) {
-        setUser(null);
-        return;
-      }
+      if (error || !data?.user) return;
 
-      const fullName =
-        data.user.user_metadata?.full_name ||
-        data.user.user_metadata?.display_name ||
-        data.user.user_metadata?.name ||
-        "User";
-
+      const fullName = data.user.user_metadata?.full_name || "User";
       const firstName = fullName.split(" ")[0] || "";
       const lastName = fullName.split(" ")[1] || "";
       const email = data.user.email || "";
-      const id = data.user.id;
 
-      setUser({ id, firstName, lastName, email });
+      setUser({ id: data.user.id, firstName, lastName, email });
 
       setNewAddress((prev) => ({
         ...prev,
@@ -69,52 +62,41 @@ export default function AddNewAddress() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    // Ensure only numbers for phone and pincode
     if ((name === "phone" || name === "pincode") && !/^\d*$/.test(value)) return;
-
     setNewAddress((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    let newErrors: Partial<Address> = {};
+    if (!newAddress.first_name) newErrors.first_name = "First name is required.";
+    if (!/^\d{10}$/.test(newAddress.phone)) newErrors.phone = "Phone number must be exactly 10 digits.";
+    if (!/^\d{6}$/.test(newAddress.pincode)) newErrors.pincode = "Pincode must be exactly 6 digits.";
+    if (!newAddress.state) newErrors.state = "State is required.";
+    if (!newAddress.city) newErrors.city = "City is required.";
+    if (!newAddress.address_line1) newErrors.address_line1 = "Address Line 1 is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSaveAddress = async () => {
-    if (!/^\d{10}$/.test(newAddress.phone)) {
-      alert("Phone number must be exactly 10 numeric digits.");
-      return;
-    }
-
-    if (!/^\d{6}$/.test(newAddress.pincode)) {
-      alert("Pincode must be exactly 6 numeric digits.");
-      return;
-    }
-
-    if (!newAddress.first_name || !newAddress.phone || !newAddress.state || !newAddress.city || !newAddress.pincode || !newAddress.address_line1) {
-      alert("Please fill all required fields.");
-      return;
-    }
-
-    console.log("Saving address:", newAddress); // Debug log
-
-    const { error, data } = await supabase.from("user_information").upsert([
-      {
-        user_id: user?.id, // Ensure the user ID is passed
-        ...newAddress,
-      },
+    if (!validateForm()) return;
+  
+    const { error } = await supabase.from("user_information").upsert([
+      { user_id: user?.id, ...newAddress },
     ]);
-
-    console.log("Supabase response:", { data, error }); // Debug log
-
+  
     if (error) {
       alert("Failed to save address. Please try again.");
-      console.error("Error saving address:", error);
     } else {
       alert("Address saved successfully!");
-      router.push("/addresses");
+      router.back(); // Redirects to the previous page instead of a fixed route
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-      {/* Header with Back Button */}
       <div className="w-full max-w-2xl mt-20">
         <div className="relative flex items-center">
           <button
@@ -127,35 +109,47 @@ export default function AddNewAddress() {
         </div>
       </div>
 
-      {/* Form Card */}
       <Card className="w-full max-w-2xl mt-4 shadow-lg rounded-xl bg-white">
         <CardContent className="p-6 space-y-4">
-          {/* First Name & Last Name */}
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" name="first_name" value={newAddress.first_name} onChange={handleChange} placeholder="First Name" className="input-field" />
+            <div>
+              <input type="text" name="first_name" value={newAddress.first_name} onChange={handleChange} placeholder="First Name" className="input-field" />
+              {errors.first_name && <p className="error-text">{errors.first_name}</p>}
+            </div>
             <input type="text" name="last_name" value={newAddress.last_name} onChange={handleChange} placeholder="Last Name" className="input-field" />
           </div>
 
-          {/* Email */}
           <input type="email" name="email" value={newAddress.email} onChange={handleChange} placeholder="Email" className="input-field" />
 
-          {/* Phone Number */}
-          <input type="text" name="phone" value={newAddress.phone} onChange={handleChange} placeholder="Phone Number" className="input-field" maxLength={10} />
+          <div>
+            <input type="text" name="phone" value={newAddress.phone} onChange={handleChange} placeholder="Phone Number" className="input-field" maxLength={10} />
+            {errors.phone && <p className="error-text">{errors.phone}</p>}
+          </div>
 
-          {/* Address Fields */}
-          <input type="text" name="address_line1" value={newAddress.address_line1} onChange={handleChange} placeholder="Address Line 1" className="input-field" />
+          <div>
+            <input type="text" name="address_line1" value={newAddress.address_line1} onChange={handleChange} placeholder="Address Line 1" className="input-field" />
+            {errors.address_line1 && <p className="error-text">{errors.address_line1}</p>}
+          </div>
+
           <input type="text" name="address_line2" value={newAddress.address_line2} onChange={handleChange} placeholder="Address Line 2 (Optional)" className="input-field" />
           <input type="text" name="landmark" value={newAddress.landmark} onChange={handleChange} placeholder="Landmark (Optional)" className="input-field" />
 
-          {/* City, Pincode, and State */}
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" name="city" value={newAddress.city} onChange={handleChange} placeholder="City" className="input-field" />
-            <input type="text" name="state" value={newAddress.state} onChange={handleChange} placeholder="State" className="input-field" />
+            <div>
+              <input type="text" name="city" value={newAddress.city} onChange={handleChange} placeholder="City" className="input-field" />
+              {errors.city && <p className="error-text">{errors.city}</p>}
+            </div>
+            <div>
+              <input type="text" name="state" value={newAddress.state} onChange={handleChange} placeholder="State" className="input-field" />
+              {errors.state && <p className="error-text">{errors.state}</p>}
+            </div>
           </div>
 
-          <input type="text" name="pincode" value={newAddress.pincode} onChange={handleChange} placeholder="Pincode" className="input-field" maxLength={6} />
+          <div>
+            <input type="text" name="pincode" value={newAddress.pincode} onChange={handleChange} placeholder="Pincode" className="input-field" maxLength={6} />
+            {errors.pincode && <p className="error-text">{errors.pincode}</p>}
+          </div>
 
-          {/* Save Button */}
           <button
             onClick={handleSaveAddress}
             className="w-full text-lg bg-red-500 font-semibold text-white p-3 rounded-lg hover:bg-red-600 transition duration-200 shadow-md hover:shadow-lg"
@@ -165,7 +159,6 @@ export default function AddNewAddress() {
         </CardContent>
       </Card>
 
-      {/* Styles */}
       <style jsx>{`
         .input-field {
           width: 100%;
@@ -179,6 +172,11 @@ export default function AddNewAddress() {
         .input-field:focus {
           border-color: #ef4444;
           box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
+        }
+        .error-text {
+          color: red;
+          font-size: 14px;
+          margin-top: 4px;
         }
       `}</style>
     </div>

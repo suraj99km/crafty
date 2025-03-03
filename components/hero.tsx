@@ -26,7 +26,7 @@ const Hero = () => {
   return (
     <div className="w-full min-h-[775px] flex flex-col items-center font-poppins">
       {/* Hero Image */}
-      <div className="relative w-full h-[380px]">
+      <div className="mt-16 relative w-full h-[250px]">
         <Image
           src="/hero.jpg"
           alt="Handmade Treasures"
