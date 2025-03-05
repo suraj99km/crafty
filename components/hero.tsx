@@ -5,22 +5,46 @@ import CustomButton from "./CustomButton";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import supabase from "@/lib/supabase-db/supabaseClient";
+import { User } from "@supabase/supabase-js"; // Import the User type
 
 const Hero = () => {
   const router = useRouter();
-  const [user, setUser] = useState(false);
+  const [user, setUser] = useState<User | null>(null); // ✅ Fix: Explicitly set the type
 
   useEffect(() => {
     const checkUser = async () => {
       const { data, error } = await supabase.auth.getUser();
       if (error || !data?.user) return;
-      setUser(true);
+      setUser(data.user); // ✅ No more TypeScript errors
     };
     checkUser();
   }, []);
 
-  const handleJoinAsArtist = () => {
-    router.push(user ? "/join-as-artist" : "/login?redirect=/join-as-artist");
+  const handleJoinAsArtist = async () => {
+    if (!user) {
+      router.push("/login?redirect=/join-as-artist"); // Redirect if not logged in
+      return;
+    }
+
+    try {
+      const { data: artist, error } = await supabase
+        .from("Artists")
+        .select("email_address")
+        .eq("email_address", user.email) // ✅ user.email is now safe
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        console.error("Error fetching artist data:", error);
+      }
+
+      if (artist) {
+        router.push("/profile"); // If user is an artist, redirect to profile
+      } else {
+        router.push("/join-as-artist"); // Otherwise, go to onboarding
+      }
+    } catch (err) {
+      console.error("Error checking artist status:", err);
+    }
   };
 
   return (
@@ -59,6 +83,7 @@ const Hero = () => {
             handleClick={handleJoinAsArtist}
           />
         </div>
+
         <p className="text-md text-gray-500 italic mt-6 font-semibold">
           "Every craft has an Identity."
         </p>
@@ -101,7 +126,6 @@ const Hero = () => {
             </a>
           </div>
         </div>
-
     </div>
   );
 };

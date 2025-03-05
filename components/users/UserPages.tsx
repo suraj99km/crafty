@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, ShoppingCart, Users, Package, HelpCircle, List, ArrowLeftRight, Paintbrush, ShoppingBag} from "lucide-react";
+import { LogOut, ShoppingCart, Users, User, Package, HelpCircle, List, ArrowLeftRight, Paintbrush, ShoppingBag} from "lucide-react";
 import supabase from "@/lib/supabase-db/supabaseClient";
 
 const userPages = [
@@ -18,6 +18,7 @@ const profilePages = [
 ];
 
 const artistPages = [
+  { name: "Profile", path: "/profile", icon: <User size={20} /> },
   { name: "List a Product", path: "/list-product", icon: <List size={20} /> },
   { name: "Product Listings", path: "/product-listings", icon: <List size={20} /> },
   { name: "Track Your Sales", path: "/track-sales", icon: <Package size={20} /> },

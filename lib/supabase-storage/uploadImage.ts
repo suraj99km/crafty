@@ -3,48 +3,82 @@ import supabase from "@/lib/supabase-db/supabaseClient";
 import crypto from "crypto"; // ✅ Hashing function
 
 /**
- * Compresses an image to ensure it's below 50KB.
- * @param file - The image file selected by the user.
- * @returns {Promise<File | null>} - Compressed file or null if failed.
+ * Crops an image to a 1:1 ratio from the top before compression.
+ * @param file - The original image file.
+ * @returns {Promise<File | null>} - Cropped image as a File.
  */
-const compressImage = async (file: File): Promise<File | null> => {
-  if (!file) return null;
-
-  let quality = 0.6; // Start with decent quality
-  let maxWidth = 1000;
-  let maxHeight = 1000;
-
-  return new Promise((resolve, reject) => {
-    const compress = (inputFile: File, attempt = 1) => {
-      new Compressor(inputFile, {
-        quality,
-        maxWidth,
-        maxHeight,
-        convertSize: 0, // Always compress, no exceptions
-        success: async (compressedBlob) => {
-          const compressedFile = new File([compressedBlob], file.name, { type: file.type });
-
-          console.log(`Attempt ${attempt}: Compressed size = ${compressedFile.size / 1024} KB`);
-
-          if (compressedFile.size <= 50 * 1024 || attempt >= 4) {
-            resolve(compressedFile);
-          } else {
-            quality -= 0.1; // Reduce quality
-            maxWidth -= 200;
-            maxHeight -= 200;
-            compress(compressedFile, attempt + 1); // Retry compression
-          }
-        },
-        error: (err) => {
-          console.error("Compression error:", err);
-          reject(null);
-        },
-      });
-    };
-
-    compress(file);
-  });
-};
+const cropImageToSquare = async (file: File): Promise<File | null> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const minSide = Math.min(img.width, img.height); // Ensure square crop
+        const canvas = document.createElement("canvas");
+        canvas.width = minSide;
+        canvas.height = minSide;
+  
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(null);
+  
+        ctx.drawImage(img, 0, 0, minSide, minSide, 0, 0, minSide, minSide);
+  
+        canvas.toBlob((blob) => {
+          if (!blob) return reject(null);
+          const croppedFile = new File([blob], file.name, { type: file.type });
+          resolve(croppedFile);
+        }, file.type);
+      };
+      img.onerror = (err) => reject(err);
+    });
+  };
+  
+  /**
+   * Compresses an image after cropping.
+   * @param file - The image file.
+   * @returns {Promise<File | null>} - Compressed file or null if failed.
+   */
+  const compressImage = async (file: File): Promise<File | null> => {
+    if (!file) return null;
+  
+    // First, crop the image to a square
+    const croppedFile = await cropImageToSquare(file);
+    if (!croppedFile) return null;
+  
+    let quality = 0.6;
+    let maxWidth = 1000;
+    let maxHeight = 1000;
+  
+    return new Promise((resolve, reject) => {
+      const compress = (inputFile: File, attempt = 1) => {
+        new Compressor(inputFile, {
+          quality,
+          maxWidth,
+          maxHeight,
+          convertSize: 0,
+          success: async (compressedBlob) => {
+            const compressedFile = new File([compressedBlob], file.name, { type: file.type });
+  
+            console.log(`Attempt ${attempt}: Compressed size = ${compressedFile.size / 1024} KB`);
+  
+            if (compressedFile.size <= 50 * 1024 || attempt >= 4) {
+              resolve(compressedFile);
+            } else {
+              quality -= 0.1;
+              maxWidth -= 200;
+              maxHeight -= 200;
+              compress(compressedFile, attempt + 1);
+            }
+          },
+          error: (err) => {
+            console.error("Compression error:", err);
+            reject(null);
+          },
+        });
+      };
+  
+      compress(croppedFile);
+    });
+  };
 
 /**
  * Uploads an image to Supabase Storage, generates a signed URL (if needed), and saves it to the database.

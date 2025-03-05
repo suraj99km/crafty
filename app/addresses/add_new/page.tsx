@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import supabase from "@/lib/supabase-db/supabaseClient";
 import { ChevronLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
 
 type Address = {
   first_name: string;
@@ -88,10 +89,13 @@ export default function AddNewAddress() {
     ]);
   
     if (error) {
-      alert("Failed to save address. Please try again.");
+      toast.error("Failed to save address. Please try again.");
     } else {
-      alert("Address saved successfully!");
-      router.back(); // Redirects to the previous page instead of a fixed route
+      toast.success("Address saved successfully!");
+  
+      setTimeout(() => {
+        router.back(); // Redirect to the previous page
+      }, 1000);
     }
   };
 

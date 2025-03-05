@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Product, Artist } from "@/Types";
 import { ShoppingCart, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type Props = {
   product: Product;
@@ -23,19 +24,18 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
     setCartCount(totalQuantity);
   }, []);
 
-  // Handle adding product to the cart
   const handleAddToCart = () => {
     setIsAdding(true);
-
+  
     setTimeout(() => {
       setIsAdding(false);
-
+  
       // Get existing cart from localStorage
       let cart: (Product & { quantity: number })[] = JSON.parse(localStorage.getItem("cart") || "[]");
-
+  
       // Find if the product already exists in the cart
       const existingProductIndex = cart.findIndex((item) => item.id === product.id);
-
+  
       if (existingProductIndex !== -1) {
         // If product exists, increase quantity
         cart[existingProductIndex].quantity += 1;
@@ -43,13 +43,18 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
         // If product doesn't exist, add with quantity 1
         cart.push({ ...product, quantity: 1 });
       }
-
+  
       // Update cart in localStorage
       localStorage.setItem("cart", JSON.stringify(cart));
-
+  
       // Update cart count
       const totalQuantity = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
       setCartCount(totalQuantity);
+  
+      // Show toast notification
+      toast.success(`${product.title} added to cart!`, {
+        duration: 3000, // Auto-close after 3 seconds
+      });
     }, 500);
   };
 
@@ -63,7 +68,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
       {/* Back Button */}
       <button
         onClick={handleBack}
-        className="fixed top-24 left-4 bg-white rounded-full p-3 shadow-lg z-10 hover:bg-gray-100 transition-all duration-200"
+        className="fixed top-24 left-4 bg-white rounded-full p-2 shadow-lg z-10 hover:bg-gray-100 transition-all duration-200"
       >
         <ChevronLeft size={24} className="text-gray-800" />
       </button>
