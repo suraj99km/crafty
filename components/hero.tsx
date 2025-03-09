@@ -85,7 +85,7 @@ const Hero = () => {
         </div>
 
         <p className="text-md text-gray-500 italic mt-6 font-semibold">
-          "Every craft has an Identity."
+          "Every craft carries an Identity."
         </p>
       </div>
 

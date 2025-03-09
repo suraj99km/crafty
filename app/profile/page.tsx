@@ -337,7 +337,9 @@ const ArtistProfile = () => {
               onChange={(e) => setArtist({ ...artist, bio: e.target.value })}
               onBlur={() => handleUpdate("bio", artist.bio)}
               autoFocus
+              rows={6} // Adjust this number as needed
             />
+
           ) : (
             <p className="text-gray-700 leading-relaxed">{artist.bio || "No bio added yet."}</p>
           )}

@@ -3,7 +3,7 @@ import supabase from "@/lib/supabase-db/supabaseClient";
 import crypto from "crypto"; // ✅ Hashing function
 
 /**
- * Crops an image to a 1:1 ratio from the top before compression.
+ * Crops an image to a 1:1 ratio from the center before compression.
  * @param file - The original image file.
  * @returns {Promise<File | null>} - Cropped image as a File.
  */
@@ -12,7 +12,10 @@ const cropImageToSquare = async (file: File): Promise<File | null> => {
       const img = new Image();
       img.src = URL.createObjectURL(file);
       img.onload = () => {
-        const minSide = Math.min(img.width, img.height); // Ensure square crop
+        const minSide = Math.min(img.width, img.height); // Ensuring a square crop
+        const startX = (img.width - minSide) / 2;  // Center cropping X-axis
+        const startY = (img.height - minSide) / 2; // Center cropping Y-axis
+  
         const canvas = document.createElement("canvas");
         canvas.width = minSide;
         canvas.height = minSide;
@@ -20,7 +23,7 @@ const cropImageToSquare = async (file: File): Promise<File | null> => {
         const ctx = canvas.getContext("2d");
         if (!ctx) return reject(null);
   
-        ctx.drawImage(img, 0, 0, minSide, minSide, 0, 0, minSide, minSide);
+        ctx.drawImage(img, startX, startY, minSide, minSide, 0, 0, minSide, minSide);
   
         canvas.toBlob((blob) => {
           if (!blob) return reject(null);
@@ -134,16 +137,6 @@ export async function uploadImage(file: File, folder: string): Promise<string | 
   
     if (!data?.path) {
       console.error("Upload response missing path:", data);
-      return null;
-    }
-  
-    // ✅ Ensure the profile image is publicly accessible
-    const { error: publicError } = await supabase.storage
-      .from("craftid.in-images")
-      .update(filePath, compressedFile, { cacheControl: "3600", upsert: true });
-  
-    if (publicError) {
-      console.error("Error setting file to public:", publicError);
       return null;
     }
   
