@@ -246,7 +246,7 @@ export default function ProductVideosUploader({
                   <UploadCloud className="w-8 h-8 text-gray-500 mb-1" />
                   <span className="text-xs text-gray-500">Upload {key === "qualityVideo" ? "Quality" : "Demo"} Video</span>
                   <span className="text-xs text-gray-400 mt-1">Max size: 50MB</span>
-                  <span className="text-xs text-gray-400">Formats: MP4, MOV, AVI</span>
+                  <span className="text-xs text-gray-400">Formats: MP4</span>
                 </>
               )}
               
@@ -289,15 +289,13 @@ export default function ProductVideosUploader({
         </div>
       ))}
       
-      <div className="text-xs text-gray-500 space-y-1">
-        <span className="font-medium block">Tips for successful uploads:</span> 
+        <div className="text-xs text-gray-500 space-y-1">
+        <span className="font-medium block">Upload Tips:</span> 
         <ul className="ml-1 space-y-0.5">
-          <li>• Keep videos short (10-20 seconds) for faster uploads</li>
-          <li>• Use a stable internet connection for best results</li>
-          <li>• Compress videos before uploading for faster processing</li>
-          <li>• If upload fails, try again or with a smaller file</li>
+            <li>• Keep videos short (10-20 sec)</li>
+            <li>• Compress videos for faster uploads</li>
         </ul>
-      </div>
+        </div>
     </div>
   );
 }

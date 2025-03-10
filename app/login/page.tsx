@@ -22,7 +22,7 @@ export default function LoginPage() {
 
       {/* Tagline */}
       <p className="text-white text-md font-semibold mb-6 tracking-wide">
-        "Every craft has an identity."
+        "Every craft carries an identity."
       </p>
 
       {/* Login Card */}

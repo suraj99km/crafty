@@ -41,24 +41,24 @@ export default function OAuthButtons() {
       </Button>
 
       {/* LinkedIn Sign-In */}
-      <Button
+      {/* <Button
         className="mt-4 w-full flex items-center justify-center gap-3 p-3 border border-gray-300 rounded-xl bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition duration-300"
         onClick={() => signInWithProvider("linkedin")}
         disabled={loading === "linkedin"}
       >
         <FaLinkedin className="text-blue-600 text-lg" />
         {loading === "linkedin" ? "Signing in..." : "Sign in with LinkedIn"}
-      </Button>
+      </Button> */}
 
       {/* X.com (Twitter) Sign-In */}
-      <Button
+      {/* <Button
         className="mt-4 w-full flex items-center justify-center gap-3 p-3 border border-gray-300 rounded-xl bg-white shadow-md hover:shadow-lg hover:bg-gray-100 transition duration-300"
         onClick={() => signInWithProvider("twitter")}
         disabled={loading === "twitter"}
       >
         <FaXTwitter className="text-black text-lg" />
         {loading === "twitter" ? "Signing in..." : "Sign in with X.com"}
-      </Button>
+      </Button> */}
     </>
   );
 }

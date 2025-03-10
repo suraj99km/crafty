@@ -95,7 +95,7 @@ const ArtistProfile = () => {
   
     try {
       // Store in user-specific folder inside "images/"
-      const emailFolder = `images/${artist.email_address.replace(/[@.]/g, "_")}`;
+      const emailFolder = `artists/${artist.email_address.replace(/[@.]/g, "_")}`;
       
       // Upload file to Supabase storage
       const uploadedUrl = await uploadImage(file, emailFolder);

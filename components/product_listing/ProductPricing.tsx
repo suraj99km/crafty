@@ -14,7 +14,7 @@ export default function ProductPricing() {
       <Card className="w-full max-w-3xl shadow-lg rounded-2xl border border-gray-200 bg-white">
         <CardContent className="p-6 space-y-6">
           <div className="flex items-center space-x-3 border-b pb-3">
-            <span className="rounded-full h-8 w-8 flex items-center justify-center bg-red-500 text-white text-lg font-bold">5</span>
+            <span className="rounded-full h-8 w-8 flex items-center justify-center bg-red-500 text-white text-lg font-bold">3</span>
             <h2 className="text-xl font-semibold text-gray-800">Product Pricing</h2>
           </div>
 
