@@ -5,10 +5,16 @@ import OAuthButtons from "@/components/auth/OAuthButtoms";
 import EmailAuth from "@/components/auth/EmailAuth";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-red-500 to-red-600 p-6">
+    <motion.div
+    className="flex items-center flex-col justify-center min-h-screen bg-gradient-to-b from-red-500 to-red-600 p-6"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+  >
       {/* Logo */}
       <div className="mb-4">
         <Image
@@ -57,6 +63,6 @@ export default function LoginPage() {
           .
         </p>
       </Card>
-    </div>
+    </motion.div>
   );
 }

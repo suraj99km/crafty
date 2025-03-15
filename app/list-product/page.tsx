@@ -16,9 +16,9 @@ export default function ProductListingPage() {
     images: [],
     qualityVideo: null,
     demoVideo: null,
-    dimensions: { length: "", width: "", height: "", weight: "" },
+    dimensions: { length: undefined, width: undefined, height: undefined, weight: undefined }, // <-- Use undefined instead of null
     material: "",
-    prepTime: "",
+    prepTime: undefined,
     priceByArtist: "",
     priceOnPlatform: "",
     paymentMethod: "",
@@ -51,9 +51,9 @@ export default function ProductListingPage() {
       images: savedProduct.images || [],
       qualityVideo: savedProduct.qualityVideo || null,
       demoVideo: savedProduct.demoVideo || null,
-      dimensions: savedProduct.dimensions || { length: "", width: "", height: "", weight: "" },
+      dimensions: savedProduct.dimensions || { length: null, width: null, height: null, weight: null },
       material: savedProduct.material || "",
-      prepTime: savedProduct.prepTime || "",
+      prepTime: savedProduct.prepTime || null,
       priceByArtist: savedProduct.priceByArtist || "",
       priceOnPlatform: savedProduct.priceOnPlatform || "",
       paymentMethod: savedProduct.paymentMethod || "",
@@ -115,8 +115,8 @@ export default function ProductListingPage() {
       {/* Step-based Section Rendering */}
       <div>
         {currentStep === 1 && <ProductDetails product={product} updateProduct={updateProduct} />}
-        {/* {currentStep === 2 && <ProductSpecifications product={product} updateProduct={updateProduct} />}
-        {currentStep === 3 && <ProductPricing product={product} updateProduct={updateProduct} />}
+        {currentStep === 2 && <ProductSpecifications product={product} updateProduct={updateProduct} />}
+        {/* {currentStep === 3 && <ProductPricing product={product} updateProduct={updateProduct} />}
         {currentStep === 4 && <ProductShipping product={product} updateProduct={updateProduct} />}
         {currentStep === 5 && <AdditionalInfo product={product} updateProduct={updateProduct} />} */}
       </div>
@@ -132,7 +132,7 @@ export default function ProductListingPage() {
           </Button>
         )}
 
-        {currentStep < 1 ? (
+        {currentStep < 5 ? (
           <Button
             onClick={handleNextStep}
             className="px-6 py-2 font-bold rounded-2xl text-md text-white bg-red-500 hover:bg-red-600 shadow-md transition-all"

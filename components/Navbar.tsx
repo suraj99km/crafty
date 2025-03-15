@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Menu, X, Home, Store, Users } from "lucide-react";
 import AuthButton from "./auth/AuthButton";
 import UserPages from "./users/UserPages";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -52,17 +53,18 @@ const Navbar = () => {
       }`}
     >
       <nav className="max-w-[1440px] mx-auto flex justify-between items-center px-6 sm:px-16 transition-all duration-300">
-        <Link href="/" className="flex items-center">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={180}
-            height={30}
-            className={`object-contain transition-all duration-300 ${
-              isScrolled ? "w-28" : "w-44"
-            }`}
-          />
-        </Link>
+      <Link href="/" className="relative flex flex-col items-center group">
+      {/* Logo Image */}
+      <Image
+        src="/logo.png"
+        alt="Logo"
+        width={180}
+        height={30}
+        className={`object-contain transition-all duration-300 ${
+          isScrolled ? "w-28" : "w-44"
+        }`}
+      />
+    </Link>
 
         {/* Sidebar Toggle Button */}
         <button
@@ -78,7 +80,7 @@ const Navbar = () => {
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={` fixed top-0 right-0 w-[260px] h-full bg-red-500 text-white transition-transform duration-300 ${
+        className={` fixed top-0 right-0 w-[280px] h-full bg-red-500 text-white transition-transform duration-300 ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         } flex flex-col justify-between`}
       >
@@ -97,22 +99,25 @@ const Navbar = () => {
             <AuthButton />
           </div>
 
-          {/* Navigation */}
-          <div className="border-t border-white/20 pt-3">
-            <p className="text-xs uppercase opacity-75">Explore</p>
-            <Link href="/" className="flex items-center gap-2 py-2 text-base hover:text-gray-200" onClick={toggleSidebar}>
-              <Home size={18} />
-              Home
-            </Link>
-            <Link href="/products" className="flex items-center gap-2 py-2 text-base hover:text-gray-200" onClick={toggleSidebar}>
-              <Store size={18} />
-              Products
-            </Link>
-            <Link href="/artists" className="flex items-center gap-2 py-2 text-base hover:text-gray-200" onClick={toggleSidebar}>
-              <Users size={18} />
-              Artists
-            </Link>
-          </div>
+{/* Navigation */}
+<div className="border-t border-white/20 pt-6 flex justify-center gap-8">
+  {[
+    { href: "/", icon: <Home size={26} />, label: "Home" },
+    { href: "/products", icon: <Store size={26} />, label: "Products" },
+    { href: "/artists", icon: <Users size={26} />, label: "Artists" },
+  ].map((item, index) => (
+    <Link 
+      key={index} 
+      href={item.href} 
+      className="flex flex-col items-center gap-2 text-sm text-gray-200 hover:text-white transition-all"
+      onClick={toggleSidebar}
+    >
+      {item.icon}
+      <span className="text-xs uppercase tracking-wide">{item.label}</span>
+    </Link>
+  ))}
+</div>
+
 
           {/* User Pages */}
           <div className="border-t border-white/20 pt-3">
