@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import supabase from "@/lib/supabase-db/supabaseClient";
 import { User } from "@supabase/supabase-js";
 import OurMission from "@/components/home/ourmission";
-import HowItWorks from "@/components/home/HowItWorks";
+import HowItWorks from "@/components/home/howitworks";
 import { motion } from "framer-motion";
 
 const Hero = () => {
