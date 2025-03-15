@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadImage } from "@/lib/supabase-storage/uploadImage";
 import PaymentMethods from "@/components/profile/PaymentMethods";
+import ArtistAddresses from "@/components/profile/ArtistAddresses";
 
 const ArtistProfile = () => {
   const [user, setUser] = useState<any>(null);
@@ -354,6 +355,8 @@ const ArtistProfile = () => {
       </Card>
 
       <PaymentMethods/>
+
+      <ArtistAddresses/>
 
 
     </div>
