@@ -45,6 +45,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.26.10",
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
