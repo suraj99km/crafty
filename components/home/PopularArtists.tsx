@@ -25,7 +25,7 @@ const PopularArtists = () => {
   }, []);
 
   const handleShowMore = () => {
-    setVisibleCount((prev) => prev + 5);
+    setVisibleCount((prev) => prev + 4);
   };
 
   return (
@@ -70,7 +70,7 @@ const PopularArtists = () => {
           </button>
         )}
 
-        {visibleCount >= artists.length && artists.length > 5 && (
+        {visibleCount >= artists.length && artists.length > 4 && (
           <div className="flex justify-center mt-8">
             <a
               href="/artists"

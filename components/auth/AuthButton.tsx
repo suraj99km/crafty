@@ -4,42 +4,56 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { User } from "lucide-react";
 import supabase from "@/lib/supabase-db/supabaseClient";
+import { toast } from "sonner";
 
 export default function AuthButton() {
   const [user, setUser] = useState<{ firstName?: string } | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data?.user) {
-        setUser(null);
-        return;
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+
+        if (!sessionData?.session) {
+          console.warn("No active session found.");
+          setUser(null);
+          return;
+        }
+
+        const { data, error } = await supabase.auth.getUser();
+
+        if (error || !data?.user) {
+          console.warn("Error fetching user:", error);
+          toast.error(error?.message || "User session not found.");
+          setUser(null);
+          return;
+        }
+
+        const fullName =
+          data.user.user_metadata?.full_name ||
+          data.user.user_metadata?.display_name ||
+          data.user.user_metadata?.name ||
+          "User";
+
+        setUser({ firstName: fullName.split(" ")[0] });
+      } catch (err) {
+        console.error("Unexpected error:", err);
+        toast.error("Failed to fetch user data.");
       }
-
-      const fullName =
-        data.user.user_metadata?.full_name ||
-        data.user.user_metadata?.display_name ||
-        data.user.user_metadata?.name ||
-        "User";
-
-      const firstName = fullName.split(" ")[0];
-      setUser({ firstName });
     };
-
-    // Listen to auth state changes
-    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_OUT") {
-        setUser(null); // Clear user state on logout
-      } else {
-        getUser(); // Fetch user if signed in
-      }
-    });
 
     getUser();
 
-    return () => {
-      listener?.subscription.unsubscribe(); // Cleanup listener
-    };
+    // Listen for authentication state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event);
+      if (session) getUser();
+      else setUser(null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return user ? (

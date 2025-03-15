@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadImage } from "@/lib/supabase-storage/uploadImage";
+import PaymentMethods from "@/components/profile/PaymentMethods";
 
 const ArtistProfile = () => {
   const [user, setUser] = useState<any>(null);
@@ -351,6 +352,8 @@ const ArtistProfile = () => {
       </button>
         </CardContent>
       </Card>
+
+      <PaymentMethods/>
 
 
     </div>

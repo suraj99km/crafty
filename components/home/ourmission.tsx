@@ -32,7 +32,7 @@ const OurMission = () => {
       transition: { duration: 0.7, ease: "easeOut", delay: 1.2 }
     },
     hover: {
-      scale: 1.05,
+      scale: 1,
       backgroundColor: "#b91c1c", // dark red
       boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
     },
@@ -68,7 +68,7 @@ const OurMission = () => {
           className="text-lg md:text-xl text-gray-800 leading-relaxed mb-6"
           variants={itemVariants}
         >
-          At <span className="inline-block text-white bg-red-500 rounded-lg px-2 py-1 font-bold transform transition-transform hover:scale-105">CraftID.in</span>,
+          At <span className="inline-block text-white bg-red-500 rounded-lg px-2 py-1 font-bold transform transition-transform">CraftID.in</span>,
           we believe <span className="text-red-500 font-extrabold">every artist deserves a stage.</span>
         </motion.p>
         

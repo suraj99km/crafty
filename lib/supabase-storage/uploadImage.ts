@@ -44,8 +44,8 @@ const cropImageToSquare = async (file: File): Promise<File | null> => {
     if (!file) return null;
   
     // First, crop the image to a square
-    const croppedFile = await cropImageToSquare(file);
-    if (!croppedFile) return null;
+    // const croppedFile = await cropImageToSquare(file);
+    // if (!croppedFile) return null;
   
     let quality = 0.6;
     let maxWidth = 1000;
@@ -79,7 +79,8 @@ const cropImageToSquare = async (file: File): Promise<File | null> => {
         });
       };
   
-      compress(croppedFile);
+    //   compress(croppedFile);
+      compress(file);
     });
   };
 
