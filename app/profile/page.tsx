@@ -18,13 +18,21 @@ const ArtistProfile = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [editing, setEditing] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
-  const [activeTab, setActiveTab] = useState<string>(
-    sessionStorage.getItem("artistProfileActiveTab") || "profile"
-  );
+  const [activeTab, setActiveTab] = useState<string>("profile");
 
   useEffect(() => {
-    sessionStorage.setItem("artistProfileActiveTab", activeTab);
-  }, [activeTab]);
+    if (typeof window !== "undefined") {
+      const savedTab = sessionStorage.getItem("artistProfileActiveTab");
+      if (savedTab) setActiveTab(savedTab);
+    }
+  }, []);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("artistProfileActiveTab", tab);
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -162,7 +170,7 @@ const ArtistProfile = () => {
         handleProfileImageUpload={handleProfileImageUpload} 
         />
 
-<Tabs defaultValue={activeTab} className="w-full">
+<Tabs defaultValue={activeTab} onValueChange={handleTabChange} className="w-full">
       <TabsList className="relative flex mb-6 p-1 bg-white rounded-xl shadow-sm border border-gray-100 z-[5] overflow-hidden">
         <div
           className="absolute h-[calc(100%-8px)] top-1 transition-all duration-300 ease-out bg-red-500 rounded-lg shadow-md z-[4]"
