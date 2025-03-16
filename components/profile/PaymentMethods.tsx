@@ -7,7 +7,8 @@ import {
   Trash, 
   AlertCircle, 
   CheckCircle,
-  Plus
+  Plus,
+  IndianRupee
 } from "lucide-react";
 import supabase from "@/lib/supabase-db/supabaseClient";
 import { toast } from "sonner";
@@ -139,7 +140,7 @@ export default function PaymentMethods() {
     if (method === "Bank Account") {
       return <CreditCard className="h-5 w-5 text-red-500" />;
     } else if (method === "UPI") {
-      return <CreditCard className="h-5 w-5 text-red-500" />;
+      return <IndianRupee className="w-5 h-5 text-red-500" />;
     }
     return <CreditCard className="h-5 w-5 text-red-500" />;
   };

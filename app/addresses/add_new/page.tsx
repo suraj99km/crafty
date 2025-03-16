@@ -89,6 +89,7 @@ export default function AddNewAddress() {
     ]);
   
     if (error) {
+      console.log(error);
       toast.error("Failed to save address. Please try again.");
     } else {
       toast.success("Address saved successfully!");
