@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import supabase from "@/lib/supabase-db/supabaseClient"; // Adjust based on your setup
+import supabase from "@/lib/supabase-db/supabaseClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 const WalletBalance = () => {
-  const [artistId, setArtistId] = useState<string | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [isNewArtist, setIsNewArtist] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -14,46 +13,61 @@ const WalletBalance = () => {
   useEffect(() => {
     const fetchArtistWallet = async () => {
       setLoading(true);
-  
+
       // Get authenticated user
-      const { data: user, error: userError } = await supabase.auth.getUser();
-      if (userError || !user?.user?.email) {
+      let user;
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error || !data?.user?.email) throw new Error("User not authenticated.");
+        user = data.user;
+      } catch (error) {
         toast.error("User not authenticated.");
         setLoading(false);
         return;
       }
-  
-      // Fetch artist ID using email
-      const { data: artist, error: artistError } = await supabase
-        .from("Artists")
-        .select("id")
-        .eq("email_address", user.user.email)
-        .single();
-  
-      if (artistError || !artist) {
-        toast.error("Artist not found.");
+
+      // Fetch artist ID
+      let artist;
+      try {
+        const { data, error } = await supabase
+          .from("Artists")
+          .select("id")
+          .eq("email_address", user.email)
+          .single();
+
+        if (error || !data) throw error;
+        artist = data;
+      } catch {
+        setIsNewArtist(true);
         setLoading(false);
         return;
       }
-  
-      setArtistId(artist.id);
-  
-      // Fetch wallet balance using new RLS policy
-      const { data: wallet, error: walletError } = await supabase
-        .from("artist_wallet")
-        .select("balance")
-        .eq("artist_id", artist.id) // Now allowed by policy
-        .single();
-  
-      if (walletError) {
-        toast.error("Failed to fetch wallet balance.");
-      } else {
-        setBalance(wallet?.balance || 0);
+
+      try {
+        const { data, error } = await supabase
+          .from("artist_wallet")
+          .select("balance")
+          .eq("artist_id", artist.id)
+          .limit(1) // Ensures at most one row is fetched
+          .maybeSingle(); // Avoids error when no rows are found
+      
+        if (error) throw error;
+      
+        if (!data) {
+          setIsNewArtist(true);
+          setBalance(null);
+        } else {
+          setIsNewArtist(false);
+          setBalance(data.balance || 0);
+        }
+      } catch (error) {
+        console.error("Error fetching wallet balance:", error);
+        setIsNewArtist(true);
+      } finally {
+        setLoading(false);
       }
-  
-      setLoading(false);
     };
-  
+
     fetchArtistWallet();
   }, []);
 
@@ -84,7 +98,7 @@ const WalletBalance = () => {
             variant="outline"
             size="sm"
             className="text-xs"
-            disabled={loading}
+            disabled={loading || isNewArtist}
             onClick={() => (window.location.href = "/profile/wallet-transactions")}
           >
             View Transactions
