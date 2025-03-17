@@ -78,7 +78,7 @@ const Hero = () => {
       <div className="lg:hidden flex flex-col items-center">
         {/* Hero Image */}
         <motion.div 
-          className="mt-16 relative w-full h-[250px]"
+          className="mt-16 relative w-full h-[230px]"
           initial="hidden"
           animate="visible"
           variants={imageVariants}
@@ -118,7 +118,7 @@ const Hero = () => {
           
           {/* Buttons */}
           <motion.div 
-            className="flex flex-col gap-4 mt-8 max-w-sm mx-auto"
+            className="flex flex-col gap-4 mt-6 max-w-sm mx-auto"
             initial="hidden"
             animate="visible"
             custom={3}

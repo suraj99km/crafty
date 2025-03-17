@@ -45,7 +45,7 @@ export const fetchProductsWithArtists = async (): Promise<Product[] | null> => {
 export const fetchPopularArtists = async () => {
   const { data: artists, error } = await supabase
     .from('Artists')
-    .select('id, name, profile_picture, bio, Products(sales_count)'); // Fetch artists with their products' sales count
+    .select('id, name, profile_picture, tagline, bio, Products(sales_count)'); // Fetch artists with their products' sales count
 
   if (error) {
     console.error('Error fetching artists:', error);

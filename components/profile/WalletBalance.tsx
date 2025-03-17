@@ -83,7 +83,7 @@ const WalletBalance = () => {
           {loading ? (
             <p className="text-sm text-gray-400 mt-4">Fetching...</p>
           ) : isNewArtist ? (
-            <p className="text-sm text-gray-400">No wallet activity yet</p>
+            <p className="text-sm text-gray-400 mt-4">No wallet activity yet</p>
           ) : (
             <p className="text-2xl font-bold text-green-600">
               INR {balance !== null ? balance.toFixed(2) : "0.00"}

@@ -175,7 +175,7 @@ const ArtistProfile = () => {
         <div
           className="absolute h-[calc(100%-8px)] top-1 transition-all duration-300 ease-out bg-red-500 rounded-lg shadow-md z-[4]"
           style={{
-            width: "calc(50% - 8px)",
+            width: "calc(50% - 4px)",
             left: "4px",
             transform: `translateX(${activeTab === "business" ? "100%" : "0%"})`,
           }}

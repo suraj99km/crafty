@@ -23,6 +23,7 @@ export interface Product {
     id: string;
     name: string;
     bio: string;
+    tagline?: string;
     profile_picture: string;
     portfolio?: string;
     instagram?: string;
