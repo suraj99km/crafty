@@ -123,7 +123,7 @@ export const fetchLatestProductsWithCategories = async (sortBy: string = "sales_
 export const fetchArtistDetails = async (id: string): Promise<Artist | null> => {
   const { data: artist, error } = await supabase
     .from('Artists')
-    .select('id, name, bio, profile_picture')
+    .select('*')
     .eq('id', id)
     .single();
 
