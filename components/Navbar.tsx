@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Menu, X, Home, Store, Users } from "lucide-react";
 import AuthButton from "./auth/AuthButton";
 import UserPages from "./users/UserPages";
-import { motion } from "framer-motion";
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -99,24 +98,24 @@ const Navbar = () => {
             <AuthButton />
           </div>
 
-{/* Navigation */}
-<div className="border-t border-white/20 pt-6 flex justify-center gap-8">
-  {[
-    { href: "/", icon: <Home size={26} />, label: "Home" },
-    { href: "/products", icon: <Store size={26} />, label: "Products" },
-    { href: "/artists", icon: <Users size={26} />, label: "Artists" },
-  ].map((item, index) => (
-    <Link 
-      key={index} 
-      href={item.href} 
-      className="flex flex-col items-center gap-2 text-sm text-gray-200 hover:text-white transition-all"
-      onClick={toggleSidebar}
-    >
-      {item.icon}
-      <span className="text-xs uppercase tracking-wide">{item.label}</span>
-    </Link>
-  ))}
-</div>
+        {/* Navigation */}
+        <div className="border-t border-white/20 pt-6 flex justify-center gap-8">
+          {[
+            { href: "/", icon: <Home size={26} />, label: "Home" },
+            { href: "/products", icon: <Store size={26} />, label: "Products" },
+            { href: "/artists", icon: <Users size={26} />, label: "Artists" },
+          ].map((item, index) => (
+            <Link 
+              key={index} 
+              href={item.href} 
+              className="flex flex-col items-center gap-2 text-sm text-gray-200 hover:text-white transition-all"
+              onClick={toggleSidebar}
+            >
+              {item.icon}
+              <span className="text-xs uppercase tracking-wide">{item.label}</span>
+            </Link>
+          ))}
+        </div>
 
 
           {/* User Pages */}

@@ -97,7 +97,7 @@ const Hero = () => {
         {/* Hero Content */}
         <div className="w-full px-6 text-center mt-8 pb-10">
           <motion.h1 
-            className="text-3xl font-bold text-gray-900 leading-tight"
+            className="text-3xl font-semibold text-gray-900 leading-tight"
             initial="hidden"
             animate="visible"
             custom={1}
@@ -139,13 +139,13 @@ const Hero = () => {
           </motion.div>
           
           <motion.p 
-            className="text-md text-gray-500 italic mt-8 font-semibold"
+            className="text-md text-gray-500 italic mt-6 font-semibold"
             initial="hidden"
             animate="visible"
             custom={4}
             variants={fadeUpVariants}
           >
-            "Every craft carries an Identity."
+            "Where crafts come alive"
           </motion.p>
         </div>
       </div>

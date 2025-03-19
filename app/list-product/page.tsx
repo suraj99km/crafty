@@ -19,9 +19,9 @@ export default function ProductListingPage() {
     dimensions: { length: undefined, width: undefined, height: undefined, weight: undefined }, // <-- Use undefined instead of null
     material: "",
     prepTime: undefined,
-    priceByArtist: "",
-    priceOnPlatform: "",
-    paymentMethod: "",
+    artistPrice: undefined,
+    platformPrice: undefined,
+    paymentMethodId: "",
     shippingAddress: "",
     internationalShipping: false,
     additionalShippingCost: "",
@@ -54,9 +54,9 @@ export default function ProductListingPage() {
       dimensions: savedProduct.dimensions || { length: null, width: null, height: null, weight: null },
       material: savedProduct.material || "",
       prepTime: savedProduct.prepTime || null,
-      priceByArtist: savedProduct.priceByArtist || "",
-      priceOnPlatform: savedProduct.priceOnPlatform || "",
-      paymentMethod: savedProduct.paymentMethod || "",
+      artistPrice: savedProduct.artistPrice || "",
+      platformPrice: savedProduct.platformPrice || "",
+      paymentMethodId: savedProduct.paymentMethodId || "",
       shippingAddress: savedProduct.shippingAddress || "",
       internationalShipping: savedProduct.internationalShipping || false,
       additionalShippingCost: savedProduct.additionalShippingCost || "",
@@ -102,22 +102,37 @@ export default function ProductListingPage() {
 
   return (
     <div className="mt-20 max-w-4xl mx-auto">
-      {/* Updated Branding Heading */}
-      <h1 className="text-center text-2xl font-bold text-gray-900 leading-snug">
-        <span className="text-xl font-extrabold text-white bg-red-500 rounded-lg px-5 py-1 shadow-md">
-          CraftID
-        </span>
-        <span className="text-gray-800 font-bold"> Product Listing</span>
-        <br />
-        <span className="text-gray-600 text-lg italic font-medium">"Where crafts come alive."</span>
-      </h1>
+
+    {/* Step Indicator */}
+    <div className="relative flex items-center justify-between max-w-3xl mx-auto px-4">
+      {["Details", "Specifications", "Pricing", "Shipping", "Additional Info"].map((step, index) => (
+        <div key={index} className="relative flex flex-col items-center w-1/5 text-center cursor-pointer" onClick={() => setCurrentStep(index + 1)}>
+          
+          {/* Step Number Circle */}
+          <div
+            className={`w-8 h-8 flex items-center justify-center rounded-full font-bold text-white
+              ${currentStep >= index + 1 ? "bg-red-500" : "bg-gray-300"} z-[3]`}
+          >
+            {index + 1}
+          </div>
+
+          {/* Connecting Line - Hide last connector */}
+          {index < 4 && (
+            <div className={`absolute top-4 left-[55%] w-full h-[4px] ${currentStep > index + 1 ? "bg-red-500" : "bg-gray-100"} z-[2]`}>
+                <div className="h-full w-full border-dotted border-t-2 border-red-500 z-[1]"></div>
+            </div>
+          )}
+          
+        </div>
+      ))}
+    </div>
 
       {/* Step-based Section Rendering */}
       <div>
         {currentStep === 1 && <ProductDetails product={product} updateProduct={updateProduct} />}
         {currentStep === 2 && <ProductSpecifications product={product} updateProduct={updateProduct} />}
-        {/* {currentStep === 3 && <ProductPricing product={product} updateProduct={updateProduct} />}
-        {currentStep === 4 && <ProductShipping product={product} updateProduct={updateProduct} />}
+        {currentStep === 3 && <ProductPricing product={product} updateProduct={updateProduct} />}
+        {/* {currentStep === 4 && <ProductShipping product={product} updateProduct={updateProduct} />}
         {currentStep === 5 && <AdditionalInfo product={product} updateProduct={updateProduct} />} */}
       </div>
 
@@ -151,3 +166,13 @@ export default function ProductListingPage() {
     </div>
   );
 }
+
+      {/* Updated Branding Heading */}
+      {/* <h1 className="text-center text-2xl font-bold text-gray-900 leading-snug">
+        <span className="text-xl font-extrabold text-white bg-red-500 rounded-lg px-5 py-1 shadow-md">
+          CraftID
+        </span>
+        <span className="text-gray-800 font-bold"> Product Listing</span>
+        <br />
+        <span className="text-gray-600 text-lg italic font-medium">"Where crafts come alive."</span>
+      </h1> */}

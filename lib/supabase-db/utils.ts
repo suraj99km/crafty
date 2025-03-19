@@ -165,3 +165,25 @@ export const fetchProductDetails = async (id: string) => {
   return data;
 };
 
+export const getArtistId = async (): Promise<string | null> => {
+  try {
+    // Fetch authenticated user
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user?.email) return null;
+
+    // Fetch artist details based on email
+    const { data: artistData, error: artistError } = await supabase
+      .from("Artists")
+      .select("id")
+      .eq("email_address", userData.user.email)
+      .single();
+
+    if (artistError || !artistData) return null;
+
+    return artistData.id;
+  } catch (error) {
+    console.error("Error fetching artist ID:", error);
+    return null;
+  }
+};
+

@@ -129,8 +129,8 @@ const PopularProducts = () => {
                     <div className="p-4">
                       <h3 className="font-semibold text-lg mb-2 truncate">{product.title}</h3>
                       <p className="font-bold">₹ {product.price}</p>
-                      <p className="text-gray-900 text-sm mt-2">
-                        Crafted by <span className="font-semibold">{product.artist_name || "Unknown Artist"}</span>
+                      <p className="flex items-center justify-center text-gray-900 text-sm mt-2">
+                        Crafted by <span className="font-semibold ml-1">{product.artist_name || "Unknown Artist"}</span>
                       </p>
                     </div>
                   </Link>

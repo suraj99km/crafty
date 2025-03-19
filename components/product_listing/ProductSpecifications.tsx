@@ -169,9 +169,9 @@ const ProductSpecifications: React.FC<ProductSpecificationsProps> = ({ product, 
     >
       <Card className="w-full max-w-3xl shadow-lg rounded-2xl border border-gray-200 bg-white">
         <CardContent className="p-6 space-y-6">
-          <div className="flex items-center space-x-3 border-b pb-3">
-            <span className="rounded-full h-8 w-8 flex items-center justify-center bg-red-500 text-white text-lg font-bold">2</span>
-            <h2 className="text-xl font-semibold text-gray-800">Product Specifications</h2>
+          <div className="flex items-center justify-center space-x-3 border-b pb-3">
+            {/* <span className="rounded-full h-8 w-8 flex items-center justify-center bg-red-500 text-white text-lg font-bold">2</span> */}
+            <h2 className="text-xl font-semibold text-white bg-red-500 rounded-lg px-4 py-1">Product Specifications</h2>
           </div>
           
           {/* {Object.keys(errors).length > 0 && ( true
