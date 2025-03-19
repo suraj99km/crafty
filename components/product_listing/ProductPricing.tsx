@@ -194,17 +194,18 @@ const handleInputBlur = () => {
                 <span className="font-medium">₹{artistPrice.toFixed(2)}</span>
               </div>
               
-              <div className="flex justify-between items-center">
+              {/* <div className="flex justify-between items-center">
                 <div className="flex items-center">
                   <span className="text-gray-600">Platform Fee:</span>
-                  <FeeStructureDialog currentPrice={artistPrice} />
+             
                 </div>
                 <span className="font-medium">₹{platformFee.toFixed(2)} ({currentTier}%)</span>
-              </div>
+              </div> */}
               
               <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
                 <span className="font-semibold">Final Price to Customers:</span>
-                <span className="text-lg font-bold text-red-600">₹{finalPrice.toFixed(2)}</span>
+                <FeeStructureDialog currentPrice={artistPrice} />
+                <span className="text-lg font-bold text-red-600 ml-2">₹{finalPrice.toFixed(2)}</span>
               </div>
             </div>
             
