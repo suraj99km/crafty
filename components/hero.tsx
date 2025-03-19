@@ -157,8 +157,8 @@ const Hero = () => {
 
           {/* Decorative element */}
           <motion.div 
-          initial={{ width: 0, x: -80, y: -160 }} // Start slightly right and lower
-          animate={{ width: 135, x: -80, y: -160 }} // Move left and up while expanding
+          initial={{ width: 0, x: -80, y: -157 }} // Start slightly right and lower
+          animate={{ width: 135, x: -80, y: -157 }} // Move left and up while expanding
           transition={{ duration: 0.8, delay: 0.5 }}
           className="h-1 bg-red-500 mb-12 left-2 hidden lg:block"
         />

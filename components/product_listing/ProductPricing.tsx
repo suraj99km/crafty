@@ -120,7 +120,7 @@ const handleInputBlur = () => {
             {/* Artist Price Controls */}
             <div className="space-y-4">
               <Label className="text-sm font-semibold">
-                Product Price by Artist
+                Price you want to get:
               </Label>
               
               {/* Input field and slider combination */}
@@ -168,7 +168,7 @@ const handleInputBlur = () => {
               
               {/* Quick price presets */}
               <div className="grid grid-cols-4 gap-2">
-                {[99, 199, 499, 999].map((price) => (
+                {[99, 199, 499, 999, 1499, 2499, 3999, 4999].map((price) => (
                   <button
                     key={price}
                     onClick={() => {
