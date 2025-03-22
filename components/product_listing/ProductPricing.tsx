@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Percent } from "lucide-react";
 import FeeStructureDialog, { feeStructure } from "./Pricing/FeeStructureDialog";
 import PaymentMethodSelection from "./Pricing/PaymentMethodSelection";
 
@@ -12,6 +14,7 @@ interface PricingProps {
   product?: {
     artistPrice?: number,
     platformPrice?: number;
+    isDiscountEnabled?: boolean;
     artistSalePrice?: number;
     finalSalePrice?: number;
   };
@@ -37,10 +40,16 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("bank_transfer");
   
   // Initialize artistSalePrice and finalSalePrice
-  const initialSalePrice = product?.artistSalePrice || initialPrice;
+  const initialSalePrice = product?.artistSalePrice || Math.round(initialPrice * 0.9); // Default 10% off
   const [artistSalePrice, setArtistSalePrice] = useState(initialSalePrice);
   const [inputSalePrice, setInputSalePrice] = useState(initialSalePrice.toString());
   const [finalSalePrice, setFinalSalePrice] = useState(initialSalePrice + calculatePlatformFee(initialSalePrice));
+  
+  // New state for discount toggle
+  const [isDiscountEnabled, setIsDiscountEnabled] = useState(product?.isDiscountEnabled || false);
+  const [discountPercent, setDiscountPercent] = useState(
+    Math.round((1 - initialSalePrice/initialPrice) * 100) || 10
+  );
 
   // Update all pricing related states
   const updatePricing = (newPrice: number) => {
@@ -59,10 +68,9 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
       updateProduct("platformPrice", validPrice + newFee);
     }
 
-    // Update sale price if it's now greater than the artist price
-    if (artistSalePrice > validPrice) {
-      updateSalePrice(validPrice);
-    }
+    // Update sale price based on current discount percentage
+    const newSalePrice = Math.max(50, Math.round(validPrice * (1 - discountPercent/100)));
+    updateSalePrice(newSalePrice);
 
     return validPrice;
   };
@@ -71,6 +79,10 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     const validPrice = Math.max(50, Math.min(artistPrice, newPrice));
     setArtistSalePrice(validPrice);
     setInputSalePrice(validPrice.toString());
+    
+    // Calculate the discount percentage
+    const newDiscountPercent = Math.round((1 - validPrice/artistPrice) * 100);
+    setDiscountPercent(newDiscountPercent);
     
     const salePlatformFee = calculatePlatformFee(validPrice);
     const newFinalSalePrice = validPrice + salePlatformFee;
@@ -158,6 +170,12 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     setInputFocused(true);
   };
 
+  // Handle discount percentage presets
+  const handleDiscountPreset = (percentage: number) => {
+    const newSalePrice = Math.max(50, Math.round(artistPrice * (1 - percentage/100)));
+    updateSalePrice(newSalePrice);
+  };
+
   // Handle payment method change
   const handleMethodChange = (methodId: number) => {
     const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
@@ -165,11 +183,21 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
       ...savedProduct,
       artistPrice: savedProduct.artistPrice || "",
       platformPrice: savedProduct.platformPrice || "",
+      isDiscountEnabled: isDiscountEnabled,
       artistSalePrice: savedProduct.artistSalePrice || "",
       finalSalePrice: savedProduct.finalSalePrice || "",
       paymentMethodId: methodId
     };
     localStorage.setItem("productData", JSON.stringify(updatedProduct));
+  };
+
+  // Handle discount toggle change
+  const handleDiscountToggle = () => {
+    const newState = !isDiscountEnabled;
+    setIsDiscountEnabled(newState);
+    if (updateProduct) {
+      updateProduct("isDiscountEnabled", newState);
+    }
   };
 
   return (
@@ -188,18 +216,17 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
           <div className="space-y-6">
             {/* Artist Price Controls */}
             <div className="space-y-4">
-
-            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
                 <Label className="text-sm font-semibold w-2/3">
-                Price you will get:
+                  Price you will get:
                 </Label>
                 <div className="relative flex items-center w-1/3">
                   <span className="absolute left-3 font-semibold text-gray-500">₹</span>
                   <Input
                     type="text"
                     value={inputPrice}
-                    onChange={handleSalePriceChange}
-                    onBlur={handleSalePriceBlur}
+                    onChange={handleInputChange}
+                    onBlur={handleInputBlur}
                     className="pl-7 w-full font-semibold text-gray-900"
                     inputMode="numeric"
                   />
@@ -263,52 +290,106 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
               </div>
             </div>
 
-            {/* Sale Price Section */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Label className="text-sm font-semibold w-2/3">
-                  Set Sale Price (Optional):
-                </Label>
-                <div className="relative flex items-center w-1/3">
-                  <span className="absolute left-3 font-semibold text-gray-500">₹</span>
-                  <Input
-                    type="text"
-                    value={inputSalePrice}
-                    onChange={handleSalePriceChange}
-                    onBlur={handleSalePriceBlur}
-                    className="pl-7 w-full font-semibold text-gray-900"
-                    inputMode="numeric"
-                  />
+            {/* Discount Toggle - Attractive Redesign */}
+            <div className="mt-6 border border-red-100 rounded-lg p-4 bg-red-50">
+            <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
+              <span className="rounded-3xl p-1 bg-red-500 mr-2"><Percent size={16} className="text-white font-semibold"/></span> Participate in Flash Sales
+            </h3>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                  <div>
+                    <p className="text-xs text-gray-600">Boost your visibility with <br/>limited-time discounts</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handleDiscountToggle}
+                    className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${
+                      isDiscountEnabled ? 'bg-red-500' : 'bg-gray-300'
+                    }`}
+                  >
+                    <div
+                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                        isDiscountEnabled ? 'translate-x-6' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
                 </div>
               </div>
-              <div className="flex flex-col space-y-4">
-                <div className="space-y-1">
-                  <Slider
-                    value={[artistSalePrice]}
-                    onValueChange={handleSalePriceSliderChange}
-                    min={50}
-                    max={artistPrice}
-                    step={1}
-                    className="py-2 w-full h-2 bg-red-400 rounded-lg relative"
-                  />
-                  <div className="flex justify-between items-center pt-1">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-gray-500">₹50</span>
-                      <span className="text-xs text-gray-400">Min</span>
+              
+              {isDiscountEnabled && (
+                <div className="space-y-4 mt-4 border-t border-red-200 pt-4">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Current Discount: <span className="text-red-600 font-semibold">{discountPercent}% OFF</span>
+                    </Label>
+                    <div className="flex space-x-2">
+                      {[10, 20, 30, 50].map((percent) => (
+                        <button
+                          key={percent}
+                          onClick={() => handleDiscountPreset(percent)}
+                          className={`py-1 px-2 text-xs rounded ${
+                            discountPercent === percent
+                              ? 'bg-red-500 text-white'
+                              : 'bg-white border border-red-300 text-red-500 hover:bg-red-50'
+                          }`}
+                        >
+                          {percent}%
+                        </button>
+                      ))}
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className="text-xs text-gray-500">₹{artistPrice}</span>
-                      <span className="text-xs text-gray-400">Max</span>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Label className="text-sm font-medium w-2/3">
+                      Your earnings during sales:
+                    </Label>
+                    <div className="relative flex items-center w-1/3">
+                      <span className="absolute left-3 font-semibold text-gray-500">₹</span>
+                      <Input
+                        type="text"
+                        value={inputSalePrice}
+                        onChange={handleSalePriceChange}
+                        onBlur={handleSalePriceBlur}
+                        className="pl-7 w-full font-semibold text-gray-900 border-red-200 focus:border-red-500 focus:ring-red-500"
+                        inputMode="numeric"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <Slider
+                      value={[artistSalePrice]}
+                      onValueChange={handleSalePriceSliderChange}
+                      min={50}
+                      max={artistPrice}
+                      step={1}
+                      className="py-2 w-full h-2 bg-red-400 rounded-lg relative"
+                    />
+                    <div className="flex justify-between items-center pt-1">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-gray-500">₹50</span>
+                        <span className="text-xs text-gray-400">Min</span>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs text-gray-500">₹{artistPrice}</span>
+                        <span className="text-xs text-gray-400">Max</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white p-4 rounded-lg border border-red-200">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium text-sm text-gray-700">Customer sale price:</span>
+                      <div className="flex items-center">
+                        <span className="text-sm text-gray-500 line-through mr-2">₹{finalPrice.toFixed(2)}</span>
+                        <span className="text-lg font-bold text-red-600">₹{finalSalePrice.toFixed(2)}</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-500">
+                      Products with active discounts get featured in our promotional campaigns and flash sales.
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-sm">Final Sale Price to Customers:</span>
-                  <span className="text-lg font-bold text-red-600 ml-2">₹{finalSalePrice.toFixed(2)}</span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Payment Method Selection */}
