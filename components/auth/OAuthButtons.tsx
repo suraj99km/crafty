@@ -4,6 +4,7 @@ import { useState } from "react";
 import supabase from "@/lib/supabase-db/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { FaGoogle, FaLinkedin } from "react-icons/fa";
+import { toast } from "sonner";
 import { FaXTwitter } from "react-icons/fa6"; // Import X.com (formerly Twitter) icon
 
 export default function OAuthButtons() {
@@ -12,17 +13,15 @@ export default function OAuthButtons() {
   const signInWithProvider = async (provider: "google" | "linkedin" | "twitter") => {
     setLoading(provider);
   
-    const redirectTo = `${process.env.NEXT_PUBLIC_BASE_URL}`;
-    console.log(process.env.NEXT_PUBLIC_BASE_URL);
-  
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo },
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`, // Redirect to a secure server route
+      },
     });
   
     if (error) {
-      console.error("OAuth Error:", error);
-      alert("Error signing in: " + error.message);
+      toast.error("Error signing you in. Please try again.");
     }
   
     setLoading(null);

@@ -1,21 +1,31 @@
 import React, { useEffect, useState } from "react";
-import supabase from "@/lib/supabase-db/supabaseClient"; // Adjust import as needed
-import { toast } from "sonner"; // Import toast
+import supabase from "@/lib/supabase-db/supabaseClient";
+import { toast } from "sonner";
 import { getArtistId } from "@/lib/supabase-db/utils";
 
 interface PaymentMethod {
-  id: number;
-  payment_method: string; // "Bank Account" or "UPI"
-  details: Record<string, string>; // JSON data
+  id: string;
+  payment_method: string;
+  details: Record<string, string>;
 }
 
 interface PaymentMethodSelectionProps {
-  onSelect: (methodId: number) => void; // Pass only the selected method's ID
+  onSelect: (methodId: string) => void;
 }
 
 const PaymentMethodSelection: React.FC<PaymentMethodSelectionProps> = ({ onSelect = () => {} }) => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Retrieve stored selection when component mounts
+  useEffect(() => {
+    const storedMethodId = localStorage.getItem("selectedPaymentMethod");
+    if (storedMethodId) {
+      setSelectedMethodId(storedMethodId);
+      onSelect(storedMethodId); // Ensure parent gets the ID
+    }
+  }, []);
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
@@ -37,7 +47,6 @@ const PaymentMethodSelection: React.FC<PaymentMethodSelectionProps> = ({ onSelec
 
         setPaymentMethods(data || []);
       } catch (err) {
-        console.log(err);
         toast.error("Error fetching the payment method.");
       } finally {
         setLoading(false);
@@ -71,20 +80,21 @@ const PaymentMethodSelection: React.FC<PaymentMethodSelectionProps> = ({ onSelec
         {paymentMethods.map((method) => (
           <div 
             key={method.id}
-            className="relative rounded-lg p-4 text-sm transition cursor-pointer min-w-[250px] w-full max-w-md overflow-hidden ring-2 ring-gray-300 hover:ring-green-500 hover:shadow-lg"
+            className={`relative rounded-lg p-4 text-sm transition cursor-pointer min-w-[250px] w-full max-w-md overflow-hidden 
+                        ring-2 ${selectedMethodId === method.id ? "ring-green-500 shadow-lg scale-95" : "ring-gray-300 scale-95"}`}
             onClick={() => {
-              console.log("onSelect function type:", typeof onSelect);
-              if (typeof onSelect === "function") {
-                onSelect(method.id);
-              } else {
-                console.error("onSelect is not a function!");
-              }
-            }} // Pass only the ID
+              setSelectedMethodId(method.id);
+              localStorage.setItem("selectedPaymentMethod", method.id);
+              onSelect(method.id);
+            }}
           >
-            <div className="flex justify-between items-center font-semibold">
+            {selectedMethodId === method.id && (
+              <div className="absolute inset-0 bg-green-600 bg-opacity-20 rounded-lg z-[1]"></div>
+            )}
+            <div className="flex justify-between items-center font-semibold relative z-[2]">
               <span>{method.payment_method}</span>
             </div>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 mt-1 relative z-[2]">
               {method.payment_method === "BANK" ? (
                 <>
                   <span className="block">Account Holder: {method.details.accountHolder}</span>

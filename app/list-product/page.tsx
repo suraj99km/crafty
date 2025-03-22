@@ -7,6 +7,7 @@ import ProductSpecifications from "@/components/product_listing/ProductSpecifica
 import ProductPricing from "@/components/product_listing/ProductPricing";
 import ProductShipping from "@/components/product_listing/ProductShipping";
 import AdditionalInfo from "@/components/product_listing/AdditionalInfo";
+import { toast } from "sonner";
 
 export default function ProductListingPage() {
   const [product, setProduct] = useState({
@@ -22,6 +23,7 @@ export default function ProductListingPage() {
     artistPrice: undefined,
     platformPrice: undefined,
     paymentMethodId: "",
+    
     shippingAddress: "",
     internationalShipping: false,
     additionalShippingCost: "",
@@ -60,6 +62,7 @@ export default function ProductListingPage() {
       platformPrice: savedProduct.platformPrice || "",
       paymentMethodId: savedProduct.paymentMethodId || "",
 
+
       shippingAddress: savedProduct.shippingAddress || "",
       internationalShipping: savedProduct.internationalShipping || false,
       additionalShippingCost: savedProduct.additionalShippingCost || "",
@@ -95,6 +98,7 @@ export default function ProductListingPage() {
   const handleSubmit = () => {
     console.log("Final Product Data:", product);
     // Submit to database (to be implemented)
+    toast.success("Product submitted successfully!");
     // Clear the product data from localStorage once the product is submitted
     localStorage.removeItem("productData");
   };
@@ -170,13 +174,3 @@ export default function ProductListingPage() {
     </div>
   );
 }
-
-      {/* Updated Branding Heading */}
-      {/* <h1 className="text-center text-2xl font-bold text-gray-900 leading-snug">
-        <span className="text-xl font-extrabold text-white bg-red-500 rounded-lg px-5 py-1 shadow-md">
-          CraftID
-        </span>
-        <span className="text-gray-800 font-bold"> Product Listing</span>
-        <br />
-        <span className="text-gray-600 text-lg italic font-medium">"Where crafts come alive."</span>
-      </h1> */}

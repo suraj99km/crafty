@@ -17,6 +17,7 @@ interface PricingProps {
     isDiscountEnabled?: boolean;
     artistSalePrice?: number;
     finalSalePrice?: number;
+    paymentMethodId: string,
   };
   updateProduct?: (field: string, value: any) => void;
 }
@@ -37,7 +38,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     feeStructure.find(tier => initialPrice >= tier.min && initialPrice <= tier.max)?.percentage || 0
   );
   const [inputFocused, setInputFocused] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("bank_transfer");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(product?.paymentMethodId || "");
   
   // Initialize artistSalePrice and finalSalePrice
   const initialSalePrice = product?.artistSalePrice || Math.round(initialPrice * 0.9); // Default 10% off
@@ -177,7 +178,12 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
   };
 
   // Handle payment method change
-  const handleMethodChange = (methodId: number) => {
+  const handleMethodChange = (methodId: string) => {
+    setSelectedPaymentMethod(methodId); // Update state
+    if (updateProduct) {
+      updateProduct("paymentMethodId", methodId); // Ensure it's updated in the product state
+    }
+
     const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
     const updatedProduct = {
       ...savedProduct,
@@ -186,7 +192,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
       isDiscountEnabled: isDiscountEnabled,
       artistSalePrice: savedProduct.artistSalePrice || "",
       finalSalePrice: savedProduct.finalSalePrice || "",
-      paymentMethodId: methodId
+      paymentMethodId: methodId, // Store selected method ID
     };
     localStorage.setItem("productData", JSON.stringify(updatedProduct));
   };
@@ -393,7 +399,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
             </div>
 
             {/* Payment Method Selection */}
-            <PaymentMethodSelection onSelect={(methodId: number) => handleMethodChange(methodId)} />
+            <PaymentMethodSelection onSelect={handleMethodChange} />
           </div>
         </CardContent>
       </Card>
