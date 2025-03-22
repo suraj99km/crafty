@@ -78,7 +78,7 @@ const Hero = () => {
       <div className="lg:hidden flex flex-col items-center">
         {/* Hero Image */}
         <motion.div 
-          className="mt-16 relative w-full h-[230px]"
+          className="mt-14 relative w-full h-[230px] md:h-[300px]"
           initial="hidden"
           animate="visible"
           variants={imageVariants}
@@ -151,19 +151,17 @@ const Hero = () => {
       </div>
       
       {/* Desktop Layout */}
-      <div className="mt-28 hidden lg:flex min-h-[600px] items-center px-8 xl:px-16 py-16 max-w-7xl mx-auto">
+      <div className="mt-28 hidden lg:flex min-h-[600px] items-center justify-center px-8 xl:px-16 py-16 max-w-7xl mx-auto">
         {/* Left Text Content */}
         <div className="w-1/2 pr-8">
-
           {/* Decorative element */}
           <motion.div 
-          initial={{ width: 0, x: -80, y: -156 }} // Start slightly right and lower
-          animate={{ width: 135, x: -80, y: -156 }} // Move left and up while expanding
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="h-1 bg-red-500 mb-12 left-2 hidden lg:block"
-        />
-
-
+            initial={{ width: 0, x: -80, y: -156 }}
+            animate={{ width: 135, x: -80, y: -156 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="h-1 bg-red-500 mb-12 left-2 hidden lg:block"
+          />
+      
           <motion.h1
             className="text-5xl font-bold text-gray-900 leading-tight"
             initial="hidden"
@@ -173,7 +171,7 @@ const Hero = () => {
           >
             Handmade Treasures, <br /> Crafted with Love
           </motion.h1>
-
+      
           <motion.p
             className="text-xl text-gray-700 mt-6 max-w-xl"
             initial="hidden"
@@ -183,7 +181,7 @@ const Hero = () => {
           >
             Discover unique handcrafted products made with passion.
           </motion.p>
-
+      
           {/* Buttons */}
           <motion.div
             className="flex gap-4 mt-8 max-w-md"
@@ -205,7 +203,7 @@ const Hero = () => {
               handleClick={handleJoinAsArtist}
             />
           </motion.div>
-
+      
           <motion.p
             className="text-lg text-gray-500 italic mt-12 font-semibold"
             initial="hidden"
@@ -213,13 +211,13 @@ const Hero = () => {
             custom={4}
             variants={fadeUpVariants}
           >
-            "Every craft carries an Identity."
+            "Where crafts come alive"
           </motion.p>
         </div>
-
+      
         {/* Right Image */}
         <motion.div
-          className="w-1/2 relative h-[500px]"
+          className="w-1/2 relative h-[500px] flex items-center justify-center"
           initial="hidden"
           animate="visible"
           variants={{
@@ -231,7 +229,7 @@ const Hero = () => {
             },
           }}
         >
-          <div className="absolute inset-0 -right-8 rounded-3xl overflow-hidden shadow-xl">
+          <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-xl">
             <Image
               src="/hero.jpg"
               alt="Handmade Treasures"

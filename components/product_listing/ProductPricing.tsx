@@ -11,7 +11,9 @@ import PaymentMethodSelection from "./Pricing/PaymentMethodSelection";
 interface PricingProps {
   product?: {
     artistPrice?: number,
-    platformPrice?:number;
+    platformPrice?: number;
+    artistSalePrice?: number;
+    finalSalePrice?: number;
   };
   updateProduct?: (field: string, value: any) => void;
 }
@@ -33,6 +35,12 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
   );
   const [inputFocused, setInputFocused] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("bank_transfer");
+  
+  // Initialize artistSalePrice and finalSalePrice
+  const initialSalePrice = product?.artistSalePrice || initialPrice;
+  const [artistSalePrice, setArtistSalePrice] = useState(initialSalePrice);
+  const [inputSalePrice, setInputSalePrice] = useState(initialSalePrice.toString());
+  const [finalSalePrice, setFinalSalePrice] = useState(initialSalePrice + calculatePlatformFee(initialSalePrice));
 
   // Update all pricing related states
   const updatePricing = (newPrice: number) => {
@@ -48,7 +56,29 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     
     if (updateProduct) {
       updateProduct("artistPrice", validPrice);
-      updateProduct("platformPrice", finalPrice);
+      updateProduct("platformPrice", validPrice + newFee);
+    }
+
+    // Update sale price if it's now greater than the artist price
+    if (artistSalePrice > validPrice) {
+      updateSalePrice(validPrice);
+    }
+
+    return validPrice;
+  };
+
+  const updateSalePrice = (newPrice: number) => {
+    const validPrice = Math.max(50, Math.min(artistPrice, newPrice));
+    setArtistSalePrice(validPrice);
+    setInputSalePrice(validPrice.toString());
+    
+    const salePlatformFee = calculatePlatformFee(validPrice);
+    const newFinalSalePrice = validPrice + salePlatformFee;
+    setFinalSalePrice(newFinalSalePrice);
+
+    if (updateProduct) {
+      updateProduct("artistSalePrice", validPrice);
+      updateProduct("finalSalePrice", newFinalSalePrice);
     }
 
     return validPrice;
@@ -61,30 +91,67 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     setInputPrice(validPrice.toString());
   };
 
-// Handle price change from input field
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-  setInputPrice(value);
+  // Handle sale price change from input field
+  const handleSalePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputSalePrice(value);
 
-  const numValue = value === "" ? 50 : parseFloat(value);
-  if (!isNaN(numValue)) {
-    updatePricing(numValue);
-  }
-};
+    const numValue = value === "" ? 50 : parseFloat(value);
+    if (!isNaN(numValue)) {
+      updateSalePrice(numValue);
+    }
+  };
 
-// Ensure the value is within the range when input loses focus
-const handleInputBlur = () => {
-  const numValue = parseFloat(inputPrice);
-  if (!isNaN(numValue)) {
-    if (numValue < 50) {
+  // Ensure the value is within the range when sale price input loses focus
+  const handleSalePriceBlur = () => {
+    const numValue = parseFloat(inputSalePrice);
+    if (!isNaN(numValue)) {
+      if (numValue < 50) {
+        setInputSalePrice("50");
+        updateSalePrice(50);
+      } else if (numValue > artistPrice) {
+        setInputSalePrice(artistPrice.toString());
+        updateSalePrice(artistPrice);
+      }
+    } else {
+      setInputSalePrice("50");
+      updateSalePrice(50);
+    }
+  };
+
+  // Handle price change from input field
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputPrice(value);
+
+    const numValue = value === "" ? 50 : parseFloat(value);
+    if (!isNaN(numValue)) {
+      updatePricing(numValue);
+    }
+  };
+
+  // Handle sale price change from slider
+  const handleSalePriceSliderChange = (values: number[]) => {
+    const newPrice = values[0];
+    updateSalePrice(newPrice);
+  };
+
+  // Ensure the value is within the range when input loses focus
+  const handleInputBlur = () => {
+    const numValue = parseFloat(inputPrice);
+    if (!isNaN(numValue)) {
+      if (numValue < 50) {
+        setInputPrice("50");
+        updatePricing(50);
+      } else if (numValue > 5000) {
+        setInputPrice("5000");
+        updatePricing(5000);
+      }
+    } else {
       setInputPrice("50");
       updatePricing(50);
-    } else if (numValue > 5000) {
-      setInputPrice("5000");
-      updatePricing(5000);
     }
-  }
-};
+  };
 
   // Handle focus on input
   const handleInputFocus = () => {
@@ -93,14 +160,16 @@ const handleInputBlur = () => {
 
   // Handle payment method change
   const handleMethodChange = (methodId: number) => {
-      const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
-      const updatedProduct = {
-          ...savedProduct,
-          artistPrice: savedProduct.artistPrice || "",
-          platformPrice: savedProduct.platformPrice || "",
-          paymentMethodId: methodId
-      };
-      localStorage.setItem("productData", JSON.stringify(updatedProduct));
+    const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
+    const updatedProduct = {
+      ...savedProduct,
+      artistPrice: savedProduct.artistPrice || "",
+      platformPrice: savedProduct.platformPrice || "",
+      artistSalePrice: savedProduct.artistSalePrice || "",
+      finalSalePrice: savedProduct.finalSalePrice || "",
+      paymentMethodId: methodId
+    };
+    localStorage.setItem("productData", JSON.stringify(updatedProduct));
   };
 
   return (
@@ -119,27 +188,25 @@ const handleInputBlur = () => {
           <div className="space-y-6">
             {/* Artist Price Controls */}
             <div className="space-y-4">
-              <Label className="text-sm font-semibold">
+
+            <div className="flex items-center space-x-2">
+                <Label className="text-sm font-semibold w-2/3">
                 Price you will get:
-              </Label>
-              
-              {/* Input field and slider combination */}
-              <div className="flex flex-col space-y-4">
-                <div className="flex items-center">
-                  <div className="relative flex items-center w-full">
-                    <span className="absolute left-3 text-gray-500">₹</span>
-                    <Input
-                      type="text"
-                      value={inputPrice}
-                      onChange={handleInputChange}
-                      onFocus={handleInputFocus}
-                      onBlur={handleInputBlur}
-                      className="pl-7 w-full font-medium text-gray-900"
-                      inputMode="numeric"
-                    />
-                  </div>
+                </Label>
+                <div className="relative flex items-center w-1/3">
+                  <span className="absolute left-3 font-semibold text-gray-500">₹</span>
+                  <Input
+                    type="text"
+                    value={inputPrice}
+                    onChange={handleSalePriceChange}
+                    onBlur={handleSalePriceBlur}
+                    className="pl-7 w-full font-semibold text-gray-900"
+                    inputMode="numeric"
+                  />
                 </div>
-                
+              </div>
+
+              <div className="flex flex-col space-y-4">
                 <div className="space-y-1">
                   <Slider
                     value={[artistPrice]}
@@ -187,28 +254,63 @@ const handleInputBlur = () => {
               </div>
             </div>
             
-            {/* Price Breakdown */}
+            {/* Final Price to the Customers*/}
             <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-              {/* <div className="flex justify-between items-center">
-                <span className="text-gray-600 font-semibold">Price you will get:</span>
-                <span className="font-medium">₹{artistPrice.toFixed(2)}</span>
-              </div>
-              
-              <div className=" border-b border-gray-200 pb-3 flex justify-between items-center">
-                <div className="flex items-center">
-                  <span className="text-gray-600">Platform Fee:</span>
-             
-                </div>
-                <span className="font-medium">₹{platformFee.toFixed(2)} ({currentTier}%)</span>
-              </div> */}
-              
               <div className="flex justify-between items-center">
-                <span className="font-semibold">Final Price to Customers:</span>
+                <span className="font-semibold text-sm">Final Price to Customers:</span>
                 <FeeStructureDialog currentPrice={artistPrice} />
                 <span className="text-lg font-bold text-red-600 ml-2">₹{finalPrice.toFixed(2)}</span>
               </div>
             </div>
-            
+
+            {/* Sale Price Section */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Label className="text-sm font-semibold w-2/3">
+                  Set Sale Price (Optional):
+                </Label>
+                <div className="relative flex items-center w-1/3">
+                  <span className="absolute left-3 font-semibold text-gray-500">₹</span>
+                  <Input
+                    type="text"
+                    value={inputSalePrice}
+                    onChange={handleSalePriceChange}
+                    onBlur={handleSalePriceBlur}
+                    className="pl-7 w-full font-semibold text-gray-900"
+                    inputMode="numeric"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col space-y-4">
+                <div className="space-y-1">
+                  <Slider
+                    value={[artistSalePrice]}
+                    onValueChange={handleSalePriceSliderChange}
+                    min={50}
+                    max={artistPrice}
+                    step={1}
+                    className="py-2 w-full h-2 bg-red-400 rounded-lg relative"
+                  />
+                  <div className="flex justify-between items-center pt-1">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-gray-500">₹50</span>
+                      <span className="text-xs text-gray-400">Min</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-xs text-gray-500">₹{artistPrice}</span>
+                      <span className="text-xs text-gray-400">Max</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-sm">Final Sale Price to Customers:</span>
+                  <span className="text-lg font-bold text-red-600 ml-2">₹{finalSalePrice.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
             {/* Payment Method Selection */}
             <PaymentMethodSelection onSelect={(methodId: number) => handleMethodChange(methodId)} />
           </div>

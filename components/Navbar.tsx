@@ -48,7 +48,7 @@ const Navbar = () => {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-10 transition-all duration-300 ${
-        isScrolled ? "py-1 shadow-md bg-white" : "py-4 bg-white"
+        isScrolled ? "py-1 shadow-md bg-white" : "py-3 lg:py-4 bg-white"
       }`}
     >
       <nav className="max-w-[1440px] mx-auto flex justify-between items-center px-6 sm:px-16 transition-all duration-300">
@@ -60,7 +60,7 @@ const Navbar = () => {
         width={180}
         height={30}
         className={`object-contain transition-all duration-300 ${
-          isScrolled ? "w-28" : "w-44"
+          isScrolled ? "w-28" : "w-40"
         }`}
       />
     </Link>
@@ -69,10 +69,10 @@ const Navbar = () => {
         <button
           onClick={toggleSidebar}
           className={`p-2 rounded-full bg-red-500 text-white transition-all duration-300 hover:bg-red-600 ${
-            isScrolled ? "scale-75" : "scale-100"
+            isScrolled ? "scale-75" : "scale-120"
           }`}
         >
-          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </nav>
 
