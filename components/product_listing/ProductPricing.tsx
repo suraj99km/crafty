@@ -120,7 +120,7 @@ const handleInputBlur = () => {
             {/* Artist Price Controls */}
             <div className="space-y-4">
               <Label className="text-sm font-semibold">
-                Price you want to get:
+                Price you will get:
               </Label>
               
               {/* Input field and slider combination */}
@@ -189,12 +189,12 @@ const handleInputBlur = () => {
             
             {/* Price Breakdown */}
             <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Artist Price:</span>
+              {/* <div className="flex justify-between items-center">
+                <span className="text-gray-600 font-semibold">Price you will get:</span>
                 <span className="font-medium">₹{artistPrice.toFixed(2)}</span>
               </div>
               
-              {/* <div className="flex justify-between items-center">
+              <div className=" border-b border-gray-200 pb-3 flex justify-between items-center">
                 <div className="flex items-center">
                   <span className="text-gray-600">Platform Fee:</span>
              
@@ -202,7 +202,7 @@ const handleInputBlur = () => {
                 <span className="font-medium">₹{platformFee.toFixed(2)} ({currentTier}%)</span>
               </div> */}
               
-              <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
+              <div className="flex justify-between items-center">
                 <span className="font-semibold">Final Price to Customers:</span>
                 <FeeStructureDialog currentPrice={artistPrice} />
                 <span className="text-lg font-bold text-red-600 ml-2">₹{finalPrice.toFixed(2)}</span>

@@ -51,17 +51,21 @@ export default function ProductListingPage() {
       images: savedProduct.images || [],
       qualityVideo: savedProduct.qualityVideo || null,
       demoVideo: savedProduct.demoVideo || null,
+
       dimensions: savedProduct.dimensions || { length: null, width: null, height: null, weight: null },
       material: savedProduct.material || "",
       prepTime: savedProduct.prepTime || null,
+
       artistPrice: savedProduct.artistPrice || "",
       platformPrice: savedProduct.platformPrice || "",
       paymentMethodId: savedProduct.paymentMethodId || "",
+
       shippingAddress: savedProduct.shippingAddress || "",
       internationalShipping: savedProduct.internationalShipping || false,
       additionalShippingCost: savedProduct.additionalShippingCost || "",
       stockQuantity: savedProduct.stockQuantity || "",
       madeToOrder: savedProduct.madeToOrder || false,
+      
       customizationAvailable: savedProduct.customizationAvailable || false,
       customizationInstructions: savedProduct.customizationInstructions || "",
       requiresAssembly: savedProduct.requiresAssembly || false,
