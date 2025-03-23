@@ -4,7 +4,7 @@ import supabase from "@/lib/supabase-db/supabaseClient";
 
 interface AddressCardProps {
   address: Address;
-  onDelete: (id: number) => void; // Function to handle deletion
+  onDelete: (id: string) => void; // Function to handle deletion
 }
 
 export default function AddressCard({ address, onDelete }: AddressCardProps) {
