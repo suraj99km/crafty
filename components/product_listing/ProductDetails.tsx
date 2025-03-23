@@ -59,7 +59,7 @@ export default function ProductDetails({
             {/* <span className="rounded-full h-8 w-8 flex items-center justify-center bg-red-500 text-white text-lg font-bold">
               1
             </span> */}
-            <h2 className="text-xl font-bold text-white bg-red-500 rounded-lg px-6 py-1">Product Details</h2>
+            <h2 className="text-xl font-bold text-white bg-red-500 rounded-lg px-4 py-1">Product Details</h2>
           </div>
 
           {/* Product Title */}

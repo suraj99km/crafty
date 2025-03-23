@@ -24,11 +24,10 @@ export default function ProductListingPage() {
     platformPrice: undefined,
     paymentMethodId: "",
     
-    shippingAddress: "",
-    internationalShipping: false,
-    additionalShippingCost: "",
-    stockQuantity: "",
+    shippingAddressId: "",
+    stockQuantity: undefined,
     madeToOrder: false,
+
     customizationAvailable: false,
     customizationInstructions: "",
     requiresAssembly: false,
@@ -63,10 +62,8 @@ export default function ProductListingPage() {
       paymentMethodId: savedProduct.paymentMethodId || "",
 
 
-      shippingAddress: savedProduct.shippingAddress || "",
-      internationalShipping: savedProduct.internationalShipping || false,
-      additionalShippingCost: savedProduct.additionalShippingCost || "",
-      stockQuantity: savedProduct.stockQuantity || "",
+      shippingAddressId: savedProduct.shippingAddressId || "",
+      stockQuantity: savedProduct.stockQuantity || null,
       madeToOrder: savedProduct.madeToOrder || false,
       
       customizationAvailable: savedProduct.customizationAvailable || false,
@@ -140,8 +137,8 @@ export default function ProductListingPage() {
         {currentStep === 1 && <ProductDetails product={product} updateProduct={updateProduct} />}
         {currentStep === 2 && <ProductSpecifications product={product} updateProduct={updateProduct} />}
         {currentStep === 3 && <ProductPricing product={product} updateProduct={updateProduct} />}
-        {/* {currentStep === 4 && <ProductShipping product={product} updateProduct={updateProduct} />}
-        {currentStep === 5 && <AdditionalInfo product={product} updateProduct={updateProduct} />} */}
+        {currentStep === 4 && <ProductShipping product={product} updateProduct={updateProduct} />}
+        {/* {currentStep === 5 && <AdditionalInfo product={product} updateProduct={updateProduct} />} */}
       </div>
 
       {/* Step Navigation */}

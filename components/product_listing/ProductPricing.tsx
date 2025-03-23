@@ -249,6 +249,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
                     step={1}
                     className="py-2 w-full h-2 bg-red-400 rounded-lg relative"
                   />
+
                   <div className="flex justify-between items-center pt-1">
                     <div className="flex flex-col">
                       <span className="text-xs text-gray-500">₹50</span>
@@ -328,8 +329,8 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
                     <Label className="text-sm font-medium text-gray-700">
                       Current Discount: <span className="text-red-600 font-semibold">{discountPercent}% OFF</span>
                     </Label>
-                    <div className="flex space-x-2">
-                      {[10, 20, 30, 50].map((percent) => (
+                    <div className="flex space-x-1">
+                      {[10, 20, 30, 40, 50].map((percent) => (
                         <button
                           key={percent}
                           onClick={() => handleDiscountPreset(percent)}
