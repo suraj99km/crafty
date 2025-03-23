@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Package } from "lucide-react";
-import SavedShippingAddresses from "./Pricing/SavedShippingAddresses";
+import SavedShippingAddresses from "./Shipping/SavedShippingAddresses";
 import { Address } from "@/Types";
 import { Slider } from "@/components/ui/slider"; // Importing the Slider component
 
@@ -63,7 +63,7 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
   // Quick quantity presets
   const quantityPresets = [1, 5, 10,15,25,50,75, 100];
 
-  // Load saved address from sessionStorage on component mount
+  // Load saved address from localStorage on component mount
   useEffect(() => {
     const savedAddress = localStorage.getItem("selectedAddress");
     if (savedAddress && !selectedAddress) {
@@ -143,7 +143,7 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
   // Handle address selection
   const handleSelectAddress = (address: Address) => {
     setSelectedAddress(address);
-    sessionStorage.setItem("selectedAddress", JSON.stringify(address));
+    localStorage.setItem("selectedAddress", JSON.stringify(address));
     updateProduct("shippingAddressId", address.id);
   };
 

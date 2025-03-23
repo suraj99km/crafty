@@ -39,16 +39,15 @@ const SavedShippingAddresses = ({
     if (scrollRef.current) {
       const scrollToRight = () => {
         if (scrollRef.current) {
-          scrollRef.current.scrollBy({ left: scrollRef.current.clientWidth * 0.3, behavior: 'smooth' });
+          scrollRef.current.scrollBy({ left: scrollRef.current.clientWidth * 0.5, behavior: 'smooth' });
           setTimeout(() => {
             if (scrollRef.current) {
-              scrollRef.current.scrollBy({ left: -scrollRef.current.clientWidth * 0.3, behavior: 'smooth' });
+              scrollRef.current.scrollBy({ left: -scrollRef.current.clientWidth * 0.45, behavior: 'smooth' });
             }
           }, 800);
         }
       };
       scrollToRight();
-      setTimeout(scrollToRight, 1600);
     }
   }, [addresses]);
 
@@ -81,7 +80,7 @@ const SavedShippingAddresses = ({
           </Link>
         </div>
       ) : (
-        <div ref={scrollRef} className="flex overflow-x-auto gap-3 max-h-60">
+        <div ref={scrollRef} className="flex overflow-x-auto gap-2 max-h-60">
           {addresses.map((address) => (
             <SelectAddressCard
               key={address.id}

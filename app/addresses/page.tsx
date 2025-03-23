@@ -18,7 +18,7 @@ export default function SavedAddresses() {
         .select("*");
 
       if (!error && data) {
-        setAddresses(data as Address[]);
+        setAddresses(data.map((address) => ({ ...address, id: String(address.id) })) as Address[]);
       }
     };
 
@@ -26,7 +26,7 @@ export default function SavedAddresses() {
   }, []);
 
   // Function to remove the deleted address from UI
-  const handleDeleteAddress = (id: number) => {
+  const handleDeleteAddress = (id: string) => {
     setAddresses((prev) => prev.filter((address) => address.id !== id));
   };
 
@@ -50,7 +50,7 @@ export default function SavedAddresses() {
         <div className="my-6 pb-4 space-y-4 overflow-y-auto max-h-[70vh] px-2 w-full">
           {addresses.length > 0 ? (
             addresses.map((address) => (
-              <AddressCard key={address.id} address={address} onDelete={handleDeleteAddress} />
+              <AddressCard key={address.id} address={address} onDelete={(id) => handleDeleteAddress(String(id))} />
             ))
           ) : (
             <p className="text-gray-500 text-center mt-4">No saved addresses found.</p>
