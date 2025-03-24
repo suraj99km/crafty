@@ -162,7 +162,7 @@ const ArtistProfile = () => {
   }
 
   return (
-    <div className="mt-16 max-w-4xl mx-auto p-6 space-y-6">
+    <div className="mt-12 max-w-4xl mx-auto p-6 space-y-6">
       
       <ProfileHeader 
         artist={artist} 

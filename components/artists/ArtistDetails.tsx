@@ -14,7 +14,7 @@ const ArtistDetails: React.FC<Props> = ({ artist, relatedProducts }) => {
   const router = useRouter();
 
   return (
-    <section className="max-w-6xl mx-auto mt-16 p-6">
+    <section className="max-w-6xl mx-auto mt-14 p-6">
       {/* Artist Profile Section */}
       <div className="bg-white shadow-md rounded-xl overflow-hidden">
         {/* Header with subtle background */}

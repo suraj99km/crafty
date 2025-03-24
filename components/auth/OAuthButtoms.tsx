@@ -16,7 +16,7 @@ export default function OAuthButtons() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`, // Redirect to a secure server route
+        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}`, // Redirect to a secure server route
       },
     });
   

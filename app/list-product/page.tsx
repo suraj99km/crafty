@@ -138,7 +138,7 @@ export default function ProductListingPage() {
         {currentStep === 2 && <ProductSpecifications product={product} updateProduct={updateProduct} />}
         {currentStep === 3 && <ProductPricing product={product} updateProduct={updateProduct} />}
         {currentStep === 4 && <ProductShipping product={product} updateProduct={updateProduct} />}
-        {/* {currentStep === 5 && <AdditionalInfo product={product} updateProduct={updateProduct} />} */}
+        {currentStep === 5 && <AdditionalInfo product={product} updateProduct={updateProduct} />}
       </div>
 
       {/* Step Navigation */}

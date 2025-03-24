@@ -64,7 +64,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
   };
 
   return (
-    <div className="max-container my-20">
+    <div className="max-container my-16">
       {/* Back Button */}
       <button
         onClick={handleBack}

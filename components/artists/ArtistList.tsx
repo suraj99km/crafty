@@ -38,7 +38,7 @@ const ArtistList = () => {
   );
 
   return (
-    <section className="container mx-auto px-4 py-6 mt-14 min-h-screen">
+    <section className="container mx-auto px-4 mt-16 min-h-screen pb-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-1">Popular Artists</h1>
         <p className="text-gray-600 text-sm">Discover and explore talented artists</p>

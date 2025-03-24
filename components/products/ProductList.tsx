@@ -74,7 +74,7 @@ export default function ProductsPage() {
     );
 
   return (
-    <section className="container mx-auto p-2 mt-16 min-h-screen">
+    <section className="container mx-auto p-2 mt-14 min-h-screen">
       {/* Search & Sorting Bar (No Sticky) */}
       <div className="mb-4">
         <div className="flex items-center gap-4">
