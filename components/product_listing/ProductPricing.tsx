@@ -269,7 +269,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
               
               {/* Quick price presets */}
               <div className="grid grid-cols-4 gap-2">
-                {[99, 199, 499, 999, 1499, 2499, 3999, 4999].map((price) => (
+                {[99, 199, 299,399, 499,699, 999, 1199, 1499, 2499, 3999, 4999].map((price) => (
                   <button
                     key={price}
                     onClick={() => {
