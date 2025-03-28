@@ -1,22 +1,37 @@
-"use client";
+import React, { ReactNode } from "react";
 
-import { CustomButtonProps } from '@/Types';
-import React from 'react'
-
-const CustomButton = ({title, containerStyles, handleClick, btnType}: CustomButtonProps) => {
-  return (
-    <button
-        disabled={false}
-        type={"button"}
-        className={`custom-btn ${containerStyles}`}
-        onClick={handleClick}
-    >
-        <span className={'flex-1'}>
-            {title}
-        </span>
-
-    </button>
-  )
+export interface CustomButtonProps {
+  title: string;
+  btnType: "button" | "submit";
+  containerStyles?: string;
+  handleClick?: () => void;
+  textStyles?: string;
+  rightIcon?: ReactNode; // Add this line to support the rightIcon prop
+  isDisabled?: boolean;
 }
 
-export default CustomButton
+const CustomButton = ({
+  title,
+  btnType,
+  containerStyles,
+  handleClick,
+  textStyles,
+  rightIcon, // Add this to the destructuring
+  isDisabled = false,
+}: CustomButtonProps) => {
+  return (
+    <button
+      disabled={isDisabled}
+      type={btnType === "button" ? "button" : "submit"}
+      className={`${containerStyles}`}
+      onClick={handleClick}
+    >
+      <span className={`flex items-center ${textStyles}`}>
+        {title}
+        {rightIcon && rightIcon} {/* Render the rightIcon if provided */}
+      </span>
+    </button>
+  );
+};
+
+export default CustomButton;
