@@ -5,7 +5,7 @@ import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "CraftID.in",
-  description: "Every craft has an Identity",
+  description: "Where crafts come alive",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
