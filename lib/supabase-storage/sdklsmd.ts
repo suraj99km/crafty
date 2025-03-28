@@ -22,17 +22,19 @@ const compressVideo = async (file: File): Promise<File | null> => {
 
     await ffmpeg.FS("writeFile", inputFileName, await fetchFile(file));
 
+    // Compression settings
+    const resolution = "480p"; // Adaptive resolution scaling
+    const compressionSettings = { crf: 28, preset: "medium" };  // Adjusted CRF and preset
+
     await ffmpeg.run(
       "-i", inputFileName,
       "-c:v", "libx265",
-      "-preset", "fast",
-      "-crf", "32",  // Higher compression
-      "-b:v", "300k", // Restrict bitrate
-      "-vf", "scale=640:360",
-      "-c:a", "aac",
-      "-b:a", "64k",  // Lower audio bitrate
+      "-preset", compressionSettings.preset,
+      "-crf", `${compressionSettings.crf}`,
       "-movflags", "+faststart",
-      "-map_metadata", "-1",  // Remove unnecessary metadata
+      "-vf", `scale=${resolution},format=yuv420p`,
+      "-c:a", "aac",
+      "-b:a", "128k", // Adaptive audio bitrate
       outputFileName
     );
 
@@ -44,7 +46,7 @@ const compressVideo = async (file: File): Promise<File | null> => {
       return compressedFile;
     }
 
-    console.error("❌ Compression failed, file still too large.");
+    console.error("❌ Compression failed, file too large.");
     return null;
   } catch (error) {
     console.error("❌ Error in video compression:", error);

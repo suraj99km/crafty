@@ -11,23 +11,29 @@ import { toast } from "sonner";
 
 export default function ProductListingPage() {
   const [product, setProduct] = useState({
+    //Product Details Step
     title: "",
     category: "",
     description: "",
     images: [],
-    qualityVideo: null,
     demoVideo: null,
+
+    //Product Specifications Step
     dimensions: { length: undefined, width: undefined, height: undefined, weight: undefined }, // <-- Use undefined instead of null
     material: "",
     prepTime: undefined,
+
+    //Product Pricing Step
     artistPrice: undefined,
     platformPrice: undefined,
     paymentMethodId: "",
     
+    //Product Shipping Step
     shippingAddressId: "",
     stockQuantity: undefined,
     madeToOrder: false,
 
+    //Product Additional info Step
     customizationAvailable: false,
     customizationInstructions: "",
     requiresAssembly: false,

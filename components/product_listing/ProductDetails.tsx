@@ -30,8 +30,7 @@ export default function ProductDetails({
     category: string;
     description: string;
     images: string[];
-    // qualityVideo: string | null;
-    // demoVideo: string | null;
+    demoVideo: string | null;
   };
   updateProduct: (key: string, value: string | string[] | null) => void;
 }) {
@@ -131,7 +130,7 @@ export default function ProductDetails({
           <ProductImagesUploader product={product} updateProduct={updateProduct} />
 
           {/* Product Videos Uploader */}
-          {/* <ProductVideosUploader product={product} updateProduct={updateProduct} /> */}
+          <ProductVideosUploader product={product} updateProduct={updateProduct} />
         </CardContent>
       </Card>
     </motion.div>

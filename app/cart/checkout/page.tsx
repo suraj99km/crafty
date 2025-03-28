@@ -13,7 +13,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     // Retrieve selected address
-    const storedAddress = sessionStorage.getItem("selectedAddress");
+    const storedAddress = localStorage.getItem("selectedAddress");
     if (storedAddress) {
       setSelectedAddress(JSON.parse(storedAddress));
     }

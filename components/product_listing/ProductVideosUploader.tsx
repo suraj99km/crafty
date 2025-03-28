@@ -7,10 +7,9 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { XCircle, UploadCloud, Loader2, AlertTriangle } from "lucide-react";
 
-type ProductVideoKeys = "qualityVideo" | "demoVideo";
+type ProductVideoKeys = "demoVideo";
 
 type ProductWithVideos = {
-  qualityVideo: string | null;
   demoVideo: string | null;
 };
 
@@ -113,7 +112,7 @@ export default function ProductVideosUploader({
 
       // Define folder path with a more reliable structure
       const timestamp = new Date().toISOString().split("T")[0];
-      const folderPath = `products/${userEmail}/${timestamp}`;
+      const folderPath = `product-demos/${userEmail}/${timestamp}`;
       const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const fullPath = `${folderPath}/${fileName}`;
 
@@ -140,7 +139,7 @@ export default function ProductVideosUploader({
 
       if (urlData?.publicUrl) {
         updateProduct(key, urlData.publicUrl);
-        toast.success(`${key === "qualityVideo" ? "Quality Verification" : "Demo"} Video uploaded successfully!`);
+        toast.success(`Demo Video uploaded successfully!`);
       } else {
         throw new Error("Failed to get public URL");
       }
@@ -161,7 +160,7 @@ export default function ProductVideosUploader({
       delete newFileNames[key];
       return newFileNames;
     });
-    toast.info(`${key === "qualityVideo" ? "Quality Verification" : "Demo"} Video removed.`);
+    toast.info(`Demo Video removed.`);
   };
 
   const videoFields: Array<{
@@ -169,32 +168,8 @@ export default function ProductVideosUploader({
     label: string;
     required: boolean;
   }> = [
-    { key: "demoVideo", label: "Product Demo Video", required: false },
-    { key: "qualityVideo", label: "Product Quality Verification Video", required: true },
+    { key: "demoVideo", label: "Product Demo Video", required: true },
   ];
-
-  if (!isAuthReady) {
-    return (
-      <div className="space-y-4">
-        <div className="w-full py-8 flex flex-col items-center justify-center">
-          <Loader2 className="animate-spin text-gray-600 mb-2" size={24} />
-          <span className="text-sm text-gray-600">Checking authentication...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (!userEmail) {
-    return (
-      <div className="space-y-4">
-        <div className="w-full py-8 flex flex-col items-center justify-center bg-red-50 rounded-lg border border-red-200">
-          <AlertTriangle className="text-red-500 mb-2" size={24} />
-          <span className="text-sm text-red-600 font-medium">Authentication required</span>
-          <p className="text-xs text-red-500 mt-1">Please log in to upload videos</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-4">
@@ -202,7 +177,7 @@ export default function ProductVideosUploader({
         <div key={key} className="space-y-2">
           <div className="flex justify-between items-center">
             <label className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
-              {label} {required && <span className="text-red-500">*</span>}
+              {label}
             </label>
           </div>
           
@@ -210,7 +185,7 @@ export default function ProductVideosUploader({
             <div className="relative rounded-lg overflow-hidden border border-gray-200">
               <video 
                 controls 
-                className="w-full aspect-video object-cover rounded-lg"
+                className="w-full h-100 object-contain rounded-t-lg"
                 src={product[key]}
                 preload="metadata"
               >
@@ -244,7 +219,7 @@ export default function ProductVideosUploader({
               {!uploading[key] && (
                 <>
                   <UploadCloud className="w-8 h-8 text-gray-500 mb-1" />
-                  <span className="text-xs text-gray-500">Upload {key === "qualityVideo" ? "Quality" : "Demo"} Video</span>
+                  <span className="text-xs text-gray-500">Upload Demo Video</span>
                   <span className="text-xs text-gray-400 mt-1">Max size: 50MB</span>
                   <span className="text-xs text-gray-400">Formats: MP4</span>
                 </>
@@ -282,9 +257,8 @@ export default function ProductVideosUploader({
               )}
             </div>
           )}
-          
-          {key === "qualityVideo" && !product[key] && (
-            <p className="text-xs text-red-500">Quality verification video is required.</p>
+          {required && !product[key] && (
+            <span className="text-red-500 text-xs">Product Demo Video is required</span>
           )}
         </div>
       ))}
@@ -292,8 +266,9 @@ export default function ProductVideosUploader({
         <div className="text-xs text-gray-500 space-y-1">
         <span className="font-medium block">Upload Tips:</span> 
         <ul className="ml-1 space-y-0.5">
-            <li>• Keep videos short (10-20 sec)</li>
-            <li>• Compress videos for faster uploads</li>
+        <li>• Keep videos short, engaging, and visually appealing.</li>  
+        <li>• Upload in portrait mode for the best viewing experience.</li>  
+        <li>• Make it creative and interactive to stand out on CraftID.in's social channels.</li>
         </ul>
         </div>
     </div>
