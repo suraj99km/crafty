@@ -19,13 +19,16 @@ export default function ProductListingPage() {
     demoVideo: null,
 
     //Product Specifications Step
-    dimensions: { length: undefined, width: undefined, height: undefined, weight: undefined }, // <-- Use undefined instead of null
+    dimensions: { length: undefined, width: undefined, height: undefined, weight: undefined },
     material: "",
     prepTime: undefined,
 
     //Product Pricing Step
     artistPrice: undefined,
     platformPrice: undefined,
+    isDiscountEnabled: false,
+    artistSalePrice: undefined,
+    finalSalePrice: undefined,
     paymentMethodId: "",
     
     //Product Shipping Step
@@ -43,11 +46,11 @@ export default function ProductListingPage() {
   });
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [isClient, setIsClient] = useState(false); // State to check if the component is mounted on the client
+  const [isClient, setIsClient] = useState(false);
 
   // Load saved product data from localStorage after the component has mounted
   useEffect(() => {
-    setIsClient(true); // Mark the component as mounted on the client
+    setIsClient(true);
 
     const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
     setProduct((prev) => ({
@@ -56,17 +59,18 @@ export default function ProductListingPage() {
       category: savedProduct.category || "",
       description: savedProduct.description || "",
       images: savedProduct.images || [],
-      qualityVideo: savedProduct.qualityVideo || null,
       demoVideo: savedProduct.demoVideo || null,
 
       dimensions: savedProduct.dimensions || { length: null, width: null, height: null, weight: null },
       material: savedProduct.material || "",
       prepTime: savedProduct.prepTime || null,
 
-      artistPrice: savedProduct.artistPrice || "",
-      platformPrice: savedProduct.platformPrice || "",
+      artistPrice: savedProduct.artistPrice || undefined,
+      platformPrice: savedProduct.platformPrice || undefined,
+      isDiscountEnabled: savedProduct.isDiscountEnabled || false,
+      artistSalePrice: savedProduct.artistSalePrice || undefined,
+      finalSalePrice: savedProduct.finalSalePrice || undefined,
       paymentMethodId: savedProduct.paymentMethodId || "",
-
 
       shippingAddressId: savedProduct.shippingAddressId || "",
       stockQuantity: savedProduct.stockQuantity || null,
@@ -81,6 +85,7 @@ export default function ProductListingPage() {
     }));
   }, []);
 
+  // Rest of the component remains the same...
   const updateProduct = (field: string, value: any) => {
     setProduct((prev) => {
       const updatedProduct = { ...prev, [field]: value };
@@ -92,6 +97,7 @@ export default function ProductListingPage() {
 
   const handleNextStep = () => {
     setCurrentStep((prevStep) => Math.min(prevStep + 1, 5)); // Max step 5
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePrevStep = () => {

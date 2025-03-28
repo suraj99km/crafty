@@ -168,7 +168,7 @@ export default function ProductVideosUploader({
     label: string;
     required: boolean;
   }> = [
-    { key: "demoVideo", label: "Product Demo Video", required: true },
+    { key: "demoVideo", label: "Product Demo Video *", required: true },
   ];
 
   return (

@@ -12,12 +12,12 @@ import PaymentMethodSelection from "./Pricing/PaymentMethodSelection";
 
 interface PricingProps {
   product?: {
-    artistPrice?: number,
+    artistPrice?: number;
     platformPrice?: number;
     isDiscountEnabled?: boolean;
     artistSalePrice?: number;
     finalSalePrice?: number;
-    paymentMethodId: string,
+    paymentMethodId: string;
   };
   updateProduct?: (field: string, value: any) => void;
 }
@@ -38,7 +38,12 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     feeStructure.find(tier => initialPrice >= tier.min && initialPrice <= tier.max)?.percentage || 0
   );
   const [inputFocused, setInputFocused] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(product?.paymentMethodId || "");
+  
+  // Get payment method from localStorage or use product value or default to "wallet"
+  const storedPaymentMethod = typeof window !== 'undefined' ? localStorage.getItem("selectedPaymentMethod") : null;
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
+    storedPaymentMethod || product?.paymentMethodId || "wallet"
+  );
   
   // Initialize artistSalePrice and finalSalePrice
   const initialSalePrice = product?.artistSalePrice || Math.round(initialPrice * 0.9); // Default 10% off
@@ -51,6 +56,46 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
   const [discountPercent, setDiscountPercent] = useState(
     Math.round((1 - initialSalePrice/initialPrice) * 100) || 10
   );
+
+  // Helper function to update localStorage with all pricing data
+  const updateLocalStorage = () => {
+    const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
+    const updatedProduct = {
+      ...savedProduct,
+      artistPrice,
+      platformPrice: finalPrice,
+      isDiscountEnabled,
+      artistSalePrice,
+      finalSalePrice,
+      paymentMethodId: selectedPaymentMethod, // Ensure we're using the current payment method ID
+    };
+    localStorage.setItem("productData", JSON.stringify(updatedProduct));
+  };
+
+  // Set default values on component mount
+  useEffect(() => {
+    // Check for payment method in localStorage on component mount
+    const storedMethod = localStorage.getItem("selectedPaymentMethod");
+    if (storedMethod) {
+      setSelectedPaymentMethod(storedMethod);
+      if (updateProduct) {
+        updateProduct("paymentMethodId", storedMethod);
+      }
+    }
+    
+    // Set default values in the parent component if updateProduct is provided
+    if (updateProduct) {
+      updateProduct("artistPrice", artistPrice);
+      updateProduct("platformPrice", finalPrice);
+      updateProduct("isDiscountEnabled", isDiscountEnabled);
+      updateProduct("artistSalePrice", artistSalePrice);
+      updateProduct("finalSalePrice", finalSalePrice);
+      updateProduct("paymentMethodId", selectedPaymentMethod);
+      
+      // Update localStorage with default values
+      updateLocalStorage();
+    }
+  }, []);
 
   // Update all pricing related states
   const updatePricing = (newPrice: number) => {
@@ -69,10 +114,44 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
       updateProduct("platformPrice", validPrice + newFee);
     }
 
-    // Update sale price based on current discount percentage
-    const newSalePrice = Math.max(50, Math.round(validPrice * (1 - discountPercent/100)));
-    updateSalePrice(newSalePrice);
+    // Keep sale price fixed when increasing artist price
+    // When decreasing artist price below sale price, adjust sale price to match artist price
+    if (validPrice > artistPrice) {
+      // Price is increasing - keep sale price the same, recalculate discount percentage
+      const newDiscountPercent = Math.round((1 - artistSalePrice/validPrice) * 100);
+      setDiscountPercent(Math.max(0, newDiscountPercent));
+      
+      // Update final sale price with new platform fee
+      const salePlatformFee = calculatePlatformFee(artistSalePrice);
+      const newFinalSalePrice = artistSalePrice + salePlatformFee;
+      setFinalSalePrice(newFinalSalePrice);
+      
+      if (updateProduct) {
+        updateProduct("finalSalePrice", newFinalSalePrice);
+      }
+    } else if (validPrice < artistSalePrice) {
+      // Price decreased below sale price - adjust sale price to match artist price
+      setArtistSalePrice(validPrice);
+      setInputSalePrice(validPrice.toString());
+      setDiscountPercent(0);
+      
+      const salePlatformFee = calculatePlatformFee(validPrice);
+      const newFinalSalePrice = validPrice + salePlatformFee;
+      setFinalSalePrice(newFinalSalePrice);
+      
+      if (updateProduct) {
+        updateProduct("artistSalePrice", validPrice);
+        updateProduct("finalSalePrice", newFinalSalePrice);
+      }
+    } else {
+      // Price is decreasing but still above sale price - recalculate discount percentage
+      const newDiscountPercent = Math.round((1 - artistSalePrice/validPrice) * 100);
+      setDiscountPercent(Math.max(0, newDiscountPercent));
+    }
 
+    // Update localStorage after price changes
+    updateLocalStorage();
+    
     return validPrice;
   };
 
@@ -94,6 +173,9 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
       updateProduct("finalSalePrice", newFinalSalePrice);
     }
 
+    // Update localStorage after sale price changes
+    updateLocalStorage();
+    
     return validPrice;
   };
 
@@ -179,20 +261,19 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
 
   // Handle payment method change
   const handleMethodChange = (methodId: string) => {
-    setSelectedPaymentMethod(methodId); // Update state
+    if (!methodId) return; // Don't update if methodId is empty
+    
+    setSelectedPaymentMethod(methodId); // Update state with the ID from PaymentMethodSelection
+    
     if (updateProduct) {
-      updateProduct("paymentMethodId", methodId); // Ensure it's updated in the product state
+      updateProduct("paymentMethodId", methodId);
     }
 
+    // Update localStorage with new payment method
     const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
     const updatedProduct = {
       ...savedProduct,
-      artistPrice: savedProduct.artistPrice || "",
-      platformPrice: savedProduct.platformPrice || "",
-      isDiscountEnabled: isDiscountEnabled,
-      artistSalePrice: savedProduct.artistSalePrice || "",
-      finalSalePrice: savedProduct.finalSalePrice || "",
-      paymentMethodId: methodId, // Store selected method ID
+      paymentMethodId: methodId,
     };
     localStorage.setItem("productData", JSON.stringify(updatedProduct));
   };
@@ -201,9 +282,13 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
   const handleDiscountToggle = () => {
     const newState = !isDiscountEnabled;
     setIsDiscountEnabled(newState);
+    
     if (updateProduct) {
       updateProduct("isDiscountEnabled", newState);
     }
+    
+    // Update localStorage with new discount state
+    updateLocalStorage();
   };
 
   return (
@@ -249,7 +334,6 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
                     step={1}
                     className="py-2 w-full h-2 bg-red-400 rounded-lg relative"
                   />
-
                   <div className="flex justify-between items-center pt-1">
                     <div className="flex flex-col">
                       <span className="text-xs text-gray-500">₹50</span>
@@ -269,7 +353,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
               
               {/* Quick price presets */}
               <div className="grid grid-cols-4 gap-2">
-                {[99, 199, 299,399, 499,699, 999, 1199, 1499, 2499, 3999, 4999].map((price) => (
+                {[99, 199, 299, 399, 499,749, 999,1249, 1499, 2499, 3999, 4999].map((price) => (
                   <button
                     key={price}
                     onClick={() => {
@@ -329,8 +413,8 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
                     <Label className="text-sm font-medium text-gray-700">
                       Current Discount: <span className="text-red-600 font-semibold">{discountPercent}% OFF</span>
                     </Label>
-                    <div className="flex space-x-1">
-                      {[10, 20, 30, 40, 50].map((percent) => (
+                    <div className="flex space-x-2">
+                      {[10, 20, 30, 50].map((percent) => (
                         <button
                           key={percent}
                           onClick={() => handleDiscountPreset(percent)}
