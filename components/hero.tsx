@@ -283,7 +283,7 @@ const Hero = () => {
         {/* Authentic Indian Crafts tag for mobile - FIXED: moved outside absolute positioning */}
         <div className="relative h-0">
           <motion.div 
-            className="absolute -bottom-8 -right-40 bg-white/90 backdrop-blur-sm w-20 h-20 rounded-full shadow-lg z-5 flex items-center justify-center border-2 border-red-100"
+            className="absolute -bottom-8 -right-40 bg-white backdrop-blur-sm w-20 h-20 rounded-full shadow-lg z-5 flex items-center justify-center border-2 border-red-100"
             initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
             animate={{ opacity: 1, scale: 0.9, rotate: 0 }}
             transition={{ delay: 1.2, duration: 0.5 }}
@@ -463,8 +463,6 @@ const Hero = () => {
                   className="w-full h-full object-cover object-center"
                   loading={currentSlide === 0 ? "eager" : "lazy"}
                 />
-                {/* Enhanced gradient overlay with more depth */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
               </motion.div>
             </AnimatePresence>
             
