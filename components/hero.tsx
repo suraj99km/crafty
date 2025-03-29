@@ -192,7 +192,7 @@ const Hero = () => {
         >
           {/* Horizontal swipe area */}
           <div 
-            className="absolute inset-0 z-20 cursor-pointer"
+            className="absolute inset-0 z-10 cursor-pointer"
             onClick={() => handleProductClick(currentSlide)}
             onTouchStart={(e) => {
               const touchStart = e.touches[0].clientX;
@@ -468,7 +468,7 @@ const Hero = () => {
             
             
             {/* Slideshow indicators */}
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-5">
               {productImages.map((_, index) => (
                 <button
                   key={index}
