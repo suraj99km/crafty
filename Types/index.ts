@@ -7,17 +7,36 @@ export interface CustomButtonProps {
     btnType: "button" | "submit";
 }
 
-export interface Product {
-    id: string;
-    title: string;
-    price: number;
-    image_url: string;
-    artist_name?: string;
-    description?: string;
-    artist_id?: string;
-    quantity?: number;
-    category?: string; 
-  }
+export interface ProductData {
+  title: string;
+  category: string;
+  description: string;
+  images: string[];
+  demoVideo: string | null;
+  dimensions: {
+    length?: number | null;
+    width?: number | null;
+    height?: number | null;
+    weight?: number | null;
+  };
+  material: string;
+  prepTime?: number | null;
+  artistPrice?: number | null;
+  platformPrice?: number | null;
+  isDiscountEnabled: boolean;
+  artistSalePrice?: number | null;
+  finalSalePrice?: number | null;
+  paymentMethodId: string;
+  shippingAddressId: string;
+  stockQuantity?: number | null;
+  madeToOrder: boolean;
+  customizationAvailable: boolean;
+  customizationInstructions: string;
+  requiresAssembly: boolean;
+  assemblyInstructions: string;
+  careInstructions: string;
+  returnPolicy: string;
+}
   
 
   export interface Artist {

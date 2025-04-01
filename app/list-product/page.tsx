@@ -105,11 +105,11 @@ export default function ProductListingPage() {
   };
 
   const handleSubmit = () => {
-    console.log("Final Product Data:", product);
-    // Submit to database (to be implemented)
-    toast.success("Product submitted successfully!");
-    // Clear the product data from localStorage once the product is submitted
-    localStorage.removeItem("productData");
+    // Save the final product data to localStorage before redirecting
+    localStorage.setItem("productData", JSON.stringify(product));
+    
+    // Redirect to the preview page
+    window.location.href = "/list-product/preview";
   };
 
   if (!isClient) {
@@ -176,7 +176,7 @@ export default function ProductListingPage() {
             onClick={handleSubmit}
             className="px-6 py-2 font-bold rounded-2xl text-md text-white bg-red-500 hover:bg-red-600 shadow-md transition-all"
           >
-            Submit Product
+            Preview Product
           </Button>
         )}
       </div>
