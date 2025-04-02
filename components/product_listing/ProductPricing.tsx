@@ -12,12 +12,12 @@ import PaymentMethodSelection from "./Pricing/PaymentMethodSelection";
 
 interface PricingProps {
   product?: {
-    artistPrice?: number;
-    platformPrice?: number;
-    isDiscountEnabled?: boolean;
-    artistSalePrice?: number;
-    finalSalePrice?: number;
-    paymentMethodId: string;
+    artist_price?: number;
+    platform_price?: number;
+    is_discount_enabled?: boolean;
+    artist_sale_price?: number;
+    final_sale_price?: number;
+    payment_method_id: string;
   };
   updateProduct?: (field: string, value: any) => void;
 }
@@ -29,7 +29,7 @@ const calculatePlatformFee = (price: number) => {
 };
 
 const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
-  const initialPrice = product?.artistPrice || 499;
+  const initialPrice = product?.artist_price || 499;
   const [artistPrice, setArtistPrice] = useState(initialPrice);
   const [inputPrice, setInputPrice] = useState(initialPrice.toString());
   const [platformFee, setPlatformFee] = useState(calculatePlatformFee(initialPrice));
@@ -42,17 +42,17 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
   // Get payment method from localStorage or use product value or default to "wallet"
   const storedPaymentMethod = typeof window !== 'undefined' ? localStorage.getItem("selectedPaymentMethod") : null;
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
-    storedPaymentMethod || product?.paymentMethodId || "wallet"
+    storedPaymentMethod || product?.payment_method_id || "wallet"
   );
   
   // Initialize artistSalePrice and finalSalePrice
-  const initialSalePrice = product?.artistSalePrice || Math.round(initialPrice * 0.9); // Default 10% off
+  const initialSalePrice = product?.artist_sale_price || Math.round(initialPrice * 0.9); // Default 10% off
   const [artistSalePrice, setArtistSalePrice] = useState(initialSalePrice);
   const [inputSalePrice, setInputSalePrice] = useState(initialSalePrice.toString());
   const [finalSalePrice, setFinalSalePrice] = useState(initialSalePrice + calculatePlatformFee(initialSalePrice));
   
   // New state for discount toggle
-  const [isDiscountEnabled, setIsDiscountEnabled] = useState(product?.isDiscountEnabled || false);
+  const [isDiscountEnabled, setIsDiscountEnabled] = useState(product?.is_discount_enabled || false);
   const [discountPercent, setDiscountPercent] = useState(
     Math.round((1 - initialSalePrice/initialPrice) * 100) || 10
   );
@@ -79,18 +79,18 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     if (storedMethod) {
       setSelectedPaymentMethod(storedMethod);
       if (updateProduct) {
-        updateProduct("paymentMethodId", storedMethod);
+        updateProduct("payment_method_id", storedMethod);
       }
     }
     
     // Set default values in the parent component if updateProduct is provided
     if (updateProduct) {
-      updateProduct("artistPrice", artistPrice);
-      updateProduct("platformPrice", finalPrice);
-      updateProduct("isDiscountEnabled", isDiscountEnabled);
-      updateProduct("artistSalePrice", artistSalePrice);
-      updateProduct("finalSalePrice", finalSalePrice);
-      updateProduct("paymentMethodId", selectedPaymentMethod);
+      updateProduct("artist_price", artistPrice);
+      updateProduct("platform_price", finalPrice);
+      updateProduct("is_discount_enabled", isDiscountEnabled);
+      updateProduct("artist_sale_price", artistSalePrice);
+      updateProduct("final_sale_price", finalSalePrice);
+      updateProduct("payment_method_id", selectedPaymentMethod);
       
       // Update localStorage with default values
       updateLocalStorage();
@@ -110,8 +110,8 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     setCurrentTier(tier?.percentage || 0);
     
     if (updateProduct) {
-      updateProduct("artistPrice", validPrice);
-      updateProduct("platformPrice", validPrice + newFee);
+      updateProduct("artist_price", validPrice);
+      updateProduct("platform_price", validPrice + newFee);
     }
 
     // Keep sale price fixed when increasing artist price
@@ -127,7 +127,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
       setFinalSalePrice(newFinalSalePrice);
       
       if (updateProduct) {
-        updateProduct("finalSalePrice", newFinalSalePrice);
+        updateProduct("final_sale_price", newFinalSalePrice);
       }
     } else if (validPrice < artistSalePrice) {
       // Price decreased below sale price - adjust sale price to match artist price
@@ -140,8 +140,8 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
       setFinalSalePrice(newFinalSalePrice);
       
       if (updateProduct) {
-        updateProduct("artistSalePrice", validPrice);
-        updateProduct("finalSalePrice", newFinalSalePrice);
+        updateProduct("artist_sale_price", validPrice);
+        updateProduct("final_sale_price", newFinalSalePrice);
       }
     } else {
       // Price is decreasing but still above sale price - recalculate discount percentage
@@ -169,8 +169,8 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     setFinalSalePrice(newFinalSalePrice);
 
     if (updateProduct) {
-      updateProduct("artistSalePrice", validPrice);
-      updateProduct("finalSalePrice", newFinalSalePrice);
+      updateProduct("artist_sale_price", validPrice);
+      updateProduct("final_sale_price", newFinalSalePrice);
     }
 
     // Update localStorage after sale price changes
@@ -266,7 +266,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     setSelectedPaymentMethod(methodId); // Update state with the ID from PaymentMethodSelection
     
     if (updateProduct) {
-      updateProduct("paymentMethodId", methodId);
+      updateProduct("payment_method_id", methodId);
     }
 
     // Update localStorage with new payment method
@@ -284,7 +284,7 @@ const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {
     setIsDiscountEnabled(newState);
     
     if (updateProduct) {
-      updateProduct("isDiscountEnabled", newState);
+      updateProduct("is_discount_enabled", newState);
     }
     
     // Update localStorage with new discount state

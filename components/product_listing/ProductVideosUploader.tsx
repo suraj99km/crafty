@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { XCircle, UploadCloud, Loader2, AlertTriangle } from "lucide-react";
 
-type ProductVideoKeys = "demoVideo";
+type ProductVideoKeys = "demo_video";
 
 type ProductWithVideos = {
-  demoVideo: string | null;
+  demo_video: string | null;
 };
 
 export default function ProductVideosUploader({
@@ -168,7 +168,7 @@ export default function ProductVideosUploader({
     label: string;
     required: boolean;
   }> = [
-    { key: "demoVideo", label: "Product Demo Video *", required: true },
+    { key: "demo_video", label: "Product Demo Video *", required: true },
   ];
 
   return (

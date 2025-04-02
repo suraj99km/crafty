@@ -36,28 +36,28 @@ const Toggle: React.FC<{
 
 interface AdditionalInfoProps {
   product: {
-    customizationAvailable: boolean;
-    customizationInstructions: string;
-    requiresAssembly: boolean;
-    assemblyInstructions: string;
-    careInstructions: string;
-    returnPolicy: string;
+    customization_available: boolean;
+    customization_instructions: string;
+    requires_assembly: boolean;
+    assembly_instructions: string;
+    care_instructions: string;
+    return_policy: string;
   };
   updateProduct: (field: string, value: any) => void;
 }
 
 export default function AdditionalInfo({ product, updateProduct }: AdditionalInfoProps) {
-  const [isCustomizationAvailable, setIsCustomizationAvailable] = useState(product.customizationAvailable || false);
-  const [isAssemblyRequired, setIsAssemblyRequired] = useState(product.requiresAssembly || false);
+  const [isCustomizationAvailable, setIsCustomizationAvailable] = useState(product.customization_available || false);
+  const [isAssemblyRequired, setIsAssemblyRequired] = useState(product.requires_assembly || false);
 
   const handleCustomizationChange = (enabled: boolean) => {
     setIsCustomizationAvailable(enabled);
-    updateProduct("customizationAvailable", enabled);
+    updateProduct("customization_available", enabled);
   };
 
   const handleAssemblyChange = (enabled: boolean) => {
     setIsAssemblyRequired(enabled);
-    updateProduct("requiresAssembly", enabled);
+    updateProduct("requires_assembly", enabled);
   };
 
   // Load saved product data from localStorage on initial render
@@ -67,15 +67,15 @@ export default function AdditionalInfo({ product, updateProduct }: AdditionalInf
       if (savedProductJSON) {
         const savedProduct = JSON.parse(savedProductJSON);
 
-        setIsCustomizationAvailable(savedProduct.customizationAvailable || false);
-        setIsAssemblyRequired(savedProduct.requiresAssembly || false);
+        setIsCustomizationAvailable(savedProduct.customization_available || false);
+        setIsAssemblyRequired(savedProduct.requires_assembly || false);
 
-        updateProduct("customizationAvailable", savedProduct.customizationAvailable || false);
-        updateProduct("customizationInstructions", savedProduct.customizationInstructions || "");
-        updateProduct("requiresAssembly", savedProduct.requiresAssembly || false);
-        updateProduct("assemblyInstructions", savedProduct.assemblyInstructions || "");
-        updateProduct("careInstructions", savedProduct.careInstructions || "");
-        updateProduct("returnPolicy", savedProduct.returnPolicy || "");
+        updateProduct("customization_available", savedProduct.customization_available || false);
+        updateProduct("customization_instructions", savedProduct.customization_instructions || "");
+        updateProduct("requires_assembly", savedProduct.requires_assembly || false);
+        updateProduct("assembly_instructions", savedProduct.assembly_instructions || "");
+        updateProduct("care_instructions", savedProduct.care_instructions || "");
+        updateProduct("return_policy", savedProduct.return_policy || "");
       }
     } catch (error) {
       console.error("Error loading product data from localStorage:", error);
@@ -113,14 +113,14 @@ export default function AdditionalInfo({ product, updateProduct }: AdditionalInf
 
               {isCustomizationAvailable && (
                 <div className="mt-3 border-l-2 border-red-300 pl-3">
-                  <Label htmlFor="customizationInstructions" className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label htmlFor="customization_instructions" className="text-sm font-medium text-gray-700 mb-2 block">
                     Customization Instructions
                   </Label>
                   <Textarea
-                    id="customizationInstructions"
+                    id="customization_instructions"
                     placeholder="Describe what customizations are available..."
-                    value={product.customizationInstructions || ""}
-                    onChange={(e) => updateProduct("customizationInstructions", e.target.value)}
+                    value={product.customization_instructions || ""}
+                    onChange={(e) => updateProduct("customization_instructions", e.target.value)}
                     className="border text-sm border-gray-300 p-3 rounded-md w-full shadow-sm focus:ring-red-500 focus:border-red-500"
                     rows={3}
                   />
@@ -134,14 +134,14 @@ export default function AdditionalInfo({ product, updateProduct }: AdditionalInf
 
               {isAssemblyRequired && (
                 <div className="mt-3 border-l-2 border-red-300 pl-3">
-                  <Label htmlFor="assemblyInstructions" className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label htmlFor="assembly_instructions" className="text-sm font-medium text-gray-700 mb-2 block">
                     Assembly Instructions
                   </Label>
                   <Textarea
-                    id="assemblyInstructions"
+                    id="assembly_instructions"
                     placeholder="Provide detailed assembly instructions..."
-                    value={product.assemblyInstructions || ""}
-                    onChange={(e) => updateProduct("assemblyInstructions", e.target.value)}
+                    value={product.assembly_instructions || ""}
+                    onChange={(e) => updateProduct("assembly_instructions", e.target.value)}
                     className="border text-sm border-gray-300 p-3 rounded-md w-full shadow-sm focus:ring-red-500 focus:border-red-500"
                     rows={3}
                   />
@@ -151,14 +151,14 @@ export default function AdditionalInfo({ product, updateProduct }: AdditionalInf
 
             {/* Special Care Instructions */}
             <div className="space-y-2">
-              <Label htmlFor="careInstructions" className="text-sm font-semibold text-gray-700">
+              <Label htmlFor="care_instructions" className="text-sm font-semibold text-gray-700">
                 Special Care Instructions
               </Label>
               <Textarea
-                id="careInstructions"
+                id="care_instructions"
                 placeholder="E.g., Hand-wash only, Keep away from moisture, etc."
-                value={product.careInstructions || ""}
-                onChange={(e) => updateProduct("careInstructions", e.target.value)}
+                value={product.care_instructions || ""}
+                onChange={(e) => updateProduct("care_instructions", e.target.value)}
                 className="border text-sm border-gray-300 p-3 rounded-md w-full shadow-sm focus:ring-red-500 focus:border-red-500"
                 rows={3}
               />
@@ -166,11 +166,11 @@ export default function AdditionalInfo({ product, updateProduct }: AdditionalInf
 
             {/* Return Policy */}
             <div className="space-y-2">
-              <Label htmlFor="returnPolicy" className="text-sm font-semibold text-gray-700">
+              <Label htmlFor="return_policy" className="text-sm font-semibold text-gray-700">
                 Return Policy *
               </Label>
-              <Select value={product.returnPolicy || ""} onValueChange={(value) => updateProduct("returnPolicy", value)}>
-                <SelectTrigger id="returnPolicy" className="w-full focus:ring-red-500 focus:border-red-500">
+              <Select value={product.return_policy || ""} onValueChange={(value) => updateProduct("return_policy", value)}>
+                <SelectTrigger id="return_policy" className="w-full focus:ring-red-500 focus:border-red-500">
                   <SelectValue placeholder="Select return policy" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">

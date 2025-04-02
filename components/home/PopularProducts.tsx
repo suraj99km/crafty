@@ -123,12 +123,12 @@ const PopularProducts = () => {
                 >
                   <Link href={`/products/${product.id}`}>
                     <div className="relative aspect-square overflow-hidden">
-                      <img src={product.image_url || "/placeholder.png"} 
+                      <img src={product.images[0] || "/placeholder.png"} 
                         alt={product.title} className="w-full h-full object-cover"/>
                     </div>
                     <div className="p-4">
                       <h3 className="font-semibold text-lg mb-2 truncate">{product.title}</h3>
-                      <p className="font-bold">₹ {product.price}</p>
+                      <p className="font-bold">₹ {product.platform_price}</p>
                       <p className="flex items-center justify-center text-gray-900 text-sm mt-2">
                         Crafted by <span className="font-semibold ml-1">{product.artist_name || "Unknown Artist"}</span>
                       </p>

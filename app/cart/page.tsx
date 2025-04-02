@@ -41,7 +41,11 @@ const CartPage = () => {
   }, [total]);
 
   const getUpdatedCartItems = () =>
-    cartItems.map((item) => ({ ...item, quantity: item.quantity ?? 1 }));
+    cartItems.map((item) => ({
+      ...item,
+      stock_quantity: item.stock_quantity ?? 1,
+      platform_price: item.platform_price ?? 0, // Ensure platform_price is always a number
+    }));
 
   const handleCheckout = () => {
     if (!selectedAddress) {
@@ -56,7 +60,7 @@ const CartPage = () => {
     const cartData = cartItems.map((item) => ({
       id: item.id,
       title: item.title,
-      quantity: item.quantity ?? 1, // Default to 1 if undefined
+      quantity: item.stock_quantity ?? 1, // Default to 1 if undefined
     }));
     localStorage.setItem("cartData", JSON.stringify(cartData));
 

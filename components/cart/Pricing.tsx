@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 
 interface CartItem {
   title: string;
-  price: number;
-  quantity: number;
+  platform_price: number;
+  stock_quantity: number;
 }
 
 interface PricingProps {
@@ -21,7 +21,7 @@ const Pricing = ({ cartItems, onTotalChange }: PricingProps) => {
 
   useEffect(() => {
     const calculatedSubtotal = cartItems.reduce(
-      (sum, item) => sum + item.price * (item.quantity || 1),
+      (sum, item) => sum + item.platform_price * (item.stock_quantity || 1),
       0
     );
 

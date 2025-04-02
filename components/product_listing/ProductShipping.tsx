@@ -16,9 +16,9 @@ type ErrorRecord = Partial<Record<"stockQuantity" | "address", string>>;
 
 interface ProductShippingProps {
   product: {
-    stockQuantity?: number;
-    isMadeToOrder?: boolean;
-    shippingAddressId?: string;
+    stock_quantity?: number;
+    is_made_to_order?: boolean;
+    shipping_address_id?: string;
   };
   updateProduct: (field: string, value: any) => void;
 }
@@ -54,8 +54,8 @@ const Toggle: React.FC<{
 
 // Main Component
 const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduct }) => {
-  const [stockQuantity, setStockQuantity] = useState(product?.stockQuantity || 10);
-  const [isMadeToOrder, setIsMadeToOrder] = useState(product?.isMadeToOrder || false);
+  const [stockQuantity, setStockQuantity] = useState(product?.stock_quantity || 10);
+  const [isMadeToOrder, setIsMadeToOrder] = useState(product?.is_made_to_order || false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [errors, setErrors] = useState<ErrorRecord>({});
   const [inputQuantity, setInputQuantity] = useState(stockQuantity.toString());
@@ -69,7 +69,7 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
     if (savedAddress && !selectedAddress) {
       const parsedAddress = JSON.parse(savedAddress);
       setSelectedAddress(parsedAddress);
-      updateProduct("shippingAddressId", parsedAddress.id);
+      updateProduct("shipping_address_id", parsedAddress.id);
     }
   }, []);
 
@@ -92,7 +92,7 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
 
   const handleMadeToOrderChange = (enabled: boolean) => {
     setIsMadeToOrder(enabled);
-    updateProduct("isMadeToOrder", enabled);
+    updateProduct("is_made_to_order", enabled);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +124,7 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
   const updateQuantity = (value: number) => {
     const validQuantity = Math.max(1, Math.min(100, value));
     setStockQuantity(validQuantity);
-    updateProduct("stockQuantity", validQuantity);
+    updateProduct("stock_quantity", validQuantity);
     return validQuantity;
   };
 
@@ -143,8 +143,8 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
   // Handle address selection
   const handleSelectAddress = (address: Address) => {
     setSelectedAddress(address);
-    localStorage.setItem("selectedAddress", JSON.stringify(address));
-    updateProduct("shippingAddressId", address.id);
+    localStorage.setItem("selected_address", JSON.stringify(address));
+    updateProduct("shipping_address_id", address.id);
   };
 
   return (

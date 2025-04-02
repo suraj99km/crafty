@@ -30,7 +30,7 @@ export default function ProductDetails({
     category: string;
     description: string;
     images: string[];
-    demoVideo: string | null;
+    demo_video: string | null;
   };
   updateProduct: (key: string, value: string | string[] | null) => void;
 }) {

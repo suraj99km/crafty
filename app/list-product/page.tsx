@@ -11,38 +11,39 @@ import { toast } from "sonner";
 
 export default function ProductListingPage() {
   const [product, setProduct] = useState({
-    //Product Details Step
+    // Product Details Step
+    id: "",
     title: "",
     category: "",
     description: "",
     images: [],
-    demoVideo: null,
+    demo_video: null,
 
-    //Product Specifications Step
+    // Product Specifications Step
     dimensions: { length: undefined, width: undefined, height: undefined, weight: undefined },
     material: "",
-    prepTime: undefined,
+    prep_time: undefined,
 
-    //Product Pricing Step
-    artistPrice: undefined,
-    platformPrice: undefined,
-    isDiscountEnabled: false,
-    artistSalePrice: undefined,
-    finalSalePrice: undefined,
-    paymentMethodId: "",
+    // Product Pricing Step
+    artist_price: undefined,
+    platform_price: undefined,
+    is_discount_enabled: false,
+    artist_sale_price: undefined,
+    final_sale_price: undefined,
+    payment_method_id: "",
     
-    //Product Shipping Step
-    shippingAddressId: "",
-    stockQuantity: undefined,
-    madeToOrder: false,
+    // Product Shipping Step
+    shipping_address_id: "",
+    stock_quantity: undefined,
+    made_to_order: false,
 
-    //Product Additional info Step
-    customizationAvailable: false,
-    customizationInstructions: "",
-    requiresAssembly: false,
-    assemblyInstructions: "",
-    careInstructions: "",
-    returnPolicy: "",
+    // Product Additional Info Step
+    customization_available: false,
+    customization_instructions: "",
+    requires_assembly: false,
+    assembly_instructions: "",
+    care_instructions: "",
+    return_policy: "",
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -55,33 +56,34 @@ export default function ProductListingPage() {
     const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
     setProduct((prev) => ({
       ...prev,
+      id: savedProduct.id || "",
       title: savedProduct.title || "",
       category: savedProduct.category || "",
       description: savedProduct.description || "",
       images: savedProduct.images || [],
-      demoVideo: savedProduct.demoVideo || null,
+      demo_video: savedProduct.demo_video || null,
 
-      dimensions: savedProduct.dimensions || { length: null, width: null, height: null, weight: null },
+      dimensions: savedProduct.dimensions || { length: undefined, width: undefined, height: undefined, weight: undefined },
       material: savedProduct.material || "",
-      prepTime: savedProduct.prepTime || null,
+      prep_time: savedProduct.prep_time || undefined,
 
-      artistPrice: savedProduct.artistPrice || undefined,
-      platformPrice: savedProduct.platformPrice || undefined,
-      isDiscountEnabled: savedProduct.isDiscountEnabled || false,
-      artistSalePrice: savedProduct.artistSalePrice || undefined,
-      finalSalePrice: savedProduct.finalSalePrice || undefined,
-      paymentMethodId: savedProduct.paymentMethodId || "",
+      artist_price: savedProduct.artist_price || undefined,
+      platform_price: savedProduct.platform_price || undefined,
+      is_discount_enabled: savedProduct.is_discount_enabled || false,
+      artist_sale_price: savedProduct.artist_sale_price || undefined,
+      final_sale_price: savedProduct.final_sale_price || undefined,
+      payment_method_id: savedProduct.payment_method_id || "",
 
-      shippingAddressId: savedProduct.shippingAddressId || "",
-      stockQuantity: savedProduct.stockQuantity || null,
-      madeToOrder: savedProduct.madeToOrder || false,
+      shipping_address_id: savedProduct.shipping_address_id || "",
+      stock_quantity: savedProduct.stock_quantity || undefined,
+      made_to_order: savedProduct.made_to_order || false,
       
-      customizationAvailable: savedProduct.customizationAvailable || false,
-      customizationInstructions: savedProduct.customizationInstructions || "",
-      requiresAssembly: savedProduct.requiresAssembly || false,
-      assemblyInstructions: savedProduct.assemblyInstructions || "",
-      careInstructions: savedProduct.careInstructions || "",
-      returnPolicy: savedProduct.returnPolicy || "",
+      customization_available: savedProduct.customization_available || false,
+      customization_instructions: savedProduct.customization_instructions || "",
+      requires_assembly: savedProduct.requires_assembly || false,
+      assembly_instructions: savedProduct.assembly_instructions || "",
+      care_instructions: savedProduct.care_instructions || "",
+      return_policy: savedProduct.return_policy || "",
     }));
   }, []);
 
@@ -104,7 +106,7 @@ export default function ProductListingPage() {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 1)); // Min step 1
   };
 
-  const handleSubmit = () => {
+  const handlePreview = () => {
     // Save the final product data to localStorage before redirecting
     localStorage.setItem("productData", JSON.stringify(product));
     
@@ -173,7 +175,7 @@ export default function ProductListingPage() {
           </Button>
         ) : (
           <Button
-            onClick={handleSubmit}
+            onClick={handlePreview}
             className="px-6 py-2 font-bold rounded-2xl text-md text-white bg-red-500 hover:bg-red-600 shadow-md transition-all"
           >
             Preview Product

@@ -3,43 +3,47 @@ import { MouseEventHandler } from "react";
 export interface CustomButtonProps {
     title: string;
     containerStyles?: string;
-    handleClick?:MouseEventHandler<HTMLButtonElement>;
+    handleClick?: MouseEventHandler<HTMLButtonElement>;
     btnType: "button" | "submit";
 }
 
-export interface ProductData {
+export interface Product {
+  id: string;
   title: string;
-  category: string;
-  description: string;
+  category?: string;
+  description?: string;
   images: string[];
-  demoVideo: string | null;
-  dimensions: {
-    length?: number | null;
-    width?: number | null;
-    height?: number | null;
-    weight?: number | null;
+  demo_video?: string | null;
+  dimensions?: {
+      length?: number | null;
+      width?: number | null;
+      height?: number | null;
+      weight?: number | null;
   };
-  material: string;
-  prepTime?: number | null;
-  artistPrice?: number | null;
-  platformPrice?: number | null;
-  isDiscountEnabled: boolean;
-  artistSalePrice?: number | null;
-  finalSalePrice?: number | null;
-  paymentMethodId: string;
-  shippingAddressId: string;
-  stockQuantity?: number | null;
-  madeToOrder: boolean;
-  customizationAvailable: boolean;
-  customizationInstructions: string;
-  requiresAssembly: boolean;
-  assemblyInstructions: string;
-  careInstructions: string;
-  returnPolicy: string;
+  material?: string;
+  prep_time?: number | null;
+  artist_price?: number | null;
+  platform_price?: number | null;
+  is_discount_enabled?: boolean;
+  artist_sale_price?: number | null;
+  final_sale_price?: number | null;
+  payment_method_id?: string;
+  shipping_address_id?: string;
+  stock_quantity?: number | null;
+  made_to_order?: boolean;
+  customization_available?: boolean;
+  customization_instructions?: string;
+  requires_assembly?: boolean;
+  assembly_instructions?: string;
+  care_instructions?: string;
+  return_policy?: string;
+  artist_id?: string;
+  artist_name?: string;
+  verified?: boolean;
+  admin_notes?: string;
 }
-  
 
-  export interface Artist {
+export interface Artist {
     id: string;
     name: string;
     bio: string;
@@ -49,7 +53,6 @@ export interface ProductData {
     instagram?: string;
     other_social?: string;
 }
-
 
 export interface Address {
     id: string;
@@ -63,5 +66,4 @@ export interface Address {
     state: string;
     pincode: string;
     landmark?: string;
-  }
-  
+}

@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import supabase from '@/lib/supabase-db/supabaseClient';
-import { ArrowLeft, Check, AlertCircle, Heart, Share2, ArrowRight, ShoppingCart, MapPin, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle, Heart, Share2, ArrowRight, ShoppingCart, CircleCheckBig, MapPin, Phone, Mail } from 'lucide-react';
 import { getArtistId } from '@/lib/supabase-db/utils';
-import { ProductData, Address } from '@/Types';
+import { Product, Address } from '@/Types';
 import MediaGallery from '@/components/product_listing/Preview/MediaGallery';
 
 const PreviewPage = () => {
   const router = useRouter();
-  const [productData, setProductData] = useState<ProductData | null>(null);
+  const [productData, setProductData] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -42,11 +42,11 @@ const PreviewPage = () => {
     const fetchSensitiveInfo = async () => {
       try {
         // Fetch shipping address if ID exists
-        if (productData.shippingAddressId) {
+        if (productData.shipping_address_id) {
           const { data: addressData, error: addressError } = await supabase
             .from("user_information")
             .select("*")
-            .eq("id", productData.shippingAddressId)
+            .eq("id", productData.shipping_address_id)
             .single();
           
           if (addressError) throw addressError;
@@ -54,11 +54,11 @@ const PreviewPage = () => {
         }
         
         // Fetch payment method if ID exists
-        if (productData.paymentMethodId) {
+        if (productData.payment_method_id) {
           const { data: paymentData, error: paymentError } = await supabase
             .from("artist_paymentmethods")
             .select("*")
-            .eq("id", productData.paymentMethodId)
+            .eq("id", productData.payment_method_id)
             .single();
           
           if (paymentError) throw paymentError;
@@ -93,13 +93,14 @@ const PreviewPage = () => {
         setLoading(false);
         return;
       }
+
+      console.log(productData);
       
       // Prepare product data for submission
       const submissionData = {
         ...productData,
         artist_id: artistId,
         created_at: new Date().toISOString(),
-        status: 'pending'
       };
       
       // Submit to database
@@ -136,7 +137,7 @@ const PreviewPage = () => {
   const scrollToNext = () => {
     if (productData && productData.images) {
       setActiveImageIndex((prevIndex) => 
-        prevIndex === productData.images.length + (productData.demoVideo ? 0 : -1) 
+        prevIndex === productData.images.length + (productData.demo_video ? 0 : -1) 
           ? 0 
           : prevIndex + 1
       );
@@ -147,14 +148,14 @@ const PreviewPage = () => {
     if (productData && productData.images) {
       setActiveImageIndex((prevIndex) => 
         prevIndex === 0 
-          ? productData.images.length + (productData.demoVideo ? 0 : -1) 
+          ? productData.images.length + (productData.demo_video ? 0 : -1) 
           : prevIndex - 1
       );
     }
   };
 
   // Format dimensions as a string
-  const formatDimensions = (dimensions: ProductData['dimensions']) => {
+  const formatDimensions = (dimensions: Product['dimensions']) => {
     if (!dimensions) return 'Dimensions not specified';
     
     const length = dimensions.length !== undefined && dimensions.length !== null ? dimensions.length : 'N/A';
@@ -295,19 +296,19 @@ const PreviewPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-500">Customer Price</label>
-                  <p className="mt-1 text-gray-900">₹{productData.platformPrice || "Not set"}</p>
+                  <p className="mt-1 text-gray-900">₹{productData.platform_price || "Not set"}</p>
                 </div>
-                {productData.isDiscountEnabled && (
+                {productData.is_discount_enabled && (
                   <>
                     <div>
                       <label className="block text-sm font-medium text-gray-500">Sale Price</label>
-                      <p className="mt-1 text-gray-900">₹{productData.finalSalePrice || "Not set"}</p>
+                      <p className="mt-1 text-gray-900">₹{productData.final_sale_price || "Not set"}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-500">Discount</label>
                       <p className="mt-1 text-red-600 font-medium">
-                        {productData.platformPrice && productData.finalSalePrice ? 
-                          Math.round(((productData.platformPrice - productData.finalSalePrice) / productData.platformPrice) * 100) : 0}% off
+                        {productData.platform_price && productData.final_sale_price ? 
+                          Math.round(((productData.platform_price - productData.final_sale_price) / productData.platform_price) * 100) : 0}% off
                       </p>
                     </div>
                   </>
@@ -319,13 +320,13 @@ const PreviewPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-600">Base Earnings</label>
-                      <p className="mt-1 text-green-700 font-medium">₹{productData.artistPrice || "Not set"}</p>
+                      <p className="mt-1 text-green-700 font-medium">₹{productData.artist_price || "Not set"}</p>
                     </div>
-                    {productData.isDiscountEnabled && (
+                    {productData.is_discount_enabled && (
                       <div>
                         <label className="block text-sm font-medium text-gray-600">Earnings During Sale</label>
                         <p className="mt-1 text-green-700 font-medium">
-                          ₹{productData.artistSalePrice || "Not set"}
+                          ₹{productData.artist_sale_price || "Not set"}
                         </p>
                       </div>
                     )}
@@ -372,18 +373,18 @@ const PreviewPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-500">Stock Type</label>
-                  <p className="mt-1 text-gray-900">{productData.madeToOrder ? "Made to Order" : "Ready Stock"}</p>
+                  <p className="mt-1 text-gray-900">{productData.made_to_order ? "Made to Order" : "Ready Stock"}</p>
                 </div>
-                {!productData.madeToOrder && (
+                {!productData.made_to_order && (
                   <div>
                     <label className="block text-sm font-medium text-gray-500">Stock Quantity</label>
-                    <p className="mt-1 text-gray-900">{productData.stockQuantity || "Not specified"} units</p>
+                    <p className="mt-1 text-gray-900">{productData.stock_quantity || "Not specified"} units</p>
                   </div>
                 )}
-                {productData.prepTime && (
+                {productData.prep_time && (
                   <div>
                     <label className="block text-sm font-medium text-gray-500">Preparation Time</label>
-                    <p className="mt-1 text-gray-900">{productData.prepTime} days</p>
+                    <p className="mt-1 text-gray-900">{productData.prep_time} days</p>
                   </div>
                 )}
               </div>
@@ -396,25 +397,25 @@ const PreviewPage = () => {
               <h2 className="text-lg font-semibold text-gray-900">Additional Information</h2>
             </div>
             <div className="p-6 space-y-6">
-              {productData.customizationAvailable && (
+              {productData.customization_available && (
                 <div>
                   <label className="block text-sm font-medium text-gray-500">Customization Instructions</label>
-                  <p className="mt-1 text-gray-900">{productData.customizationInstructions || "Not provided"}</p>
+                  <p className="mt-1 text-gray-900">{productData.customization_instructions || "Not provided"}</p>
                 </div>
               )}
-              {productData.requiresAssembly && (
+              {productData.requires_assembly && (
                 <div>
                   <label className="block text-sm font-medium text-gray-500">Assembly Instructions</label>
-                  <p className="mt-1 text-gray-900">{productData.assemblyInstructions || "Not provided"}</p>
+                  <p className="mt-1 text-gray-900">{productData.assembly_instructions || "Not provided"}</p>
                 </div>
               )}
               <div>
                 <label className="block text-sm font-medium text-gray-500">Care Instructions</label>
-                <p className="mt-1 text-gray-900">{productData.careInstructions || "Not provided"}</p>
+                <p className="mt-1 text-gray-900">{productData.care_instructions || "Not provided"}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-500">Return Policy</label>
-                <p className="mt-1 text-gray-900">{productData.returnPolicy || "Not provided"}</p>
+                <p className="mt-1 text-gray-900">{productData.return_policy || "Not provided"}</p>
               </div>
             </div>
           </div>
@@ -485,7 +486,6 @@ const PreviewPage = () => {
                               : 'Not provided'}
                         </p>
                         <p className="mb-1">IFSC: {paymentDetails.details?.ifsc || paymentDetails.ifsc_code || 'Not provided'}</p>
-                        <p>Bank: {paymentDetails.bank_name || 'Not provided'}</p>
                       </>
                     ) : (
                       <p>UPI ID: {paymentDetails.details?.upiId || paymentDetails.upi_id || 'Not provided'}</p>
@@ -493,7 +493,7 @@ const PreviewPage = () => {
                   </div>
                 </div>
               ) : (
-                <p className="text-red-500">No payment method selected</p>
+                <p className="text-red-500">No payment method selected. Your Earnings will be credited to your wallet.</p>
               )}
             </div>
           </div>
@@ -511,16 +511,16 @@ const PreviewPage = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="w-full max-w-md px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full max-w-md px-4 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {loading ? "Submitting..." : "Submit Product for Review"}
-                  {!loading && <Check className="w-5 h-5 ml-2" />}
+                  {!loading && <CircleCheckBig strokeWidth={2.5} className="w-5 h-5 ml-2" />}
                 </button>
                 <button
                   onClick={handleBack}
-                  className="mt-3 px-8 py-2 text-gray-600 hover:text-red-600 hover:underline transition-all duration-300"
+                  className="flex mt-3 px-6 py-2 text-gray-600 hover:text-red-600 hover:underline transition-all duration-300"
                 >
-                  Go Back to Edit
+                  <ArrowLeft className="mr-2"/>Go Back to Edit
                 </button>
               </div>
             </div>

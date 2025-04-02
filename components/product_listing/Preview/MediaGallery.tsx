@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { ProductData } from '@/Types';
+import { Product } from '@/Types';
 
 interface MediaGalleryProps {
-  productData: ProductData;
+  productData: Product;
 }
 
 const MediaGallery: React.FC<MediaGalleryProps> = ({ productData }) => {
@@ -12,7 +12,7 @@ const MediaGallery: React.FC<MediaGalleryProps> = ({ productData }) => {
   
   const allMedia = [
     ...(productData.images || []),
-    ...(productData.demoVideo ? [productData.demoVideo] : [])
+    ...(productData.demo_video ? [productData.demo_video] : [])
   ];
 
   const scrollToNext = () => {
@@ -45,7 +45,7 @@ const MediaGallery: React.FC<MediaGalleryProps> = ({ productData }) => {
             />
           ) : (
             <video 
-              src={productData.demoVideo || ''} 
+              src={productData.demo_video || ''} 
               controls
               className="w-full h-full object-cover"
               poster={productData.images?.[0] || ''}
