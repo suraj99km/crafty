@@ -11,8 +11,6 @@ import { toast } from "sonner";
 
 export default function ProductListingPage() {
   const [product, setProduct] = useState({
-    // Product Details Step
-    id: "",
     title: "",
     category: "",
     description: "",
@@ -56,7 +54,6 @@ export default function ProductListingPage() {
     const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
     setProduct((prev) => ({
       ...prev,
-      id: savedProduct.id || "",
       title: savedProduct.title || "",
       category: savedProduct.category || "",
       description: savedProduct.description || "",

@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 // Types
-type Dimension = "length" | "width" | "height" | "weight" | "prepTime";
+type Dimension = "length" | "width" | "height" | "weight" | "prep_time";
 type ErrorRecord = Partial<Record<Dimension | "material" | "customMaterial", string>>;
 
 interface DimensionSliderProps {
@@ -30,9 +30,9 @@ interface ProductSpecificationsProps {
       height?: number;
       weight?: number;
     };
-    prepTime?: number;
+    prep_time?: number;
     material?: string;
-    customMaterial?: string;
+    custom_material?: string;
   };
   updateProduct: (field: string, value: any) => void;
 }
@@ -88,10 +88,10 @@ const ProductSpecifications: React.FC<ProductSpecificationsProps> = ({ product, 
     width: product?.dimensions?.width || 50,
     height: product?.dimensions?.height || 50,
     weight: product?.dimensions?.weight || 1000,
-    prepTime: product?.prepTime || 1
+    prep_time: product?.prep_time || 1
   });
   const [material, setMaterial] = useState(product?.material || "");
-  const [customMaterial, setCustomMaterial] = useState(product?.customMaterial || "");
+  const [customMaterial, setCustomMaterial] = useState(product?.custom_material || "");
   const [errors, setErrors] = useState<ErrorRecord>({});
 
   // Validate on changes
@@ -104,7 +104,7 @@ const ProductSpecifications: React.FC<ProductSpecificationsProps> = ({ product, 
     
     // Validate dimensions
     Object.entries(dimensions).forEach(([key, value]) => {
-      if (value <= 0 && key !== "prepTime") {
+      if (value <= 0 && key !== "prep_time") {
         newErrors[key as Dimension] = `${key.charAt(0).toUpperCase() + key.slice(1)} must be greater than zero`;
       }
     });
@@ -132,7 +132,7 @@ const ProductSpecifications: React.FC<ProductSpecificationsProps> = ({ product, 
     setDimensions(prev => ({ ...prev, [field]: newValue }));
     
     if (newValue > 0) {
-      if (field === "prepTime") {
+      if (field === "prep_time") {
         updateProduct(field, newValue);
       } else {
         updateProduct("dimensions", {
@@ -190,7 +190,7 @@ const ProductSpecifications: React.FC<ProductSpecificationsProps> = ({ product, 
               { key: "width", label: "Width", max: 200, unit: "cm" },
               { key: "height", label: "Height", max: 200, unit: "cm" },
               { key: "weight", label: "Weight", max: 5000, unit: "gm" },
-              { key: "prepTime", label: "Preparation Time", max: 14, unit: "day(s)" }
+              { key: "prep_time", label: "Preparation Time", max: 14, unit: "day(s)" }
             ].map(({ key, label, max, unit }) => (
               <React.Fragment key={key}>
                 <DimensionSlider

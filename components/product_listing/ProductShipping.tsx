@@ -17,7 +17,7 @@ type ErrorRecord = Partial<Record<"stockQuantity" | "address", string>>;
 interface ProductShippingProps {
   product: {
     stock_quantity?: number;
-    is_made_to_order?: boolean;
+    made_to_order?: boolean;
     shipping_address_id?: string;
   };
   updateProduct: (field: string, value: any) => void;
@@ -55,7 +55,7 @@ const Toggle: React.FC<{
 // Main Component
 const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduct }) => {
   const [stockQuantity, setStockQuantity] = useState(product?.stock_quantity || 10);
-  const [isMadeToOrder, setIsMadeToOrder] = useState(product?.is_made_to_order || false);
+  const [made_to_order, setIsMadeToOrder] = useState(product?.made_to_order || false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [errors, setErrors] = useState<ErrorRecord>({});
   const [inputQuantity, setInputQuantity] = useState(stockQuantity.toString());
@@ -92,7 +92,7 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
 
   const handleMadeToOrderChange = (enabled: boolean) => {
     setIsMadeToOrder(enabled);
-    updateProduct("is_made_to_order", enabled);
+    updateProduct("made_to_order", enabled);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -249,14 +249,14 @@ const ProductShipping: React.FC<ProductShippingProps> = ({ product, updateProduc
             {/* Made-to-Order Toggle */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <Toggle
-                enabled={isMadeToOrder}
+                enabled={made_to_order}
                 onChange={handleMadeToOrderChange}
                 label="Is This a Made-to-Order Product?"
                 required={true}
               />
               
               {/* Production Time Note (only shown if Made-to-Order is enabled) */}
-              {isMadeToOrder && (
+              {made_to_order && (
                 <div className="mt-3 border-l-2 border-red-300 pl-3">
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold">Note:</span> Product's Preparation Time will determine shipping estimate.
