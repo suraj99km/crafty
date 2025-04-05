@@ -76,7 +76,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
       <div className="flex flex-col md:flex-row w-full bg-white shadow-lg overflow-hidden">
         <div className="w-full md:w-1/2">
           <img
-            src={product.image_url}
+            src={product.images[0]}
             alt={product.title}
             className="w-full h-[400px] object-cover"
           />
@@ -85,7 +85,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
           <div className="flex justify-between items-center gap-4">
             <h1 className="text-2xl font-bold text-gray-800">{product.title}</h1>
             <h2 className="text-xl font-bold text-gray-800 flex items-center">
-              <span className="mr-1">₹</span> {product.price}
+              <span className="mr-1">₹</span> {product.platform_price}
             </h2>
           </div>
 

@@ -25,7 +25,7 @@ interface PricingProps {
 // Fee calculator function
 const calculatePlatformFee = (price: number) => {
   const tier = feeStructure.find(tier => price >= tier.min && price <= tier.max);
-  return tier ? (price * tier.percentage / 100) : 0;
+  return tier ? parseFloat((price * tier.percentage / 100).toFixed(2)) : 0;
 };
 
 const ProductPricing: React.FC<PricingProps> = ({ product, updateProduct }) => {

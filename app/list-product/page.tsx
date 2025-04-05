@@ -111,6 +111,35 @@ export default function ProductListingPage() {
     window.location.href = "/list-product/preview";
   };
 
+  const isProductValid = () => {
+    try {
+      const savedProduct = JSON.parse(localStorage.getItem("productData") || "{}");
+
+      return (
+        savedProduct.title?.trim() &&
+        savedProduct.category?.trim() &&
+        savedProduct.description?.trim().length >= 50 &&
+        Array.isArray(savedProduct.images) &&
+        savedProduct.images.length >= 3 &&
+        savedProduct.dimensions?.length &&
+        savedProduct.dimensions?.width &&
+        savedProduct.dimensions?.height &&
+        savedProduct.dimensions?.weight &&
+        savedProduct.material?.trim() &&
+        savedProduct.prep_time &&
+        savedProduct.artist_price &&
+        savedProduct.platform_price &&
+        savedProduct.payment_method_id?.trim() &&
+        savedProduct.shipping_address_id?.trim() &&
+        (savedProduct.stock_quantity || savedProduct.made_to_order === true) &&
+        savedProduct.return_policy?.trim()
+      );
+    } catch (error) {
+      console.error("Error validating product data:", error);
+      return false;
+    }
+  };
+
   if (!isClient) {
     // Prevent rendering until the client-side JavaScript has mounted
     return null;
@@ -171,12 +200,24 @@ export default function ProductListingPage() {
             Next
           </Button>
         ) : (
-          <Button
-            onClick={handlePreview}
-            className="px-6 py-2 font-bold rounded-2xl text-md text-white bg-red-500 hover:bg-red-600 shadow-md transition-all"
-          >
-            Preview Product
-          </Button>
+          <div className="flex flex-col items-center gap-2">
+            <Button
+              onClick={handlePreview}
+              disabled={!isProductValid()}
+              className={`px-6 py-2 font-bold rounded-2xl text-md text-white shadow-md transition-all ${
+                isProductValid()
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-gray-300 cursor-not-allowed"
+              }`}
+            >
+              Preview Product
+            </Button>
+            {!isProductValid() && (
+              <p className="text-xs text-red-500 mt-1">
+                Please complete all required fields before previewing.
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>

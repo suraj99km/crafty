@@ -79,7 +79,7 @@ export const fetchLatestProductsWithCategories = async (sortBy: string = "sales_
   // Fetch products sorted by selected column
   const { data: products, error } = await supabase
     .from("Products")
-    .select("id, title, description, price, image_url, category, artist_id, updated_at, created_at")
+    .select("*")
     .order(sortColumn, { ascending: false });
 
   if (error) {

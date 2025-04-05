@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { fetchLatestProductsWithCategories } from "@/lib/supabase-db/utils";
-import { ArrowUpDown } from "lucide-react"; // Sort icon
+import { isGlobalSaleActive, getGlobalSaleInfo } from "@/lib/supabase-db/global-utils";
+import { ArrowUpDown, Tag } from "lucide-react"; // Added Tag icon for sale badge
 import Link from "next/link";
 
 // Native debounce function to avoid flickering
@@ -21,12 +22,97 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [sortOption, setSortOption] = useState<string>("sales_count"); // Default: Popularity
+  const [globalSaleActive, setGlobalSaleActive] = useState<boolean>(false);
+  const [saleInfo, setSaleInfo] = useState<any>(null);
 
   // Handle Search Input with Debounce
   const handleSearch = useCallback(
     debounce((value: string) => setSearchTerm(value), 300),
     []
   );
+
+  // Check if global sale is active
+  useEffect(() => {
+    const checkGlobalSale = async () => {
+      try {
+        // First check if the table exists and has data
+        const saleActive = await isGlobalSaleActive().catch(() => false);
+        setGlobalSaleActive(saleActive);
+        
+        // Only fetch additional sale info if sale is active
+        if (saleActive) {
+          const info = await getGlobalSaleInfo().catch(() => ({
+            isActive: false,
+            startDate: null,
+            endDate: null
+          }));
+          setSaleInfo(info);
+        }
+      } catch (err) {
+        console.error("Error checking global sale status:", err);
+        // Set defaults if there's an error
+        setGlobalSaleActive(false);
+        setSaleInfo(null);
+      }
+    };
+    
+    checkGlobalSale();
+  }, []);
+
+  // Calculate sale price based on global sale settings
+  const calculateSalePrice = (product: any) => {
+    // If global sale is not active, only use product-specific discounts
+    if (!globalSaleActive) {
+      return product.is_discount_enabled && product.final_sale_price 
+        ? product.final_sale_price 
+        : product.price;
+    }
+    
+    // If product has its own discount and it's enabled, use that
+    if (product.is_discount_enabled && product.final_sale_price) {
+      return product.final_sale_price;
+    }
+    
+    // If global sale is active and has discount percentage
+    if (saleInfo?.discountPercentage > 0) {
+      const discount = (product.price * saleInfo.discountPercentage) / 100;
+      return Math.round((product.price - discount) * 100) / 100;
+    }
+    
+    // Default to regular price
+    return product.price;
+  };
+
+  // Check if product is on sale
+  const isProductOnSale = (product: any) => {
+    // If global sale is not active, only check product-specific discount
+    if (!globalSaleActive) {
+      return false; // Don't show sale indicators when global sale is inactive
+    }
+    
+    // Product has its own discount
+    if (product.is_discount_enabled && product.final_sale_price) {
+      return true;
+    }
+    
+    // Global sale is active with discount percentage
+    if (saleInfo?.discountPercentage > 0) {
+      return true;
+    }
+    
+    return false;
+  };
+
+  // Calculate discount percentage
+  const calculateDiscountPercentage = (product: any) => {
+    const originalPrice = product.price;
+    const salePrice = calculateSalePrice(product);
+    
+    if (originalPrice === salePrice) return 0;
+    
+    const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
+    return Math.round(discountPercentage);
+  };
 
   // Fetch Products from DB & Apply Sorting
   useEffect(() => {
@@ -75,6 +161,24 @@ export default function ProductsPage() {
 
   return (
     <section className="container mx-auto p-2 mt-14 min-h-screen">
+      {/* Global Sale Banner - Show only if active */}
+      {globalSaleActive && saleInfo && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <Tag className="h-5 w-5 mr-2" />
+            <span className="font-bold">Sale Active!</span>
+            {saleInfo.discountPercentage > 0 && (
+              <span className="ml-2">Up to {saleInfo.discountPercentage}% off selected items</span>
+            )}
+          </div>
+          {saleInfo.endDate && (
+            <div className="text-sm">
+              Ends: {new Date(saleInfo.endDate).toLocaleDateString()}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Search & Sorting Bar (No Sticky) */}
       <div className="mb-4">
         <div className="flex items-center gap-4">
@@ -156,10 +260,28 @@ export default function ProductsPage() {
             .map((product) => (
               <Link key={product.id} href={`/products/${product.id}`} passHref>
                 <div className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-95 hover:shadow-lg flex flex-col h-full">
-                  <img src={product.image_url} alt={product.title} className="w-full h-40 object-cover rounded-md" />
+                  <div className="relative">
+                    <img 
+                      src={product.image_url || (product.images && product.images[0])} 
+                      alt={product.title} 
+                      className="w-full h-40 object-cover rounded-md" 
+                    />
+                    {/* Sale badge - only show if product is actually on sale */}
+                    {isProductOnSale(product) && (
+                      <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-md">
+                        {calculateDiscountPercentage(product)}% OFF
+                      </div>
+                    )}
+                  </div>
                   <h3 className="mt-2 font-semibold flex-grow">{product.title}</h3>
                   <div className="mt-2">
-                    <p className="font-bold text-left">₹ {product.price}</p>
+                    <div className="flex items-center">
+                      <p className="font-bold text-left text-red-600">₹ {calculateSalePrice(product)}</p>
+                      {/* Show original price if on sale */}
+                      {isProductOnSale(product) && (
+                        <p className="ml-2 text-xs text-gray-500 line-through">₹ {product.price}</p>
+                      )}
+                    </div>
                     <p className="text-xs text-gray-500 text-left">Artist: {product.artist_name}</p>
                   </div>
                 </div>
