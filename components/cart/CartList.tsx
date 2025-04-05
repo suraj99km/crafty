@@ -30,12 +30,12 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
       {updatedCart.map((item) => (
         <div key={item.id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-md border border-gray-200">
           {/* Product Image */}
-          <img src={item.image_url} alt={item.title} className="w-20 h-20 rounded-lg object-cover" />
+          <img src={item.images[0]} alt={item.title} className="w-20 h-20 rounded-lg object-cover" />
 
         {/* Product Details */}
         <div className="flex-1 ml-4">
           <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
-          <p className="text-gray-600">₹ {item.price}</p>
+          <p className="text-gray-600">₹ {item.platform_price}</p>
           <p className="text-sm text-green-600 font-semibold mt-1">
           Expected delivery <br /> by
           <span className="font-semibold ml-1">
