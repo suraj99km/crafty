@@ -7,8 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
-import ProductImagesUploader from "@/components/product_listing/ProductImagesUploader";
-import ProductVideosUploader from "@/components/product_listing/ProductVideosUploader";
+import ProductImagesUploader from "@/components/product_listing/Details/ProductImagesUploader";
+import ProductVideosUploader from "@/components/product_listing/Details/ProductVideosUploader";
 
 const categories = [
   "Painting",
