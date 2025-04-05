@@ -132,13 +132,13 @@ const ArtistDetails: React.FC<Props> = ({ artist, relatedProducts }) => {
               <Link key={product.id} href={`/products/${product.id}`} passHref>
                 <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-95 duration-300 transition-transform cursor-pointer">
                   <img
-                    src={product.image_url}
+                    src={product.images[0]}
                     alt={product.title}
                     className="w-full h-[250px] object-cover"
                   />
                   <div className="p-4">
                     <h2 className="font-bold text-gray-800 text-lg">{product.title}</h2>
-                    <p className="text-gray-900 text-sm font-semibold mt-2">₹ {product.price}</p>
+                    <p className="text-gray-900 text-sm font-semibold mt-2">₹ {product.platform_price}</p>
                     <p className="text-xs text-gray-600 mt-1">
                       Crafted by <span className="font-bold text-red-500">{artist.name}</span>
                     </p>
