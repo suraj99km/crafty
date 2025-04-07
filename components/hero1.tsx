@@ -24,8 +24,8 @@ const Hero = () => {
       try {
         const { data, error } = await supabase
           .from('Products')
-          .select('id, image_url')
-          .not('image_url', 'is', null); 
+          .select('id, images')
+          .not('images', 'is', null); 
           
         if (error) {
           console.error('Error fetching product images:', error);
@@ -34,7 +34,7 @@ const Hero = () => {
         
         if (data && data.length > 0) {
           // Filter valid URLs and prepare data
-          const validProducts = data.filter(product => product.image_url && product.image_url.trim() !== '');
+          const validProducts = data.filter(product => product.images[0] && product.images[0].trim() !== '');
             
           if (validProducts.length > 0) {
             // Select random products from the pool
