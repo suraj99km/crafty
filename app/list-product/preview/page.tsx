@@ -283,7 +283,7 @@ const PreviewPage = () => {
           className="max-w-md w-full bg-white p-8 rounded-lg shadow-md"
         >
           <div className="flex items-center justify-center text-green-500 mb-4">
-            <Check size={48} />
+          <CircleCheckBig strokeWidth={2.5} size={48} />
           </div>
           <h2 className="text-center text-2xl font-bold text-gray-900 mb-4">Product Submitted!</h2>
           <p className="text-center text-gray-600 mb-6">Your product has been successfully submitted for review.</p>

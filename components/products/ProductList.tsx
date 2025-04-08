@@ -59,13 +59,13 @@ export default function ProductsPage() {
     checkGlobalSale();
   }, []);
 
-  // Calculate sale price based on global sale settings
+  // Calculate sale platform_price based on global sale settings
   const calculateSalePrice = (product: any) => {
     // If global sale is not active, only use product-specific discounts
     if (!globalSaleActive) {
       return product.is_discount_enabled && product.final_sale_price 
         ? product.final_sale_price 
-        : product.price;
+        : product.platform_price;
     }
     
     // If product has its own discount and it's enabled, use that
@@ -75,12 +75,12 @@ export default function ProductsPage() {
     
     // If global sale is active and has discount percentage
     if (saleInfo?.discountPercentage > 0) {
-      const discount = (product.price * saleInfo.discountPercentage) / 100;
-      return Math.round((product.price - discount) * 100) / 100;
+      const discount = (product.platform_price * saleInfo.discountPercentage) / 100;
+      return Math.round((product.platform_price - discount) * 100) / 100;
     }
     
-    // Default to regular price
-    return product.price;
+    // Default to regular platform_price
+    return product.platform_price;
   };
 
   // Check if product is on sale
@@ -105,7 +105,7 @@ export default function ProductsPage() {
 
   // Calculate discount percentage
   const calculateDiscountPercentage = (product: any) => {
-    const originalPrice = product.price;
+    const originalPrice = product.platform_price;
     const salePrice = calculateSalePrice(product);
     
     if (originalPrice === salePrice) return 0;
@@ -122,11 +122,11 @@ export default function ProductsPage() {
       if (data) {
         let sortedProducts = data.products;
 
-        // Apply Price Sorting
+        // Apply platform_price Sorting
         if (sortOption === "price_low_to_high") {
-          sortedProducts = [...sortedProducts].sort((a, b) => a.price - b.price);
+          sortedProducts = [...sortedProducts].sort((a, b) => a.platform_price - b.platform_price);
         } else if (sortOption === "price_high_to_low") {
-          sortedProducts = [...sortedProducts].sort((a, b) => b.price - a.price);
+          sortedProducts = [...sortedProducts].sort((a, b) => b.platform_price - a.platform_price);
         }
 
         setProducts(sortedProducts);
@@ -203,8 +203,8 @@ export default function ProductsPage() {
                 : sortOption === "recentlyModified"
                 ? "Recently Modified"
                 : sortOption === "price_low_to_high"
-                ? "Price: Low to High"
-                : "Price: High to Low"}
+                ? "platform_price: Low to High"
+                : "platform_price: High to Low"}
             </span>
           </button>
         </div>
@@ -277,9 +277,9 @@ export default function ProductsPage() {
                   <div className="mt-2">
                     <div className="flex items-center">
                       <p className="font-bold text-left text-red-600">₹ {calculateSalePrice(product)}</p>
-                      {/* Show original price if on sale */}
+                      {/* Show original platform_price if on sale */}
                       {isProductOnSale(product) && (
-                        <p className="ml-2 text-xs text-gray-500 line-through">₹ {product.price}</p>
+                        <p className="ml-2 text-xs text-gray-500 line-through">₹ {product.platform_price}</p>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 text-left">Artist: {product.artist_name}</p>
