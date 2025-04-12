@@ -61,57 +61,48 @@ export default function ProductsPage() {
 
   // Calculate sale platform_price based on global sale settings
   const calculateSalePrice = (product: any) => {
+    const platformPrice = product.platform_price || 0;
+    const finalSalePrice = product.final_sale_price || 0;
+
     // If global sale is not active, only use product-specific discounts
     if (!globalSaleActive) {
-      return product.is_discount_enabled && product.final_sale_price 
-        ? product.final_sale_price 
-        : product.platform_price;
+      return product.is_discount_enabled && finalSalePrice > 0
+        ? finalSalePrice 
+        : platformPrice;
     }
     
     // If product has its own discount and it's enabled, use that
-    if (product.is_discount_enabled && product.final_sale_price) {
-      return product.final_sale_price;
+    if (product.is_discount_enabled && finalSalePrice > 0) {
+      return finalSalePrice;
     }
     
-    // If global sale is active and has discount percentage
+    // Global sale with percentage
     if (saleInfo?.discountPercentage > 0) {
-      const discount = (product.platform_price * saleInfo.discountPercentage) / 100;
-      return Math.round((product.platform_price - discount) * 100) / 100;
+      const discount = (platformPrice * saleInfo.discountPercentage) / 100;
+      return Math.round((platformPrice - discount) * 100) / 100;
     }
     
-    // Default to regular platform_price
-    return product.platform_price;
+    return platformPrice;
   };
 
   // Check if product is on sale
   const isProductOnSale = (product: any) => {
-    // If global sale is not active, only check product-specific discount
-    if (!globalSaleActive) {
-      return false; // Don't show sale indicators when global sale is inactive
-    }
+    if (!globalSaleActive) return false;
     
-    // Product has its own discount
-    if (product.is_discount_enabled && product.final_sale_price) {
-      return true;
-    }
-    
-    // Global sale is active with discount percentage
-    if (saleInfo?.discountPercentage > 0) {
-      return true;
-    }
-    
-    return false;
+    return (
+      (product.is_discount_enabled && product.final_sale_price !== null && product.final_sale_price !== undefined) ||
+      (saleInfo?.discountPercentage > 0)
+    );
   };
 
   // Calculate discount percentage
   const calculateDiscountPercentage = (product: any) => {
-    const originalPrice = product.platform_price;
+    const originalPrice = product.platform_price || 0;
     const salePrice = calculateSalePrice(product);
     
-    if (originalPrice === salePrice) return 0;
+    if (originalPrice <= 0 || originalPrice === salePrice) return 0;
     
-    const discountPercentage = ((originalPrice - salePrice) / originalPrice) * 100;
-    return Math.round(discountPercentage);
+    return Math.round(((originalPrice - salePrice) / originalPrice) * 100);
   };
 
   // Fetch Products from DB & Apply Sorting
@@ -122,11 +113,19 @@ export default function ProductsPage() {
       if (data) {
         let sortedProducts = data.products;
 
-        // Apply platform_price Sorting
+        // Apply Price Sorting considering discounts
         if (sortOption === "price_low_to_high") {
-          sortedProducts = [...sortedProducts].sort((a, b) => a.platform_price - b.platform_price);
+          sortedProducts = [...sortedProducts].sort((a, b) => {
+            const priceA = a.is_discount_enabled && a.final_sale_price ? a.final_sale_price : a.platform_price;
+            const priceB = b.is_discount_enabled && b.final_sale_price ? b.final_sale_price : b.platform_price;
+            return priceA - priceB;
+          });
         } else if (sortOption === "price_high_to_low") {
-          sortedProducts = [...sortedProducts].sort((a, b) => b.platform_price - a.platform_price);
+          sortedProducts = [...sortedProducts].sort((a, b) => {
+            const priceA = a.is_discount_enabled && a.final_sale_price ? a.final_sale_price : a.platform_price;
+            const priceB = b.is_discount_enabled && b.final_sale_price ? b.final_sale_price : b.platform_price;
+            return priceB - priceA;
+          });
         }
 
         setProducts(sortedProducts);
@@ -203,8 +202,8 @@ export default function ProductsPage() {
                 : sortOption === "recentlyModified"
                 ? "Recently Modified"
                 : sortOption === "price_low_to_high"
-                ? "platform_price: Low to High"
-                : "platform_price: High to Low"}
+                ? "Price: Low to High"
+                : "Price: High to Low"}
             </span>
           </button>
         </div>

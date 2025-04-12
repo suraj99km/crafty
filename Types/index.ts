@@ -41,6 +41,8 @@ export interface Product {
   artist_name?: string;
   verified?: boolean;
   admin_notes?: string;
+  sales_count?: number;
+  created_at?: string;
 }
 
 export interface Artist {

@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, ShoppingCart, Users, User, Package, HelpCircle, List, ClipboardPenLine, ArrowLeftRight, ChartNoAxesCombined, MapPinned, Paintbrush, ShoppingBag} from "lucide-react";
+import { LogOut, ShoppingCart, Users, User, Package, Truck, HelpCircle, LocateFixed , ClipboardPenLine, ArrowLeftRight, ChartNoAxesCombined, MapPinned, Paintbrush, ShoppingBag} from "lucide-react";
 import supabase from "@/lib/supabase-db/supabaseClient";
 
 const userPages = [
   { name: "Shopping Cart", path: "/cart", icon: <ShoppingCart size={20} /> },
-  { name: "Orders Tracking", path: "/orders", icon: <Package size={20} /> },
+  { name: "Orders Tracking", path: "/orders", icon: <Truck size={20} /> },
   { name: "Saved Addresses", path: "/addresses", icon: <MapPinned size={20} /> },
 ];
 
@@ -21,6 +21,7 @@ const artistPages = [
   { name: "Profile", path: "/profile", icon: <User size={20} /> },
   { name: "List a Product", path: "/list-product", icon: <ClipboardPenLine size={20} /> },
   { name: "Product Listings", path: "/product-listings", icon: <Package size={20} /> },
+  { name: "Order Status", path: "/order-status", icon: <LocateFixed  size={20} /> },
   { name: "Track Your Sales", path: "/track-sales", icon: <ChartNoAxesCombined size={20} /> },
 ];
 
