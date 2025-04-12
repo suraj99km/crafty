@@ -576,8 +576,8 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
 
       {/* Floating Cart Counter */}
       {cartCount > 0 && (
-        <div className={`fixed bottom-24 right-6 z-30 transition-transform duration-300 ${
-          isScrollingUp ? 'translate-y-0' : 'translate-y-[200%]'
+        <div className={`fixed bottom-24 right-6 z-20 transition-transform duration-300 ${
+          isScrollingUp ? 'translate-y-0' : 'translate-y-[100%]'
         }`}>
           <Link href="/cart">
             <button className="bg-red-500 text-white font-semibold py-3 px-5 rounded-full shadow-lg flex items-center gap-2 hover:bg-red-600 transition-all duration-300">
