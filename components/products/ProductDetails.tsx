@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   ChevronLeft, Play, Heart, Share2, Truck, Shield, Package, RefreshCw,
   ShoppingCart, ArrowLeft, ArrowRight, Clock, Hammer, Info, ArrowUpDown,
-  Star, Calendar
+  Star, Calendar, ChevronDown
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -28,6 +28,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
   });
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
   const galleryRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
@@ -37,7 +38,11 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
     const cart: (Product & { quantity: number })[] = JSON.parse(localStorage.getItem("cart") || "[]");
     const totalQuantity = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
     setCartCount(totalQuantity);
-  }, []);
+    
+    // Check if product is in wishlist
+    const wishlist: string[] = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    setIsWishlisted(wishlist.includes(product.id));
+  }, [product.id]);
 
   useEffect(() => {
     const checkGlobalSale = async () => {
@@ -129,44 +134,140 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
     };
   };
 
+  const toggleWishlist = () => {
+    let wishlist: string[] = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    
+    if (isWishlisted) {
+      wishlist = wishlist.filter(id => id !== product.id);
+      toast.info("Removed from wishlist");
+    } else {
+      wishlist.push(product.id);
+      toast.success("Added to wishlist");
+    }
+    
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    setIsWishlisted(!isWishlisted);
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.title,
+          text: `Check out this amazing product: ${product.title}`,
+          url: url
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+        // Fallback to copying to clipboard
+        copyToClipboard(url);
+      }
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      copyToClipboard(url);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success("Link copied to clipboard!");
+    }).catch(err => {
+      console.error("Could not copy text: ", err);
+    });
+  };
+
+  const priceInfo = getPrice();
+
   return (
     <div className="mt-14 min-h-screen bg-gray-50">
-      {/* Main Content */}
-      <div className="pb-24">
-        {/* Image Gallery */}
-        <div 
-          ref={galleryRef}
-          className="relative bg-gray-100 aspect-square touch-pan-x"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+      {/* Back button */}
+      <div className="absolute top-16 left-4 z-10">
+        <button
+          onClick={router.back}
+          className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md"
+          aria-label="Go back"
         >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentImageIndex}
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-0"
-            >
-              {currentImageIndex < product.images.length ? (
-                <img
-                  src={allMedia[currentImageIndex]}
-                  alt={`${product.title} - ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <video
-                  src={product.demo_video || ''}
-                  controls
-                  className="w-full h-full object-cover"
-                >
-                  Your browser doesn't support video playback.
-                </video>
-              )}
-            </motion.div>
-          </AnimatePresence>
+          <ChevronLeft size={20} className="text-gray-700" />
+        </button>
+      </div>
+
+      {/* Action buttons */}
+      <div className="absolute top-16 right-4 z-10 flex space-x-2">
+        <button
+          onClick={toggleWishlist}
+          className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md"
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <Heart 
+            size={20} 
+            className={isWishlisted ? "text-red-500 fill-red-500" : "text-gray-700"} 
+          />
+        </button>
+        <button
+          onClick={handleShare}
+          className="bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md"
+          aria-label="Share product"
+        >
+          <Share2 size={20} className="text-gray-700" />
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="pb-24 max-w-6xl mx-auto">
+        {/* Image Gallery - Carousel Style */}
+        <div className="relative bg-gray-100 aspect-square md:aspect-[4/3] overflow-hidden">
+          <div 
+            ref={galleryRef}
+            className="flex transition-transform duration-300 ease-out h-full w-full"
+            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {allMedia.map((media, index) => (
+              <div key={index} className="min-w-full h-full flex-shrink-0">
+                {index < product.images.length ? (
+                  <img
+                    src={media}
+                    alt={`${product.title} - ${index + 1}`}
+                    className="w-full h-full object-contain bg-gray-100"
+                  />
+                ) : (
+                  <div className="relative w-full h-full flex items-center justify-center bg-gray-900">
+                    <video
+                      src={media}
+                      controls
+                      className="max-w-full max-h-full"
+                    >
+                      Your browser doesn't support video playback.
+                    </video>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Navigation Arrows */}
+          {allMedia.length > 1 && (
+            <>
+              <button 
+                onClick={() => setCurrentImageIndex((prev) => (prev - 1 + allMedia.length) % allMedia.length)}
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md hidden sm:block"
+                aria-label="Previous image"
+              >
+                <ArrowLeft size={20} className="text-gray-700" />
+              </button>
+              <button 
+                onClick={() => setCurrentImageIndex((prev) => (prev + 1) % allMedia.length)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-md hidden sm:block"
+                aria-label="Next image"
+              >
+                <ArrowRight size={20} className="text-gray-700" />
+              </button>
+            </>
+          )}
 
           {/* Image Indicators */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
@@ -177,132 +278,149 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   currentImageIndex === idx ? "w-6 bg-white" : "bg-white/50"
                 }`}
+                aria-label={`View image ${idx + 1}`}
               />
             ))}
           </div>
         </div>
 
         {/* Product Information */}
-        <div className="px-4 py-6 bg-white">
+        <div className="px-4 py-6 bg-white shadow-sm rounded-t-3xl -mt-6 relative z-10">
           <div className="space-y-6 max-w-3xl mx-auto">
             {/* Basic Info & Price */}
-            <div className="space-y-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <button
-                    onClick={router.back}
-                    className="flex items-center text-gray-600 mb-2"
-                  >
-                    <ChevronLeft size={20} />
-                    <span className="text-sm">Back</span>
-                  </button>
-                  <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
-                  <p className="text-sm text-gray-500">{product.category}</p>
-                  {product.verified && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star size={16} className="text-green-500 fill-green-500" />
-                      <span className="text-sm text-green-600">Verified Product</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-end">
-                  {globalSale.active && product.is_discount_enabled && product.final_sale_price ? (
-                    <>
-                      <span className="text-2xl font-bold text-gray-900">₹{product.final_sale_price}</span>
-                      <span className="text-sm text-gray-500 line-through ml-2">₹{product.platform_price}</span>
-                      <span className="text-sm font-medium text-green-600 ml-2">
-                        {product.platform_price && product.final_sale_price && 
-                          Math.round(((product.platform_price - product.final_sale_price) / product.platform_price) * 100)}% off
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-2xl font-bold text-gray-900">₹{product.platform_price}</span>
-                  )}
-                </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
+                {globalSale.active && product.is_discount_enabled && product.final_sale_price && (
+                  <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                    SALE
+                  </span>
+                )}
               </div>
+              
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-gray-500">{product.category}</p>
+                {product.verified && (
+                  <div className="flex items-center gap-1">
+                    <Star size={16} className="text-green-500 fill-green-500" />
+                    <span className="text-sm text-green-600">Verified</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-baseline">
+                {globalSale.active && product.is_discount_enabled && product.final_sale_price ? (
+                  <>
+                    <span className="text-2xl font-bold text-red-600">₹{product.final_sale_price}</span>
+                    <span className="text-sm text-gray-500 line-through ml-2">₹{product.platform_price}</span>
+                    <span className="text-sm font-medium text-green-600 ml-2">
+                      {product.platform_price && product.final_sale_price && 
+                        Math.round(((product.platform_price - product.final_sale_price) / product.platform_price) * 100)}% off
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-2xl font-bold text-gray-900">₹{product.platform_price}</span>
+                )}
+              </div>
+            </div>
 
               {/* Artist Info */}
               {artist && (
-                <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg">
-                  <img src={artist.profile_picture} alt={artist.name} className="w-12 h-12 rounded-full object-cover" />
-                  <div className="flex-1">
-                    <p className="text-sm text-gray-500">Crafted by</p>
-                    <Link href={`/artists/${artist.id}`} className="text-lg font-semibold text-gray-900 hover:text-red-500">
-                      {artist.name}
-                    </Link>
-                    {product.sales_count !== undefined && product.sales_count > 0 && (
-                      <p className="text-sm text-gray-600 mt-1">
-                        {product.sales_count} {product.sales_count === 1 ? 'sale' : 'sales'}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Key Product Details */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                <Clock className="w-5 h-5 text-red-500" />
-                <div className="text-sm">
-                  <p className="font-medium">Preparation Time</p>
-                  <p className="text-gray-600">{product.prep_time} days</p>
+              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl">
+                <img src={artist.profile_picture} alt={artist.name} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500">Crafted by</p>
+                  <Link href={`/artists/${artist.id}`} className="text-lg font-semibold text-gray-900 hover:text-red-500">
+                    {artist.name}
+                  </Link>
+                  {product.sales_count !== undefined && product.sales_count > 0 && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {product.sales_count} {product.sales_count === 1 ? 'sale' : 'sales'}
+                    </p>
+                  )}
                 </div>
               </div>
-              {product.material && (
-                <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                  <Hammer className="w-5 h-5 text-red-500" />
-                  <div className="text-sm">
-                    <p className="font-medium">Material</p>
-                    <p className="text-gray-600">{product.material}</p>
+            )}
+
+            {/* Stock/Made to Order Info */}
+            <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-xl">
+              {product.made_to_order ? (
+                <>
+                  <Clock className="w-5 h-5 text-red-500" />
+                  <div>
+                    <p className="font-medium">Made to Order</p>
+                    <p className="text-gray-600">Preparation time: {product.prep_time} days</p>
                   </div>
-                </div>
-              )}
-              {product.dimensions && (
-                <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                  <ArrowUpDown className="w-5 h-5 text-red-500" />
-                  <div className="text-sm">
-                    <p className="font-medium">Dimensions</p>
+                </>
+              ) : (
+                <>
+                  <Package className="w-5 h-5 text-red-500" />
+                  <div>
+                    <p className="font-medium">Stock Available</p>
                     <p className="text-gray-600">
-                      {product.dimensions.length}×{product.dimensions.width}×{product.dimensions.height} cm
-                      {product.dimensions.weight && ` • ${product.dimensions.weight}g`}
+                      {product.stock_quantity === 0 ? 
+                        "Out of Stock" : 
+                        `${product.stock_quantity} units available`}
                     </p>
                   </div>
-                </div>
-              )}
-              {!product.made_to_order && product.stock_quantity !== undefined && (
-                <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                  <Package className="w-5 h-5 text-red-500" />
-                  <div className="text-sm">
-                    <p className="font-medium">Stock</p>
-                    <p className="text-gray-600">{product.stock_quantity} units available</p>
-                  </div>
-                </div>
-              )}
-              {product.made_to_order && (
-                <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                  <RefreshCw className="w-5 h-5 text-red-500" />
-                  <div className="text-sm">
-                    <p className="font-medium">Made to Order</p>
-                    <p className="text-gray-600">Crafted upon order</p>
-                  </div>
-                </div>
-              )}
-              {product.created_at && (
-                <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                  <Calendar className="w-5 h-5 text-red-500" />
-                  <div className="text-sm">
-                    <p className="font-medium">Listed on</p>
-                    <p className="text-gray-600">{formatDate(product.created_at)}</p>
-                  </div>
-                </div>
+                </>
               )}
             </div>
 
-            {/* Description */}
+            {/* Product Details Grid */}
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Description</h3>
-              <p className="text-gray-600 whitespace-pre-line">{product.description}</p>
+              <h3 className="text-lg font-semibold">Product Details</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Material */}
+                {product.material && (
+                  <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                    <Hammer className="w-5 h-5 text-red-500" />
+                    <div className="text-sm">
+                      <p className="font-medium">Material</p>
+                      <p className="text-gray-600">{product.material}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Dimensions */}
+                {product.dimensions && (
+                  <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                    <ArrowUpDown className="w-5 h-5 text-red-500" />
+                    <div className="text-sm">
+                      <p className="font-medium">Dimensions</p>
+                      <p className="text-gray-600">
+                        {product.dimensions.length}×{product.dimensions.width}×{product.dimensions.height} cm
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Weight */}
+                {product.dimensions?.weight && (
+                  <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                    <Package className="w-5 h-5 text-red-500" />
+                    <div className="text-sm">
+                      <p className="font-medium">Weight</p>
+                      <p className="text-gray-600">
+                        {product.dimensions.weight >= 1000 
+                          ? `${(product.dimensions.weight / 1000).toFixed(1)} kg`
+                          : `${product.dimensions.weight} g`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Return Policy */}
+                {product.return_policy && (
+                  <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                    <RefreshCw className="w-5 h-5 text-red-500" />
+                    <div className="text-sm">
+                      <p className="font-medium">Return Policy</p>
+                      <p className="text-gray-600">{product.return_policy}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Product Features */}
@@ -321,33 +439,63 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
               </div>
             )}
 
-            {/* Additional Information */}
+            {/* Description */}
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">Description</h3>
+              <p className="text-gray-600 whitespace-pre-line leading-relaxed">{product.description}</p>
+            </div>
+
+            {/* Accordion sections for additional information */}
             {(product.customization_available || product.requires_assembly || product.care_instructions || product.return_policy) && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <h3 className="text-lg font-semibold">Additional Information</h3>
+                
                 {product.customization_available && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="font-medium mb-2">Customization Instructions</p>
-                    <p className="text-gray-600">{product.customization_instructions}</p>
-                  </div>
+                  <details className="group bg-gray-50 rounded-xl overflow-hidden">
+                    <summary className="flex items-center justify-between p-4 cursor-pointer">
+                      <span className="font-medium">Customization Instructions</span>
+                      <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
+                    </summary>
+                    <div className="p-4 pt-0 border-t border-gray-100">
+                      <p className="text-gray-600">{product.customization_instructions}</p>
+                    </div>
+                  </details>
                 )}
+                
                 {product.requires_assembly && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="font-medium mb-2">Assembly Instructions</p>
-                    <p className="text-gray-600">{product.assembly_instructions}</p>
-                  </div>
+                  <details className="group bg-gray-50 rounded-xl overflow-hidden">
+                    <summary className="flex items-center justify-between p-4 cursor-pointer">
+                      <span className="font-medium">Assembly Instructions</span>
+                      <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
+                    </summary>
+                    <div className="p-4 pt-0 border-t border-gray-100">
+                      <p className="text-gray-600">{product.assembly_instructions}</p>
+                    </div>
+                  </details>
                 )}
+                
                 {product.care_instructions && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="font-medium mb-2">Care Instructions</p>
-                    <p className="text-gray-600">{product.care_instructions}</p>
-                  </div>
+                  <details className="group bg-gray-50 rounded-xl overflow-hidden">
+                    <summary className="flex items-center justify-between p-4 cursor-pointer">
+                      <span className="font-medium">Care Instructions</span>
+                      <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
+                    </summary>
+                    <div className="p-4 pt-0 border-t border-gray-100">
+                      <p className="text-gray-600">{product.care_instructions}</p>
+                    </div>
+                  </details>
                 )}
+                
                 {product.return_policy && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="font-medium mb-2">Return Policy</p>
-                    <p className="text-gray-600">{product.return_policy}</p>
-                  </div>
+                  <details className="group bg-gray-50 rounded-xl overflow-hidden">
+                    <summary className="flex items-center justify-between p-4 cursor-pointer">
+                      <span className="font-medium">Return Policy</span>
+                      <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
+                    </summary>
+                    <div className="p-4 pt-0 border-t border-gray-100">
+                      <p className="text-gray-600">{product.return_policy}</p>
+                    </div>
+                  </details>
                 )}
               </div>
             )}
@@ -357,18 +505,30 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
 
       {/* Fixed Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg z-20">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto flex items-center gap-3">
+          <button
+            onClick={toggleWishlist}
+            className={`p-4 rounded-lg border ${isWishlisted ? 'border-red-200 bg-red-50' : 'border-gray-200'} flex-shrink-0`}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart 
+              size={20} 
+              className={isWishlisted ? "text-red-500 fill-red-500" : "text-gray-500"} 
+            />
+          </button>
+          
           <button
             onClick={handleAddToCart}
             disabled={!product.made_to_order && product.stock_quantity === 0}
-            className={`w-full py-4 rounded-lg font-semibold transition-all duration-300 
+            className={`flex-1 py-4 rounded-lg font-semibold transition-all duration-300 
               ${isAdding 
                 ? "bg-green-500 animate-pulse" 
                 : !product.made_to_order && product.stock_quantity === 0 
                   ? "bg-gray-400 cursor-not-allowed" 
                   : "bg-red-500 hover:bg-red-600"
-              } text-white`}
+              } text-white flex items-center justify-center gap-2`}
           >
+            <ShoppingCart size={20} />
             {!product.made_to_order && product.stock_quantity === 0 
               ? "Out of Stock" 
               : isAdding 
