@@ -29,6 +29,8 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isScrollingUp, setIsScrollingUp] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const galleryRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
@@ -54,6 +56,28 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
     };
     checkGlobalSale();
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < lastScrollY) {
+        // Scrolling up
+        setIsScrollingUp(true);
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling down
+        setIsScrollingUp(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   const handleAddToCart = () => {
     setIsAdding(true);
@@ -504,7 +528,9 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
       </div>
 
       {/* Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg z-20">
+      <div className={`fixed bottom-0 left-0 right-0 p-3 bg-white border-t shadow-lg z-20 transition-transform duration-300 sm:transform-none ${
+        isScrollingUp ? 'translate-y-0' : 'translate-y-full'
+      }`}>
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           <button
             onClick={toggleWishlist}
@@ -517,30 +543,42 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
             />
           </button>
           
+          <div className="flex-1">
+            <button
+              onClick={handleAddToCart}
+              disabled={!product.made_to_order && product.stock_quantity === 0}
+              className={`w-full py-4 rounded-lg font-semibold transition-all duration-300 
+                ${isAdding 
+                  ? "bg-green-500 animate-pulse" 
+                  : !product.made_to_order && product.stock_quantity === 0 
+                    ? "bg-gray-400 cursor-not-allowed" 
+                    : "bg-red-500 hover:bg-red-600"
+                } text-white flex items-center justify-center gap-2`}
+            >
+              <ShoppingCart size={20} />
+              {!product.made_to_order && product.stock_quantity === 0 
+                ? "Out of Stock" 
+                : isAdding 
+                  ? "Adding..." 
+                  : "Add to Cart"}
+            </button>
+          </div>
+
           <button
-            onClick={handleAddToCart}
-            disabled={!product.made_to_order && product.stock_quantity === 0}
-            className={`flex-1 py-4 rounded-lg font-semibold transition-all duration-300 
-              ${isAdding 
-                ? "bg-green-500 animate-pulse" 
-                : !product.made_to_order && product.stock_quantity === 0 
-                  ? "bg-gray-400 cursor-not-allowed" 
-                  : "bg-red-500 hover:bg-red-600"
-              } text-white flex items-center justify-center gap-2`}
+            onClick={handleShare}
+            className="p-4 rounded-lg border border-gray-200 flex-shrink-0 hover:bg-gray-50 transition-colors"
+            aria-label="Share product"
           >
-            <ShoppingCart size={20} />
-            {!product.made_to_order && product.stock_quantity === 0 
-              ? "Out of Stock" 
-              : isAdding 
-                ? "Adding..." 
-                : "Add to Cart"}
+            <Share2 size={20} className="text-gray-500" />
           </button>
         </div>
       </div>
 
       {/* Floating Cart Counter */}
       {cartCount > 0 && (
-        <div className="fixed bottom-24 right-6 z-30">
+        <div className={`fixed bottom-24 right-6 z-30 transition-transform duration-300 ${
+          isScrollingUp ? 'translate-y-0' : 'translate-y-[200%]'
+        }`}>
           <Link href="/cart">
             <button className="bg-red-500 text-white font-semibold py-3 px-5 rounded-full shadow-lg flex items-center gap-2 hover:bg-red-600 transition-all duration-300">
               <ShoppingCart size={20} />
