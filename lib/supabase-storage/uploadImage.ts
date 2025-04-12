@@ -63,7 +63,7 @@ const cropImageToSquare = async (file: File): Promise<File | null> => {
   
             console.log(`Attempt ${attempt}: Compressed size = ${compressedFile.size / 1024} KB`);
   
-            if (compressedFile.size <= 50 * 1024 || attempt >= 4) {
+            if (compressedFile.size <= 100 * 1024 || attempt >= 4) {
               resolve(compressedFile);
             } else {
               quality -= 0.1;

@@ -217,7 +217,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
       {/* Main Content */}
       <div className="pb-24 max-w-6xl mx-auto">
         {/* Image Gallery - Carousel Style */}
-        <div className="relative bg-gray-100 aspect-square md:aspect-[4/3] overflow-hidden">
+        <div className="relative bg-gray-100 aspect-square overflow-hidden">
           <div 
             ref={galleryRef}
             className="flex transition-transform duration-300 ease-out h-full w-full"
@@ -232,7 +232,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
                   <img
                     src={media}
                     alt={`${product.title} - ${index + 1}`}
-                    className="w-full h-full object-contain bg-gray-100"
+                    className="w-full h-full aspect-square object-cover bg-gray-100"
                   />
                 ) : (
                   <div className="relative w-full h-full flex items-center justify-center bg-gray-900">

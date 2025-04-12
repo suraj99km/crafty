@@ -347,12 +347,10 @@ button,
 input:where([type='button']),
 input:where([type='reset']),
 input:where([type='submit']) {
+  appearance: button;
   -webkit-appearance: button;
-  /* 1 */
   background-color: transparent;
-  /* 2 */
   background-image: none;
-  /* 2 */
 }
 
 /*
@@ -394,10 +392,9 @@ Correct the cursor style of increment and decrement buttons in Safari.
 */
 
 [type='search'] {
+  appearance: textfield;
   -webkit-appearance: textfield;
-  /* 1 */
   outline-offset: -2px;
-  /* 2 */
 }
 
 /*
@@ -405,6 +402,7 @@ Remove the inner padding in Chrome and Safari on macOS.
 */
 
 ::-webkit-search-decoration {
+  appearance: none;
   -webkit-appearance: none;
 }
 
@@ -414,10 +412,9 @@ Remove the inner padding in Chrome and Safari on macOS.
 */
 
 ::-webkit-file-upload-button {
+  appearance: button;
   -webkit-appearance: button;
-  /* 1 */
   font: inherit;
-  /* 2 */
 }
 
 /*
@@ -532,7 +529,7 @@ audio,
 iframe,
 embed,
 object {
-  display: block;
+  display: inline-block;
   /* 1 */
   vertical-align: middle;
   /* 2 */
@@ -2901,8 +2898,11 @@ video {
 .\[\&\>span\]\:line-clamp-1>span {
   overflow: hidden;
   display: -webkit-box;
+  display: box;
   -webkit-box-orient: vertical;
+  box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 .\[\&\>svg\+div\]\:translate-y-\[-3px\]>svg+div {

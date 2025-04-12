@@ -92,16 +92,15 @@ const ProductCard = ({ product }: { product: Product }) => {
   return (
     <Link key={product.id} href={`/products/${product.id}`} passHref>
       <div className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-95 hover:shadow-lg flex flex-col h-full">
-        <div className="relative">
+        <div className="relative aspect-square overflow-hidden rounded-lg">
           <img
             src={product.images[0]}
             alt={product.title}
-            className="w-full h-40 object-cover rounded-md"
+            className="w-full h-full object-cover"
           />
-          {/* Sale badge */}
-          {isProductOnSale() && (
-            <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-md">
-              {calculateDiscountPercentage()}% OFF
+          {product.is_discount_enabled && (
+            <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+              SALE
             </div>
           )}
         </div>
