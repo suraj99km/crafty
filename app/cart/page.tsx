@@ -8,25 +8,50 @@ import CartList from "@/components/cart/CartList";
 import PopularProducts from "@/components/home/PopularProducts";
 import Pricing from "@/components/cart/Pricing";
 import SavedAddresses from "@/components/cart/SavedAddresses";
+import { isGlobalSaleActive, getGlobalSaleInfo, getGlobalConfig } from "@/lib/supabase-db/global-utils";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [highlightAddress, setHighlightAddress] = useState(false);
+  const [globalSaleActive, setGlobalSaleActive] = useState(false);
+  const [globalSaleInfo, setGlobalSaleInfo] = useState<any>(null);
+  const [freeDeliveryMinimum, setFreeDeliveryMinimum] = useState(0);
   const addressRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  // Load saved cart and address from localStorage
+  // Load saved cart and address from localStorage and check global sale status
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCartItems(storedCart);
+    const loadInitialData = async () => {
+      const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      setCartItems(storedCart);
 
-    const storedAddress = JSON.parse(localStorage.getItem("selectedAddress") || "null");
-    setSelectedAddress(storedAddress);
+      const storedAddress = JSON.parse(localStorage.getItem("selectedAddress") || "null");
+      setSelectedAddress(storedAddress);
 
-    const storedTotal = JSON.parse(sessionStorage.getItem("total") || "0");
-    setTotal(storedTotal);
+      const storedTotal = JSON.parse(sessionStorage.getItem("total") || "0");
+      setTotal(storedTotal);
+
+      // Check global sale status
+      try {
+        const saleActive = await isGlobalSaleActive();
+        setGlobalSaleActive(saleActive);
+        
+        if (saleActive) {
+          const saleInfo = await getGlobalSaleInfo();
+          setGlobalSaleInfo(saleInfo);
+        }
+
+        // Get free delivery minimum
+        const minForFreeDelivery = await getGlobalConfig("free_delivery_minimum", 1000);
+        setFreeDeliveryMinimum(minForFreeDelivery);
+      } catch (err) {
+        console.error("Error checking global sale status:", err);
+      }
+    };
+
+    loadInitialData();
   }, []);
 
   // Store selected address in localStorage
@@ -43,7 +68,7 @@ const CartPage = () => {
   const getUpdatedCartItems = () =>
     cartItems.map((item) => ({
       ...item,
-      stock_quantity: item.stock_quantity ?? 1,
+      quantity_selected: item.quantity_selected ?? 1,
       platform_price: item.platform_price ?? 0, // Ensure platform_price is always a number
     }));
 
@@ -60,7 +85,7 @@ const CartPage = () => {
     const cartData = cartItems.map((item) => ({
       id: item.id,
       title: item.title,
-      quantity: item.stock_quantity ?? 1, // Default to 1 if undefined
+      quantity: item.quantity_selected ?? 1, // Default to 1 if undefined
     }));
     localStorage.setItem("cartData", JSON.stringify(cartData));
 

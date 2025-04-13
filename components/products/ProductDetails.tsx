@@ -85,19 +85,19 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
     setTimeout(() => {
       setIsAdding(false);
   
-      let cart: (Product & { quantity: number })[] = JSON.parse(localStorage.getItem("cart") || "[]");
+      let cart: (Product & { quantity_selected: number })[] = JSON.parse(localStorage.getItem("cart") || "[]");
   
       const existingProductIndex = cart.findIndex((item) => item.id === product.id);
   
       if (existingProductIndex !== -1) {
-        cart[existingProductIndex].quantity += 1;
+        cart[existingProductIndex].quantity_selected += 1;
       } else {
-        cart.push({ ...product, quantity: 1 });
+        cart.push({ ...product, quantity_selected: 1 });
       }
   
       localStorage.setItem("cart", JSON.stringify(cart));
   
-      const totalQuantity = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+      const totalQuantity = cart.reduce((acc, item) => acc + (item.quantity_selected || 1), 0);
       setCartCount(totalQuantity);
   
       toast.success(`${product.title} added to cart!`, {
@@ -332,15 +332,19 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
                 )}
               </div>
               
-              <div className="flex items-baseline">
+              <div className="flex items-baseline gap-3">
                 {globalSale.active && product.is_discount_enabled && product.final_sale_price ? (
                   <>
-                    <span className="text-2xl font-bold text-red-600">₹{product.final_sale_price}</span>
-                    <span className="text-sm text-gray-500 line-through ml-2">₹{product.platform_price}</span>
-                    <span className="text-sm font-medium text-green-600 ml-2">
-                      {product.platform_price && product.final_sale_price && 
-                        Math.round(((product.platform_price - product.final_sale_price) / product.platform_price) * 100)}% off
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl font-bold text-red-600">₹{product.final_sale_price}</span>
+                      <div className="flex flex-col items-start">
+                        <span className="text-sm text-gray-500 line-through">₹{product.platform_price}</span>
+                        <div className="bg-red-100 text-red-700 px-2 py-0.5 rounded-md text-sm font-semibold">
+                          {product.platform_price && product.final_sale_price && 
+                            Math.round(((product.platform_price - product.final_sale_price) / product.platform_price) * 100)}% OFF
+                        </div>
+                      </div>
+                    </div>
                   </>
                 ) : (
                   <span className="text-2xl font-bold text-gray-900">₹{product.platform_price}</span>
@@ -348,8 +352,8 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
               </div>
             </div>
 
-              {/* Artist Info */}
-              {artist && (
+            {/* Artist Info */}
+            {artist && (
               <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl">
                 <img src={artist.profile_picture} alt={artist.name} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm" />
                 <div className="flex-1">

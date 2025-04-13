@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Product } from "@/Types";
 import { isGlobalSaleActive, getGlobalSaleInfo } from "@/lib/supabase-db/global-utils";
 import { useState, useEffect } from "react";
@@ -92,29 +93,36 @@ const ProductCard = ({ product }: { product: Product }) => {
   return (
     <Link key={product.id} href={`/products/${product.id}`} passHref>
       <div className="border p-2 rounded-lg shadow-sm transition-all duration-300 ease-in-out hover:scale-95 hover:shadow-lg flex flex-col h-full">
-        <div className="relative aspect-square overflow-hidden rounded-lg">
-          <img
-            src={product.images[0]}
-            alt={product.title}
-            className="w-full h-full object-cover"
-          />
-          {product.is_discount_enabled && (
-            <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-              SALE
-            </div>
-          )}
-        </div>
-        <h3 className="mt-2 font-semibold flex-grow">{product.title}</h3>
-        <div className="mt-2">
-          <div className="flex items-center">
-            <p className="font-bold text-left text-red-600">₹ {calculateSalePrice()}</p>
-            {/* Show original price if on sale */}
-            {isProductOnSale() && (
-              <p className="ml-2 text-xs text-gray-500 line-through">₹ {product.platform_price}</p>
+        <div className="relative group">
+          <div className="relative aspect-square">
+            <Image 
+              src={product.images[0]} 
+              alt={product.title}
+              fill
+              className="object-cover rounded-lg"
+            />
+            {product.final_sale_price && product.platform_price && product.final_sale_price < product.platform_price && (
+              <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full z-10">
+                {Math.round(((product.platform_price - product.final_sale_price) / product.platform_price) * 100)}% OFF
+              </div>
             )}
           </div>
-          <p className="text-xs text-gray-500 text-left">Artist: {product.artist_name}</p>
+          
+          <div className="mt-2">
+            <h3 className="text-sm font-medium">{product.title}</h3>
+            <div className="flex items-center gap-2 mt-1">
+              {product.final_sale_price && product.platform_price && product.final_sale_price < product.platform_price ? (
+                <>
+                  <p className="text-gray-600 line-through text-sm">₹{product.platform_price}</p>
+                  <p className="text-green-600 font-semibold">₹{product.final_sale_price}</p>
+                </>
+              ) : (
+                <p className="text-gray-600">₹{product.platform_price || 0}</p>
+              )}
+            </div>
+          </div>
         </div>
+        <p className="text-xs text-gray-500 text-left mt-2">Artist: {product.artist_name}</p>
       </div>
     </Link>
   );

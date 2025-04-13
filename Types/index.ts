@@ -30,6 +30,7 @@ export interface Product {
   payment_method_id?: string;
   shipping_address_id?: string;
   stock_quantity?: number | null;
+  quantity_selected?: number;
   made_to_order?: boolean;
   customization_available?: boolean;
   customization_instructions?: string;
