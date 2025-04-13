@@ -172,18 +172,30 @@ export const getArtistId = async (): Promise<string | null> => {
     if (userError || !userData?.user?.email) return null;
 
     // Fetch artist details based on email
-    const { data: artistData, error: artistError } = await supabase
-      .from("Artists")
-      .select("id")
-      .eq("email_address", userData.user.email)
-      .single();
+    const artistData = await getArtistByEmail(userData.user.email);
 
-    if (artistError || !artistData) return null;
+    if (!artistData) return null;
 
     return artistData.id;
   } catch (error) {
     console.error("Error fetching artist ID:", error);
     return null;
   }
+};
+
+// Use this instead of direct fetch
+const getArtistByEmail = async (email: string) => {
+  const { data, error } = await supabase
+    .from('Artists')
+    .select('id')
+    .eq('email_address', email)
+    .single();
+
+  if (error) {
+    console.error('Error fetching artist:', error);
+    return null;
+  }
+
+  return data;
 };
 

@@ -17,22 +17,17 @@ export default function JoinArtistForm() {
   const router = useRouter();
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Profile Picture
-  const [govIdImgUrl, setGovIdImgUrl] = useState<string | null>(null); // Gov ID
   
   const [loading, setLoading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<{
     profile: "idle" | "uploading" | "success" | "error";
-    govId: "idle" | "uploading" | "success" | "error";
   }>({
-    profile: "idle",
-    govId: "idle"
+    profile: "idle"
   });
   const [uploadProgress, setUploadProgress] = useState<{
     profile: number;
-    govId: number;
   }>({
-    profile: 0,
-    govId: 0
+    profile: 0
   });
   
   const [user, setUser] = useState<{ id: string; firstName: string; lastName: string; email: string } | null>(null);
@@ -49,7 +44,6 @@ export default function JoinArtistForm() {
     instagram: "",
     other_social: "",
     profile_image: "",
-    gov_id: "",
     agreedToTerms: false,
   });
 
@@ -68,7 +62,6 @@ export default function JoinArtistForm() {
         
         // Restore image URLs if available
         if (parsedForm.profile_image) setImageUrl(parsedForm.profile_image);
-        if (parsedForm.gov_id) setGovIdImgUrl(parsedForm.gov_id);
       } catch (e) {
         console.error("Error restoring form state:", e);
       }
@@ -122,7 +115,7 @@ export default function JoinArtistForm() {
     }));
   };
 
-  const simulateProgress = (type: "profile" | "govId") => {
+  const simulateProgress = (type: "profile") => {
     let progress = 0;
     const interval = setInterval(() => {
       progress += 10;
@@ -162,7 +155,7 @@ export default function JoinArtistForm() {
     setLoading(true);
     
     // Update upload status
-    const type = folderName === "artists" ? "profile" : "govId";
+    const type = "profile";
     setUploadStatus(prev => ({ ...prev, [type]: "uploading" }));
     
     // Start progress simulation
@@ -170,7 +163,7 @@ export default function JoinArtistForm() {
     
     // Show toast notification for upload start
     const uploadToast = toast.loading(
-      `Uploading ${folderName === "artists" ? "profile picture" : "government ID"}...`
+      `Uploading profile picture...`
     );
   
     try {
@@ -185,16 +178,11 @@ export default function JoinArtistForm() {
         // Update form state with new URL
         setForm((prevForm) => ({
           ...prevForm,
-          profile_image: folderName === "artists" ? uploadedUrl : prevForm.profile_image,
-          gov_id: folderName === "gov_id" ? uploadedUrl : prevForm.gov_id,
+          profile_image: uploadedUrl,
         }));
       
         // Update UI state with new URL
-        if (folderName === "artists") {
-          setImageUrl(uploadedUrl);
-        } else if (folderName === "gov_id") {
-          setGovIdImgUrl(uploadedUrl);
-        }
+        setImageUrl(uploadedUrl);
         
         // Set progress to 100%
         setUploadProgress(prev => ({ ...prev, [type]: 100 }));
@@ -202,7 +190,7 @@ export default function JoinArtistForm() {
         
         // Update toast notification
         toast.success(
-          `${folderName === "artists" ? "Profile picture" : "Government ID"} uploaded successfully!`, 
+          `Profile picture uploaded successfully!`, 
           { id: uploadToast }
         );
       } else {
@@ -240,9 +228,9 @@ export default function JoinArtistForm() {
       toast.error("Please upload a profile picture.");
       return;
     }
-    
-    if (!govIdImgUrl) {
-      toast.error("Please upload a government ID document.");
+
+    if (!isPhoneVerified) {
+      toast.error("Please verify your phone number.");
       return;
     }
 
@@ -258,11 +246,6 @@ export default function JoinArtistForm() {
     
     if (!form.agreedToTerms) {
       toast.error("You must agree to the terms and conditions.");
-      return;
-    }
-    
-    if (form.phone.length !== 10) {
-      toast.error("Please enter a valid 10-digit phone number.");
       return;
     }
   
@@ -290,7 +273,6 @@ export default function JoinArtistForm() {
             portfolio: form.portfolio,
             instagram: form.instagram,
             other_social: form.other_social,
-            gov_id: govIdImgUrl,
             agreedtoterms: form.agreedToTerms,
           },
         ]);
@@ -324,6 +306,19 @@ export default function JoinArtistForm() {
       setLoading(false);
     }
   };
+
+  // Add debug logging before form return
+  useEffect(() => {
+    console.log("Form state:", {
+      loading,
+      uploadStatus: uploadStatus.profile,
+      imageUrl: !!imageUrl,
+      isPhoneVerified,
+      bioWords: form.bio.trim().split(/\s+/).length,
+      taglineWords: form.tagline.trim().split(/\s+/).length,
+      agreedToTerms: form.agreedToTerms
+    });
+  }, [loading, uploadStatus.profile, imageUrl, isPhoneVerified, form.bio, form.tagline, form.agreedToTerms]);
   
   return (
     <motion.div
@@ -438,90 +433,19 @@ export default function JoinArtistForm() {
           </div>
           <Input name="email" type="email" value={form.email} readOnly className="rounded-xl bg-gray-100 text-gray-500" />
 
-          {/* Mobile Number Input */}
+          {/* Phone Authentication */}
           <div className="space-y-2">
-            <label className="text-gray-700 font-medium">Contact Number *</label>
-
-            <div className="flex items-center border rounded-lg p-2 focus-within:ring-2 focus-within:ring-red-500">
-              <span className="text-gray-600 pr-2">+91</span>
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Enter 10-digit mobile number"
-                value={form.phone || ""}
-                onChange={(e) => {
-                  const phone = e.target.value.replace(/\D/g, "").slice(0, 10); // Ensure only 10 digits
-                  setForm((prev) => ({ ...prev, phone }));
-                }}
-                maxLength={10}
-                className="w-full outline-none"
-              />
-            </div>
-            {form.phone && form.phone.length !== 10 && (
-              <p className="text-xs text-red-500">Please enter a valid 10-digit mobile number</p>
-            )}
-          </div>
-
-          {/* Government ID Upload - Enhanced with better feedback */}
-          <div className="space-y-2">
-            <label className="text-gray-700 font-medium">Upload Government ID *</label>
-            <p className="text-sm text-gray-500">Accepted: Aadhar Card, PAN Card, Driver's License (JPG, PNG)</p>
-
-            <label className={`flex flex-col items-center justify-center border-2 border-dashed ${uploadStatus.govId === "error" ? "border-red-300" : "border-gray-300"} rounded-lg p-4 cursor-pointer hover:bg-gray-100 transition ${uploadStatus.govId === "uploading" ? "opacity-70" : ""}`}>
-              {govIdImgUrl ? (
-                <div className="relative group">
-                  <img src={govIdImgUrl} alt="Uploaded Gov ID" className="w-64 h-32 object-cover rounded-lg" />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    {uploadStatus.govId !== "uploading" && (
-                      <div className="text-white text-sm font-medium">
-                        <RefreshCw size={20} className="mx-auto mb-1" />
-                        Replace Document
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Error indicator */}
-                  {uploadStatus.govId === "error" && (
-                    <div className="absolute -bottom-1 -right-1 bg-red-500 rounded-full p-1 shadow-md">
-                      <AlertCircle size={16} className="text-white" />
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <Upload size={22} className="text-gray-500 mb-2" />
-                  <span className="text-gray-600 text-sm">Click to Upload or Drag & Drop</span>
-                </>
-              )}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/jpg"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    if (govIdImgUrl && !confirm("Replace current ID document?")) {
-                      return;
-                    }
-                    handleUpload(file, "gov_id");
-                  }
-                }}
-                disabled={uploadStatus.govId === "uploading"}
-              />
-            </label>
-            
-            {/* Progress indicator */}
-            {uploadStatus.govId === "uploading" && (
-              <div className="w-full mt-2">
-                <div className="w-full bg-gray-200 rounded-full h-1.5">
-                  <div 
-                    className="bg-red-500 h-1.5 rounded-full transition-all duration-300"
-                    style={{ width: `${uploadProgress.govId}%` }}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 text-center mt-1">Uploading...</p>
-              </div>
-            )}
+            <label className="text-gray-700 font-medium">Verify Phone Number *</label>
+            <PhoneAuth onVerified={(verified: boolean) => {
+              setIsPhoneVerified(verified);
+              if (verified) {
+                // Only update the phone number in the form if verification was successful
+                const phoneInput = document.querySelector('input[type="tel"]') as HTMLInputElement;
+                if (phoneInput) {
+                  setForm(prev => ({ ...prev, phone: phoneInput.value }));
+                }
+              }
+            }} />
           </div>
 
         {/* Short tagline (Minimum 5 Words, Maximum 20 Words) */}
@@ -628,24 +552,20 @@ export default function JoinArtistForm() {
             disabled={
               loading ||
               uploadStatus.profile === "uploading" ||
-              uploadStatus.govId === "uploading" ||
               !imageUrl || 
-              !govIdImgUrl || 
+              !isPhoneVerified ||
               form.bio.trim().split(/\s+/).length < 30 || 
               form.tagline.trim().split(/\s+/).length < 5 ||
-              !form.agreedToTerms || 
-              form.phone.length !== 10
+              !form.agreedToTerms
             }
             className={`w-full text-base md:text-lg py-3 rounded-2xl font-medium tracking-wide shadow-md transition-all ${
               loading ||
               uploadStatus.profile === "uploading" ||
-              uploadStatus.govId === "uploading" ||
               !imageUrl || 
-              !govIdImgUrl || 
+              !isPhoneVerified ||
               form.bio.trim().split(/\s+/).length < 30 ||
               form.tagline.trim().split(/\s+/).length < 5 ||  
-              !form.agreedToTerms || 
-              form.phone.length !== 10
+              !form.agreedToTerms
                 ? "bg-gray-400 cursor-not-allowed"
                 : "text-white bg-red-500 hover:bg-red-600 font-semibold"
             }`}
