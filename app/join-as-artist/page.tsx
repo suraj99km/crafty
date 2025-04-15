@@ -12,6 +12,7 @@ import { Upload, Instagram, Link, Share2, RefreshCw, AlertCircle } from "lucide-
 import PhoneAuth from "@/components/auth/PhoneAuth";
 import { uploadImage } from "@/lib/supabase-storage/uploadImage";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export default function JoinArtistForm() {
   const router = useRouter();
@@ -291,9 +292,8 @@ export default function JoinArtistForm() {
       // Clear saved form data on successful submission
       sessionStorage.removeItem('artistFormState');
   
-      setTimeout(() => {
-        router.push("/profile");
-      }, 1500);
+      // Redirect to welcome page with artist's name
+      router.push(`/join-as-artist/welcome?name=${encodeURIComponent(form.first_name)}`);
     } catch (error: unknown) {
       setLoading(false);
       if (error instanceof Error) {
