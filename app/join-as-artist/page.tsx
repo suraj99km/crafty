@@ -20,6 +20,7 @@ export default function JoinArtistForm() {
   const [imageUrl, setImageUrl] = useState<string | null>(null); // Profile Picture
   
   const [loading, setLoading] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<{
     profile: "idle" | "uploading" | "success" | "error";
   }>({
@@ -89,13 +90,14 @@ export default function JoinArtistForm() {
       }
   
       const fullName = data.user.user_metadata?.full_name || "User";
-      const nameParts = fullName.split(" ");
-      const firstName = toCamelCase(nameParts[0] || "");
-      const lastName = toCamelCase(nameParts.slice(1).join(" ")) || "";
+      const nameParts = fullName.split(" ").filter((part: string) => part.length > 0);
+      const firstName = nameParts.length > 0 ? toCamelCase(nameParts[0]) : "";
+      const lastName = nameParts.length > 1 ? toCamelCase(nameParts.slice(1).join(" ")) : "";
       const email = data.user.email || "";
       const id = data.user.id;
   
       setUser({ id, firstName, lastName, email });
+      setIsEditable(firstName === "User");
   
       setForm((prev) => ({
         ...prev,
@@ -452,10 +454,33 @@ export default function JoinArtistForm() {
 
           {/* Auto-Filled Name & Email */}
           <div className="grid grid-cols-2 gap-4">
-            <Input name="first_name" value={form.first_name} readOnly className="rounded-xl bg-gray-100 text-gray-500" />
-            <Input name="last_name" value={form.last_name} readOnly className="rounded-xl bg-gray-100 text-gray-500" />
+            <Input 
+              name="first_name" 
+              value={form.first_name} 
+              onChange={isEditable ? handleChange : undefined}
+              placeholder="First Name"
+              readOnly={!isEditable}
+              className={`rounded-xl ${!isEditable ? 'bg-gray-100 text-gray-500' : 'bg-white'}`}
+              required 
+            />
+            <Input 
+              name="last_name" 
+              value={form.last_name} 
+              onChange={isEditable ? handleChange : undefined}
+              placeholder="Last Name"
+              readOnly={!isEditable}
+              className={`rounded-xl ${!isEditable ? 'bg-gray-100 text-gray-500' : 'bg-white'}`}
+              required
+            />
           </div>
-          <Input name="email" type="email" value={form.email} readOnly className="rounded-xl bg-gray-100 text-gray-500" />
+          <Input 
+            name="email" 
+            type="email" 
+            value={form.email} 
+            readOnly 
+            placeholder="Email"
+            className="rounded-xl bg-gray-100 text-gray-500" 
+          />
 
           {/* Phone Authentication */}
           <div className="space-y-2">
@@ -578,6 +603,7 @@ export default function JoinArtistForm() {
               uploadStatus.profile === "uploading" ||
               !imageUrl || 
               !isPhoneVerified ||
+              !form.first_name ||
               form.bio.trim().split(/\s+/).length < 30 || 
               form.tagline.trim().split(/\s+/).length < 5 ||
               !form.agreedToTerms
@@ -587,6 +613,7 @@ export default function JoinArtistForm() {
               uploadStatus.profile === "uploading" ||
               !imageUrl || 
               !isPhoneVerified ||
+              !form.first_name ||
               form.bio.trim().split(/\s+/).length < 30 ||
               form.tagline.trim().split(/\s+/).length < 5 ||  
               !form.agreedToTerms

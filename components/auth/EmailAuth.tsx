@@ -1,32 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import supabase from "@/lib/supabase-db/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MdEmail } from "react-icons/md";
+import { toast } from "sonner";
 
 export default function EmailAuth() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Listen for auth state changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        router.push('/');
+        router.refresh();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [router]);
+
   // Send Magic Link
   const sendLoginLink = async () => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/` }, // Redirects to home after login
-    });
+    const toastId = toast.loading("Sending login link...");
 
-    if (error) {
-      alert("Error sending login link: " + error.message);
-    } else {
-      alert("Login link sent! Check your email.");
-      router.push("/"); // Redirects to home immediately
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { 
+          emailRedirectTo: `${window.location.origin}/`,
+          data: { timestamp: new Date().toISOString() }
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success("Login link sent! Check your email.", {
+        id: toastId
+      });
+
+      router.push("/");
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`, {
+        id: toastId
+      });
+      console.error("Login error:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
