@@ -11,6 +11,7 @@ import WalletBalance from "@/components/profile/WalletBalance";
 import PaymentMethods from "@/components/profile/PaymentMethods";
 import ArtistAddresses from "@/components/profile/ArtistAddresses";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bell, Plus } from "lucide-react";
 
 const ArtistProfile = () => {
   const [user, setUser] = useState<any>(null);
@@ -162,7 +163,35 @@ const ArtistProfile = () => {
   }
 
   return (
-    <div className="mt-12 max-w-4xl mx-auto p-6 space-y-6">
+    <div className="mt-14 max-w-4xl mx-auto p-6 space-y-6">
+      <div className="grid grid-cols-2 gap-4 mb-2">
+        <div className="flex justify-start">
+          <button
+            onClick={() => window.location.href = '/profile/notifications'}
+            className="inline-flex items-center px-2 py-2 bg-white text-gray-700 font-medium rounded-xl shadow hover:shadow-md border border-gray-100 transform hover:-translate-y-0.5 transition-all duration-200 ease-out w-full max-w-[200px]"
+            aria-label="View notifications"
+          >
+            <div className="relative flex items-center justify-between w-full">
+              <div className="flex items-center space-x-3">
+                <Bell className="w-5 h-5" />
+                <span className="font-medium">Notifications</span>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            onClick={() => window.location.href = '/list-product'}
+            className="inline-flex items-center px-2 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ease-out w-full max-w-[200px]"
+          >
+            <div className="flex items-center justify-center w-full">
+              <Plus className="w-5 h-5 mr-1" />
+              <span>List a Product</span>
+            </div>
+          </button>
+        </div>
+      </div>
       
       <ProfileHeader 
         artist={artist} 

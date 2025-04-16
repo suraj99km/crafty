@@ -256,6 +256,21 @@ export default function JoinArtistForm() {
     const submissionToast = toast.loading("Submitting your application...");
   
     try {
+      // First check if an artist with this email already exists
+      const { data: existingArtist, error: checkError } = await supabase
+        .from("Artists")
+        .select("id")
+        .eq("email_address", form.email)
+        .single();
+  
+      if (existingArtist) {
+        toast.error("An artist profile already exists with this email.", {
+          id: submissionToast
+        });
+        setLoading(false);
+        return;
+      }
+  
       // Insert data into the 'Artists' table
       const { data, error } = await supabase
         .from("Artists")
@@ -267,8 +282,8 @@ export default function JoinArtistForm() {
             tagline: form.tagline,
             bio: form.bio,
             profile_picture: imageUrl,
-            created_at: new Date(),
-            updated_at: new Date(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             last_name: form.last_name,
             first_name: form.first_name,
             portfolio: form.portfolio,
@@ -276,21 +291,30 @@ export default function JoinArtistForm() {
             other_social: form.other_social,
             agreedtoterms: form.agreedToTerms,
           },
-        ]);
+        ])
+        .select();
   
       if (error) {
         throw new Error(error.message);
       }
   
+      if (!data || data.length === 0) {
+        throw new Error("Failed to create artist profile");
+      }
+  
       // Handle successful insertion
       console.log("Data inserted successfully:", data);
       
-      toast.success("Your application has been submitted successfully!", {
-        id: submissionToast
-      });
-      
       // Clear saved form data on successful submission
       sessionStorage.removeItem('artistFormState');
+  
+      // Show success message
+      toast.success("Successfully created your artist profile!", {
+        id: submissionToast
+      });
+  
+      // Add a small delay before redirect
+      await new Promise(resolve => setTimeout(resolve, 500));
   
       // Redirect to welcome page with artist's name
       router.push(`/join-as-artist/welcome?name=${encodeURIComponent(form.first_name)}`);
