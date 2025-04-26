@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { Product, Artist } from "@/Types";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,18 +42,26 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
   const [isScrollingUp, setIsScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const galleryRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<{ [key: number]: HTMLVideoElement }>({});
 
   const router = useRouter();
-  const allMedia = [...product.images, ...(product.demo_video ? [product.demo_video] : [])];
+  const allMedia = useMemo(() => [...product.images, ...(product.demo_video ? [product.demo_video] : [])], [product.images, product.demo_video]);
 
   useEffect(() => {
-    const cart: (Product & { quantity: number })[] = JSON.parse(localStorage.getItem("cart") || "[]");
-    const totalQuantity = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
-    setCartCount(totalQuantity);
-    
-    // Check if product is in wishlist
-    const wishlist: string[] = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    setIsWishlisted(wishlist.includes(product.id));
+    const getCartAndWishlist = () => {
+      try {
+        const cart: (Product & { quantity: number })[] = JSON.parse(localStorage.getItem("cart") || "[]");
+        const totalQuantity = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
+        setCartCount(totalQuantity);
+        
+        const wishlist: string[] = JSON.parse(localStorage.getItem("wishlist") || "[]");
+        setIsWishlisted(wishlist.includes(product.id));
+      } catch (error) {
+        console.error("Error reading from localStorage:", error);
+      }
+    };
+
+    getCartAndWishlist();
   }, [product.id]);
 
   useEffect(() => {
@@ -93,6 +101,32 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [lastScrollY]);
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    allMedia.forEach((media, index) => {
+      if (index >= product.images.length && videoRefs.current[index]) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                videoRefs.current[index]?.play();
+              } else {
+                videoRefs.current[index]?.pause();
+              }
+            });
+          },
+          { threshold: 0.7 }
+        );
+        observer.observe(videoRefs.current[index]);
+        observers.push(observer);
+      }
+    });
+
+    return () => {
+      observers.forEach(observer => observer.disconnect());
+    };
+  }, [currentImageIndex, allMedia, product.images.length]);
 
   const handleAddToCart = () => {
     setIsAdding(true);
@@ -276,8 +310,12 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
                 ) : (
                   <div className="relative w-full h-full flex items-center justify-center bg-gray-900">
                     <video
+                      ref={el => { if (el) videoRefs.current[index] = el }}
                       src={media}
                       controls
+                      playsInline
+                      muted
+                      loop
                       className="max-w-full max-h-full"
                     >
                       Your browser doesn't support video playback.

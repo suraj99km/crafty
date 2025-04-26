@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { fetchLatestProductsWithCategories } from "@/lib/supabase-db/utils";
 import { isGlobalSaleActive, getGlobalSaleInfo } from "@/lib/supabase-db/global-utils";
-import { ArrowUpDown, Tag } from "lucide-react"; // Added Tag icon for sale badge
+import { ArrowUpDown, Tag, Zap } from "lucide-react"; // Added Tag icon for sale badge
 import Link from "next/link";
 import CountdownTimer from "@/components/ui/countdown-timer";
 
@@ -164,7 +164,10 @@ export default function ProductsPage() {
       {/* Global Sale Banner - Show only if active */}
       {globalSaleActive && saleInfo?.endDate && (
         <div className="flex flex-col gap-2 bg-red-50 p-3 rounded-lg mb-4">
-          <div className="text-sm font-medium text-red-600">Sale Ends In:</div>
+          <div className="flex flex-center text-sm text-center font-bold text-red-600">
+            <Zap size="18" className="mr-1 text-yellow-500 fill-yellow-500"/>
+            Weekend Sale Ends In:
+            </div>
           <CountdownTimer 
             endDate={saleInfo.endDate} 
             onExpire={() => setGlobalSaleActive(false)}

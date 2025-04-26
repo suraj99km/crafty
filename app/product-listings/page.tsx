@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpDown, Search, Filter, Star, TrendingUp, Package, AlertCircle, IndianRupee, ChevronDown, Edit2 } from "lucide-react";
+import { ArrowUpDown,Plus, Search, Filter, Star, TrendingUp, Package, AlertCircle, IndianRupee, ChevronDown, Edit2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Product } from "@/Types";
@@ -343,8 +343,9 @@ export default function ProductListingPage() {
           <ArrowUpDown size={16} className="text-gray-600" />
         </button>
         <Link href="/list-product">
-          <button className="px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 transition-colors">
-            + Add Product
+          <button className="px-2 py-2 flex bg-red-500 text-white text-sm rounded-lg hover:bg-gray-800 transition-colors">
+            <Plus size={18} className="mr-1" />
+            Add New
           </button>
         </Link>
       </div>
