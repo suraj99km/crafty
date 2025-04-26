@@ -7,11 +7,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   ChevronLeft, Play, Heart, Share2, Truck, Shield, Package, RefreshCw,
   ShoppingCart, ArrowLeft, ArrowRight, Clock, Hammer, Info, ArrowUpDown,
-  Star, Calendar, ChevronDown
+  Star, Calendar, ChevronDown,
+  CheckIcon,
+  CheckCircle2Icon,
+  CheckCheckIcon,
+  CheckCircle2,
+  CheckCheck,
+  CheckSquareIcon
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { isGlobalSaleActive, getGlobalSaleInfo } from "@/lib/supabase-db/global-utils";
+import { MdCheckCircle } from "react-icons/md";
+import CompactCountdownTimer from '../ui/compact-countdown';
 
 type Props = {
   product: Product;
@@ -22,9 +30,11 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [globalSale, setGlobalSale] = useState<{ active: boolean; discountPercentage: number }>({ 
-    active: false, 
-    discountPercentage: 0 
+  const [globalSale, setGlobalSale] = useState<{ 
+    active: boolean; 
+    endDate?: string;
+  }>({ 
+    active: false
   });
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -51,7 +61,12 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
       const active = await isGlobalSaleActive();
       if (active) {
         const saleInfo = await getGlobalSaleInfo();
-        setGlobalSale({ active: true, discountPercentage: saleInfo?.discountPercentage || 0 });
+        if (saleInfo?.endDate) {
+          setGlobalSale({ 
+            active: true,
+            endDate: saleInfo.endDate.toString()
+          });
+        }
       }
     };
     checkGlobalSale();
@@ -143,7 +158,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
     const platformPrice = product.platform_price || 0;
     const finalSalePrice = product.final_sale_price || 0;
 
-    if (globalSale.active && product.is_discount_enabled && platformPrice > 0 && finalSalePrice > 0) {
+    if (product.is_discount_enabled && platformPrice > 0 && finalSalePrice > 0) {
       const discount = Math.round(((platformPrice - finalSalePrice) / platformPrice) * 100);
       return {
         currentPrice: finalSalePrice,
@@ -294,7 +309,7 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
           )}
 
           {/* Image Indicators */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
             {allMedia.map((_, idx) => (
               <button
                 key={idx}
@@ -309,31 +324,37 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
         </div>
 
         {/* Product Information */}
-        <div className="px-4 py-6 bg-white shadow-sm rounded-t-3xl -mt-6 relative z-10">
+        <div className="px-4 py-6 bg-white shadow-sm relative z-10">
           <div className="space-y-6 max-w-3xl mx-auto">
             {/* Basic Info & Price */}
             <div className="space-y-3">
-              <div className="flex items-center gap-3">
+            <div className="space-y-3">
+              {globalSale.active && product.is_discount_enabled && globalSale.endDate && (
+                <span className="inline-flex items-center gap-2 text-sm bg-red-50 text-red-600 px-6 py-2 rounded-full">
+                  <span className="font-medium">Sale ends in:</span>
+                  <CompactCountdownTimer
+                    endDate={globalSale.endDate} 
+                    onExpire={() => setGlobalSale({ active: false })}
+                  />
+                </span>
+              )}
+            </div>
+              <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-900">{product.title}</h1>
-                {globalSale.active && product.is_discount_enabled && product.final_sale_price && (
-                  <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
-                    SALE
-                  </span>
-                )}
               </div>
               
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-500">{product.category}</p>
                 {product.verified && (
                   <div className="flex items-center gap-1">
-                    <Star size={16} className="text-green-500 fill-green-500" />
-                    <span className="text-sm text-green-600">Verified</span>
+                    <span className="text-sm text-green-600">Handmade Verified</span>
+                    <MdCheckCircle size={16} className="text-green-500" />
                   </div>
                 )}
               </div>
               
               <div className="flex items-baseline gap-3">
-                {globalSale.active && product.is_discount_enabled && product.final_sale_price ? (
+                {product.is_discount_enabled && product.final_sale_price ? (
                   <>
                     <div className="flex items-center gap-3">
                       <span className="text-2xl font-bold text-red-600">₹{product.final_sale_price}</span>

@@ -5,6 +5,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap');
 
 :root {
+  /* Brand Colors */
+  --color-primary-50: #FEF2F2;
+  --color-primary-100: #FEE2E2;
+  --color-primary-200: #FECACA;
+  --color-primary-300: #FCA5A5;
+  --color-primary-400: #F87171;
+  --color-primary-500: #EF4444;
+  --color-primary-600: #DC2626;
+  --color-primary-700: #B91C1C;
+  --color-primary-800: #991B1B;
+  --color-primary-900: #7F1D1D;
+
+  /* Surface Colors */
+  --color-surface-white: #FFFFFF;
+  --color-surface-light: #F9FAFB;
+  --color-surface-neutral: #F3F4F6;
+  --color-surface-dark: #1F2937;
+
+  /* Typography */
   --font-primary: "Inter", sans-serif;
   --font-secondary: "Playfair Display", serif;
 }

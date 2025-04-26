@@ -70,56 +70,6 @@ export const convertToIST = (dateString: string): Date => {
 };
 
 /**
- * Check if global sale is active
- * @returns Boolean indicating if global sale is active
- */
-export const isGlobalSaleActive = async (): Promise<boolean> => {
-  const isActive = await getGlobalConfig<boolean>('global_sale_active', false);
-  
-  // If there are dates set, check if current date is within range
-  const startDate = await getGlobalConfig<string | null>('global_sale_start_date', null);
-  const endDate = await getGlobalConfig<string | null>('global_sale_end_date', null);
-  
-  if (isActive && startDate && endDate) {
-    const now = getCurrentISTDate();
-    const start = convertToIST(startDate);
-    const end = convertToIST(endDate);
-    
-    return now >= start && now <= end;
-  }
-  
-  return isActive;
-};
-
-/**
- * Get global sale information
- * @returns Object containing sale information
- */
-export const getGlobalSaleInfo = async () => {
-  const isActive = await isGlobalSaleActive();
-  
-  if (!isActive) {
-    return {
-      isActive: false,
-      discountPercentage: 0,
-      startDate: null,
-      endDate: null
-    };
-  }
-  
-  const discountPercentage = await getGlobalConfig<number>('global_sale_discount_percentage', 0);
-  const startDate = await getGlobalConfig<string | null>('global_sale_start_date', null);
-  const endDate = await getGlobalConfig<string | null>('global_sale_end_date', null);
-  
-  return {
-    isActive,
-    discountPercentage,
-    startDate: startDate ? convertToIST(startDate) : null,
-    endDate: endDate ? convertToIST(endDate) : null
-  };
-};
-
-/**
  * Format a date to IST string representation
  * @param date Date to format
  * @returns Formatted date string in IST
@@ -137,3 +87,36 @@ export const formatISTDate = (date: Date): string => {
   
   return new Intl.DateTimeFormat('en-IN', options).format(date);
 };
+
+export async function getGlobalSaleInfo() {
+  try {
+    const { data: endDateRow } = await supabase
+      .from('global_config')
+      .select('value')
+      .eq('key', 'global_sale_end_ist')
+      .single();
+
+    if (endDateRow) {
+      return {
+        isActive: true,
+        endDate: new Date(endDateRow.value)
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching global sale info:', error);
+    return null;
+  }
+}
+
+export async function isGlobalSaleActive() {
+  try {
+    const saleInfo = await getGlobalSaleInfo();
+    if (!saleInfo || !saleInfo.endDate) return false;
+    
+    return new Date() < new Date(saleInfo.endDate);
+  } catch (error) {
+    console.error('Error checking global sale status:', error);
+    return false;
+  }
+}

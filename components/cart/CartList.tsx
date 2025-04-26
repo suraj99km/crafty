@@ -32,7 +32,7 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
           {/* Product Image with Discount Badge */}
           <div className="relative">
             <img src={item.images[0]} alt={item.title} className="w-20 h-20 rounded-lg object-cover" />
-            {item.final_sale_price && item.platform_price && item.final_sale_price < item.platform_price && (
+            {item.is_discount_enabled && item.final_sale_price && item.platform_price && item.final_sale_price < item.platform_price && (
               <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
                 {Math.round(((item.platform_price - item.final_sale_price) / item.platform_price) * 100)}% OFF
               </div>
@@ -43,17 +43,17 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
           <div className="flex-1 ml-4">
             <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
             <div className="flex items-center gap-2">
-              {item.final_sale_price && item.platform_price && item.final_sale_price < item.platform_price ? (
+              {item.is_discount_enabled && item.final_sale_price && item.platform_price && item.final_sale_price < item.platform_price ? (
                 <>
-                  <p className="text-gray-600 line-through">₹ {item.platform_price}</p>
                   <p className="text-green-600 font-semibold">₹ {item.final_sale_price}</p>
+                  <p className="text-gray-400 line-through">₹ {item.platform_price}</p>
                 </>
               ) : (
                 <p className="text-gray-600">₹ {item.platform_price || 0}</p>
               )}
             </div>
-            <p className="text-sm text-green-600 font-semibold mt-1">
-              Expected delivery <br /> by
+            <p className="text-xs text-green-600 font-semibold mt-2">
+              Expected delivery by
               <span className="font-semibold ml-1">
                 {new Date(Date.now() + (Math.floor(Math.random() * 5) + 2) * 24 * 60 * 60 * 1000)
                   .toLocaleDateString('en-GB', { day: 'numeric', month: 'short'})}

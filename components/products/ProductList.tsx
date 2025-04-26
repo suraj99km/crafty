@@ -5,6 +5,7 @@ import { fetchLatestProductsWithCategories } from "@/lib/supabase-db/utils";
 import { isGlobalSaleActive, getGlobalSaleInfo } from "@/lib/supabase-db/global-utils";
 import { ArrowUpDown, Tag } from "lucide-react"; // Added Tag icon for sale badge
 import Link from "next/link";
+import CountdownTimer from "@/components/ui/countdown-timer";
 
 // Native debounce function to avoid flickering
 const debounce = (func: Function, delay: number) => {
@@ -161,20 +162,13 @@ export default function ProductsPage() {
   return (
     <section className="container mx-auto p-2 mt-14 min-h-screen">
       {/* Global Sale Banner - Show only if active */}
-      {globalSaleActive && saleInfo && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <Tag className="h-5 w-5 mr-2" />
-            <span className="font-bold">Sale Active!</span>
-            {saleInfo.discountPercentage > 0 && (
-              <span className="ml-2">Up to {saleInfo.discountPercentage}% off selected items</span>
-            )}
-          </div>
-          {saleInfo.endDate && (
-            <div className="text-sm">
-              Ends: {new Date(saleInfo.endDate).toLocaleDateString()}
-            </div>
-          )}
+      {globalSaleActive && saleInfo?.endDate && (
+        <div className="flex flex-col gap-2 bg-red-50 p-3 rounded-lg mb-4">
+          <div className="text-sm font-medium text-red-600">Sale Ends In:</div>
+          <CountdownTimer 
+            endDate={saleInfo.endDate} 
+            onExpire={() => setGlobalSaleActive(false)}
+          />
         </div>
       )}
 
