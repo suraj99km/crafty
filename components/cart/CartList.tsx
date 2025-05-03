@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Product } from "@/Types";
 import { Trash2 } from "lucide-react"; // Delete Icon
+import { isGlobalSaleActive, getGlobalSaleInfo } from "@/lib/supabase-db/global-utils";
 
 type Props = {
   cartItems: Product[];
@@ -11,6 +12,21 @@ type Props = {
 
 const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
   const [updatedCart, setUpdatedCart] = useState<(Product & { quantity: number })[]>([]);
+  const [globalSaleActive, setGlobalSaleActive] = useState(false);
+
+  // Check if global sale is active
+  useEffect(() => {
+    const checkGlobalSale = async () => {
+      try {
+        const saleActive = await isGlobalSaleActive();
+        setGlobalSaleActive(saleActive);
+      } catch (err) {
+        console.error("Error checking global sale status:", err);
+      }
+    };
+
+    checkGlobalSale();
+  }, []);
 
   // Load cart items with quantity on mount
   useEffect(() => {
@@ -25,6 +41,15 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
+  // Check if sale price should be shown
+  const showSalePrice = (item: Product) => {
+    return globalSaleActive && 
+           item.is_discount_enabled && 
+           item.final_sale_price && 
+           item.platform_price && 
+           item.final_sale_price < item.platform_price;
+  };
+
   return (
     <div className="space-y-4">
       {updatedCart.map((item) => (
@@ -32,9 +57,9 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
           {/* Product Image with Discount Badge */}
           <div className="relative">
             <img src={item.images[0]} alt={item.title} className="w-20 h-20 rounded-lg object-cover" />
-            {item.is_discount_enabled && item.final_sale_price && item.platform_price && item.final_sale_price < item.platform_price && (
+            {showSalePrice(item) && (
               <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                {Math.round(((item.platform_price - item.final_sale_price) / item.platform_price) * 100)}% OFF
+                {Math.round((((item.platform_price || 0) - (item.final_sale_price || 0)) / (item.platform_price || 1)) * 100)}% OFF
               </div>
             )}
           </div>
@@ -43,7 +68,7 @@ const CartList: React.FC<Props> = ({ cartItems, setCartItems }) => {
           <div className="flex-1 ml-4">
             <h3 className="text-md font-semibold text-gray-800">{item.title}</h3>
             <div className="flex items-center gap-2">
-              {item.is_discount_enabled && item.final_sale_price && item.platform_price && item.final_sale_price < item.platform_price ? (
+              {showSalePrice(item) ? (
                 <>
                   <p className="text-green-600 font-semibold">₹ {item.final_sale_price}</p>
                   <p className="text-gray-400 line-through">₹ {item.platform_price}</p>

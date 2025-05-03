@@ -37,11 +37,9 @@ const ProductCard = ({ product }: { product: Product }) => {
 
   // Calculate sale price based on global sale settings
   const calculateSalePrice = () => {
-    // If global sale is not active, only use product-specific discounts
+    // If global sale is not active, return regular price
     if (!globalSaleActive) {
-      return product.is_discount_enabled && product.final_sale_price 
-        ? product.final_sale_price 
-        : product.platform_price || 0;
+      return product.platform_price || 0;
     }
     
     // If product has its own discount and it's enabled, use that
@@ -61,9 +59,9 @@ const ProductCard = ({ product }: { product: Product }) => {
 
   // Check if product is on sale
   const isProductOnSale = () => {
-    // If global sale is not active, only check product-specific discount
+    // If global sale is not active, product is not on sale
     if (!globalSaleActive) {
-      return false; // Don't show sale indicators when global sale is inactive
+      return false;
     }
     
     // Product has its own discount
@@ -81,6 +79,8 @@ const ProductCard = ({ product }: { product: Product }) => {
 
   // Calculate discount percentage
   const calculateDiscountPercentage = () => {
+    if (!isProductOnSale()) return 0;
+    
     const originalPrice = product.platform_price || 0;
     const salePrice = calculateSalePrice();
     
@@ -101,9 +101,9 @@ const ProductCard = ({ product }: { product: Product }) => {
               fill
               className="object-cover rounded-lg"
             />
-            {product.final_sale_price && product.platform_price && product.final_sale_price < product.platform_price && (
+            {isProductOnSale() && (
               <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full z-10">
-                {Math.round(((product.platform_price - product.final_sale_price) / product.platform_price) * 100)}% OFF
+                {calculateDiscountPercentage()}% OFF
               </div>
             )}
           </div>
@@ -111,10 +111,10 @@ const ProductCard = ({ product }: { product: Product }) => {
           <div className="mt-2">
             <h3 className="text-sm font-medium">{product.title}</h3>
             <div className="flex items-center gap-2 mt-1">
-              {product.final_sale_price && product.platform_price && product.final_sale_price < product.platform_price ? (
+              {isProductOnSale() ? (
                 <>
                   <p className="text-gray-600 line-through text-sm">₹{product.platform_price}</p>
-                  <p className="text-green-600 font-semibold">₹{product.final_sale_price}</p>
+                  <p className="text-green-600 font-semibold">₹{calculateSalePrice()}</p>
                 </>
               ) : (
                 <p className="text-gray-600">₹{product.platform_price || 0}</p>

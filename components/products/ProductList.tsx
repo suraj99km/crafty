@@ -60,16 +60,24 @@ export default function ProductsPage() {
     checkGlobalSale();
   }, []);
 
+  // Check if product is on sale
+  const isProductOnSale = (product: any) => {
+    if (!globalSaleActive) return false;
+    
+    return (
+      (product.is_discount_enabled && product.final_sale_price !== null && product.final_sale_price !== undefined) ||
+      (saleInfo?.discountPercentage > 0)
+    );
+  };
+
   // Calculate sale platform_price based on global sale settings
   const calculateSalePrice = (product: any) => {
     const platformPrice = product.platform_price || 0;
     const finalSalePrice = product.final_sale_price || 0;
 
-    // If global sale is not active, only use product-specific discounts
+    // If global sale is not active, return regular price
     if (!globalSaleActive) {
-      return product.is_discount_enabled && finalSalePrice > 0
-        ? finalSalePrice 
-        : platformPrice;
+      return platformPrice;
     }
     
     // If product has its own discount and it's enabled, use that
@@ -84,16 +92,6 @@ export default function ProductsPage() {
     }
     
     return platformPrice;
-  };
-
-  // Check if product is on sale
-  const isProductOnSale = (product: any) => {
-    if (!globalSaleActive) return false;
-    
-    return (
-      (product.is_discount_enabled && product.final_sale_price !== null && product.final_sale_price !== undefined) ||
-      (saleInfo?.discountPercentage > 0)
-    );
   };
 
   // Calculate discount percentage

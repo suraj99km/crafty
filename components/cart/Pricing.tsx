@@ -74,7 +74,7 @@ const Pricing = ({ cartItems, onTotalChange }: PricingProps) => {
       }, 0);
 
       // Calculate total discount
-      const calculatedDiscount = calculatedOriginalTotal - calculatedSubtotal;
+      const calculatedDiscount = globalSaleActive ? calculatedOriginalTotal - calculatedSubtotal : 0;
       
       // Check if order qualifies for free delivery
       const calculatedDeliveryFee = calculatedSubtotal >= freeDeliveryMinimum ? 0 : 

@@ -251,6 +251,14 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
     });
   };
 
+  // Add this function to determine if sale price should be shown
+  const showSalePrice = () => {
+    return globalSale.active && 
+           product.is_discount_enabled && 
+           product.final_sale_price !== null && 
+           product.final_sale_price !== undefined;
+  };
+
   const priceInfo = getPrice();
 
   return (
@@ -395,13 +403,19 @@ const ProductDetails: React.FC<Props> = ({ product, artist }) => {
                 {product.is_discount_enabled && product.final_sale_price ? (
                   <>
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl font-bold text-red-600">₹{product.final_sale_price}</span>
-                      <div className="flex flex-col items-start">
-                        <span className="text-sm text-gray-500 line-through">₹{product.platform_price}</span>
-                        <div className="bg-red-100 text-red-700 px-2 py-0.5 rounded-md text-sm font-semibold">
-                          {product.platform_price && product.final_sale_price && 
-                            Math.round(((product.platform_price - product.final_sale_price) / product.platform_price) * 100)}% OFF
-                        </div>
+                      {/* Price display */}
+                      <div className="flex items-center gap-2 mt-2">
+                        {showSalePrice() ? (
+                          <>
+                            <span className="text-2xl font-bold text-green-600">₹{product.final_sale_price}</span>
+                            <span className="text-lg text-gray-500 line-through">₹{product.platform_price || 0}</span>
+                            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                              {Math.round((((product.platform_price || 0) - (product.final_sale_price || 0)) / (product.platform_price || 1)) * 100)}% OFF
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-2xl font-bold">₹{product.platform_price || 0}</span>
+                        )}
                       </div>
                     </div>
                   </>
